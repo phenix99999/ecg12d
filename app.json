@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "Coffrets Prestige",
+    "slug": "coffrets-prestige",
+    "version": "1.2.7",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#231F20"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.dionavi.copreredeem",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Cette application utilise la caméra pour numériser le code-barres des cartes."
+      }
+    },
+    "android": {
+      "package": "com.vhiculemedia.coffretprestige",
+      "permissions": [
+        "CAMERA"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
