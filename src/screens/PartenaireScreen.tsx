@@ -131,7 +131,7 @@ export default inject("authStore")(observer(LoginScreen));
 
 const styles = StyleSheet.create({
     containerBarCode: {
-        height: 200,
+        height: 400,
         justifyContent: "center"
     },
     container: {
