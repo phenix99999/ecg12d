@@ -20,6 +20,7 @@ import { Image, ImageBackground, RefreshControl, ScrollView, View, TextInput, Ke
 import AuthStore from "../stores/AuthStore";
 import { authentificationGX } from '../utils/connectorGiveX';
 import NetworkUtils from '../utils/NetworkUtils';
+import { BarCodeScanner } from 'expo-barcode-scanner';
 
 const { StatusBarManager } = NativeModules;
 
@@ -30,7 +31,8 @@ let keyboardDidHideListener;
 const LoginScreen = ({ navigation, authStore }: Props) => {
     const [isLoading, setLoading] = React.useState<Boolean>(false);
     const [isLoadingTemp, setLoadingTemp] = React.useState<Boolean>(false);
-
+    const [hasPermission, setHasPermission] = React.useState(null);
+    const [scanned, setScanned] = React.useState(false);
     const [badPassword, setBadPassword] = React.useState<Boolean>(false);
 
     const [isScreenPartenaire, setPartenaire] = React.useState<Boolean>(true);
@@ -63,7 +65,10 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
     React.useEffect(() => {
         // alert(StatusBarManager.HEIGHT);
-
+        const getPermission = async () => {
+            const { status } = await BarCodeScanner.requestPermissionsAsync();
+            setHasPermission(status === 'granted');
+        }
 
         // alert(StatusBar.currentHeight);
         if (SyncStorage.get('username')) {

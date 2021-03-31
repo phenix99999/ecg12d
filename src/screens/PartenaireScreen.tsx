@@ -6,6 +6,8 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { LoginStackParamList, RootStackParamList } from "../types";
 import SyncStorage from 'sync-storage';
 
+
+import { BarCodeScanner } from 'expo-barcode-scanner';
 import { Root } from "native-base";
 import { inject, observer } from "mobx-react";
 import {
@@ -30,9 +32,9 @@ let keyboardDidHideListener;
 const LoginScreen = ({ navigation, authStore }: Props) => {
     const [isLoading, setLoading] = React.useState<Boolean>(false);
     const [isLoadingTemp, setLoadingTemp] = React.useState<Boolean>(false);
+    const [hasPermission, setHasPermission] = React.useState(null);
+    const [scanned, setScanned] = React.useState(false);
 
-    const [isScreenPartenaire, setPartenaire] = React.useState<Boolean>(true);
-    const [isScreenPointVente, setPointVente] = React.useState<Boolean>(false);
 
     async function onLoginPartenaire() {
         let auth = await authentificationGX(authStore.username, authStore.password);
@@ -52,19 +54,25 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
 
     React.useEffect(() => {
-        // alert(StatusBarManager.HEIGHT);
+        const getPermissions = async () => {
+            const { status } = await BarCodeScanner.requestPermissionsAsync();
+            setHasPermission(status === 'granted');
+        }
 
+        getPermissions();
 
         // alert(StatusBar.currentHeight);
         if (SyncStorage.get('username')) {
             authStore.username = SyncStorage.get('username');
         }
-        // keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow());
-        keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
-        return () => {
-            Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
-        }
+
+
     });
+
+    const handleBarCodeScanned = ({ type, data }) => {
+        setScanned(true);
+        alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    };
 
     if (!NetworkUtils.isNetworkAvailable()) {
         alert("Erreur de connexion");
@@ -105,56 +113,13 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
                     </SafeAreaView>
 
-
-
-
-
-                    {/* <Container style={{ flexGrow: 1, flex: 1, backgroundColor: 'transparent', top: 200 }}>
-
-                        <ScrollView style={{ width: "100%" }} contentContainerStyle={styles.content}>
-                            <Content style={{ flexGrow: 1, flex: 1, flexDirection: "row" }}>
-
-
-                                <View style={[styles.subContainer, { justifyContent: "flex-start" }]}>
-                                    <Form style={styles.form}>
-
-
-                                        <TextInput
-                                            placeholderTextColor="#404040"
-                                            style={{ height: 45, width: 200, borderWidth: 0.5, borderColor: '#303030', padding: 7 }}
-                                            value={authStore.username}
-                                            onChange={(e) => (authStore.username = e.nativeEvent.text)}
-                                            placeholder="Nom d'utilisateur"
-                                        />
-
-
-                                        <TextInput
-                                            placeholderTextColor="#404040"
-
-                                            secureTextEntry={true}
-                                            value={authStore.password}
-                                            placeholder="Mot de passe"
-                                            onChange={(e) => (authStore.password = e.nativeEvent.text)}
-                                            style={{ marginTop: 10, height: 45, width: 200, borderWidth: 0.5, borderColor: '#303030', padding: 7 }}
-
-                                        />
-
-                                    </Form>
-
-                                    <Button
-                                        onPress={async () => {
-                                            await onLogin()
-                                        }}
-
-                                        style={{ justifyContent: 'center', marginTop: 52, backgroundColor: "#1f4598", height: 40, width: '100%', borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
-                                    >
-                                        <Text> Connexion</Text>
-                                    </Button>
-
-                                </View>
-                            </Content>
-                        </ScrollView>
-                    </Container> */}
+                    <View style={styles.containerBarCode}>
+                        <BarCodeScanner
+                            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                            style={StyleSheet.absoluteFillObject}
+                        />
+                        {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
+                    </View>
                 </ImageBackground>
             }
 
@@ -165,6 +130,10 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 export default inject("authStore")(observer(LoginScreen));
 
 const styles = StyleSheet.create({
+    containerBarCode: {
+        height: 200,
+        justifyContent: "center"
+    },
     container: {
         flex: 1,
         justifyContent: "center"
