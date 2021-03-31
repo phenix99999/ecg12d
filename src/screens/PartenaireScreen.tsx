@@ -70,8 +70,9 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
     });
 
     const handleBarCodeScanned = ({ type, data }) => {
-        setScanned(true);
+        // setScanned(true);
         alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+        // setScanned(false);
     };
 
     if (!NetworkUtils.isNetworkAvailable()) {
