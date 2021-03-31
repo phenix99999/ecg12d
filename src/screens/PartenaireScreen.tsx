@@ -34,7 +34,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
     const [isLoadingTemp, setLoadingTemp] = React.useState<Boolean>(false);
     const [hasPermission, setHasPermission] = React.useState(null);
     const [scanned, setScanned] = React.useState(false);
-
+    const [showBarCodeScanner, setShowBarCodeScanner] = React.useState(false);
+    const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("");
 
     async function onLoginPartenaire() {
         let auth = await authentificationGX(authStore.username, authStore.password);
@@ -71,7 +72,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
     const handleBarCodeScanned = ({ type, data }) => {
         // setScanned(true);
-        alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+        // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+        setNoDeCarteManuel(data);
         // setScanned(false);
     };
 
@@ -87,7 +89,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
     return (
 
 
-        <Root>
+        <View>
             { isLoading ?
                 <View style={[styles.container, styles.horizontal]}>
 
@@ -109,35 +111,87 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                             <Image source={require('../assets/images/headerTitle.png')} resizeMode={'contain'} style={{ alignItems: 'center', margin: 8, width: 200, height: 50 }} />
                         </View>
 
-
-
-
                     </SafeAreaView>
 
                     <View style={styles.containerBarCode}>
-                        <BarCodeScanner
-                            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-                            style={StyleSheet.absoluteFillObject}
-                        />
-                        {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
+
+                        {showBarCodeScanner ?
+                            <View style={{ height: 250 }}>
+
+                                <BarCodeScanner
+                                    onBarCodeScanned={handleBarCodeScanned}
+                                    style={StyleSheet.absoluteFillObject}
+                                />
+                            </View>
+                            :
+                            <View>
+                                <ImageBackground source={require('../assets/images/code_bar.jpeg')} style={{ width: '100%', height: 175 }} >
+                                    <View style={{ height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center' }}>
+
+                                        <TouchableOpacity
+                                            onPress={() => setShowBarCodeScanner(true)}
+                                            style={{ backgroundColor: 'gray', justifyContent: 'center', alignItems: 'center', width: 175, height: 38 }}>
+                                            <Text>NUMÉRISER</Text>
+                                        </TouchableOpacity>
+
+
+                                    </View>
+                                </ImageBackground>
+
+                            </View>
+                        }
+
+
+
+
+                        <View style={{ flexDirection: 'row', width: '100%' }}>
+
+                            <TextInput
+                                placeholderTextColor="#404040"
+                                style={{ height: 45, top: 25, width: '100%', borderBottomWidth: 0.5, borderColor: '#303030', marginLeft: 17 }}
+                                value={""}
+                                onChange={(e) => (authStore.username = e.nativeEvent.text)}
+                                placeholder="Numéro de carte"
+                            />
+
+
+                        </View>
+
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+
+                            <Button
+                                onPress={async () => {
+
+                                }}
+
+
+                                style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
+                            >
+                                <Text style={{ fontSize: 14 }}> SOUMETTRE</Text>
+                            </Button>
+
+                        </View>
+
                     </View>
+
+
                 </ImageBackground>
             }
 
 
-        </Root >
+        </View >
     );
 };
 export default inject("authStore")(observer(LoginScreen));
 
 const styles = StyleSheet.create({
     containerBarCode: {
-        height: 400,
-        justifyContent: "center"
+
+
     },
     container: {
         flex: 1,
-        justifyContent: "center"
+
     },
     horizontal: {
         flexDirection: "row",
