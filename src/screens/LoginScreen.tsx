@@ -5,39 +5,24 @@ import Constants from "expo-constants";
 import { StackScreenProps } from "@react-navigation/stack";
 import { LoginStackParamList, RootStackParamList } from "../types";
 import SyncStorage from 'sync-storage';
-import EventBus from 'react-native-event-bus'
-import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
+
 import { Root } from "native-base";
 import { inject, observer } from "mobx-react";
 import {
-    Toast,
-    Title,
-    List,
-    ListItem,
-    Content,
-    Left,
-    Right,
-    Icon,
+
     Text,
-    Body,
     Button,
-    Container,
-    Header,
+
     Form,
-    Item,
-    Input,
-    Spinner,
+
 } from "native-base";
 import { Image, ImageBackground, RefreshControl, ScrollView, View, TextInput, Keyboard, ActivityIndicator, StatusBar, Platform, NativeModules, TouchableOpacity } from "react-native";
 import AuthStore from "../stores/AuthStore";
-import { authentification, get } from '../utils/connectorFileMaker';
+import { authentificationGX } from '../utils/connectorGiveX';
 import NetworkUtils from '../utils/NetworkUtils';
 
 const { StatusBarManager } = NativeModules;
-type Props = {
-    authStore: AuthStore;
-} & StackScreenProps<RootStackParamList, "Logout">;
-import RNRestart from 'react-native-restart'; // Import package from node modules
+
 
 
 let keyboardDidHideListener;
@@ -46,10 +31,21 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
     const [isLoading, setLoading] = React.useState<Boolean>(false);
     const [isLoadingTemp, setLoadingTemp] = React.useState<Boolean>(false);
 
+    const [badPassword, setBadPassword] = React.useState<Boolean>(false);
+
     const [isScreenPartenaire, setPartenaire] = React.useState<Boolean>(true);
     const [isScreenPointVente, setPointVente] = React.useState<Boolean>(false);
 
     async function onLogin() {
+        let auth = await authentificationGX(authStore.username, authStore.password);
+        // alert(auth);
+
+        if (auth) {
+            navigation.navigate('PartenaireScreen');
+        } else {
+            setBadPassword(true);
+        }
+
 
     }
 
@@ -62,40 +58,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
             await onLogin();
         }
     }
-    function onSwipeUp(gestureState) {
-        console.log("up");
-    }
 
-    function onSwipeDown(gestureState) {
-        console.log("Down");
-    }
 
-    function onSwipeLeft(gestureState) {
-        console.log("left");
-    }
-
-    function onSwipeRight(gestureState) {
-        console.log("right");
-    }
-
-    onSwipe(gestureName, gestureState) {
-        // const { SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT } = swipeDirections;
-        // this.setState({ gestureName: gestureName });
-        // switch (gestureName) {
-        //     case SWIPE_UP:
-        //         this.setState({ backgroundColor: 'red' });
-        //         break;
-        //     case SWIPE_DOWN:
-        //         this.setState({ backgroundColor: 'green' });
-        //         break;
-        //     case SWIPE_LEFT:
-        //         this.setState({ backgroundColor: 'blue' });
-        //         break;
-        //     case SWIPE_RIGHT:
-        //         this.setState({ backgroundColor: 'yellow' });
-        //         break;
-        // }
-    }
 
     React.useEffect(() => {
         // alert(StatusBarManager.HEIGHT);
@@ -191,12 +155,75 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
                     {isScreenPartenaire ?
 
-                        <View style={[styles.subContainer, { alignItems: 'center' }]}>
+                        <View>
                             <Form style={styles.form}>
                                 <View style={{ flexDirection: 'row', marginTop: 15 }}>
                                     <Text>Connectez-vous ici si vous êtes une entreprise partenaire. </Text>
                                 </View>
+
+                                <View style={{ flexDirection: 'row', marginTop: 15, height: 15 }}>
+                                    <Text style={{ color: 'red' }}>{badPassword ? "Votre nom d'utilisateur ou mot de passe est erronée" : "\n"} </Text>
+                                </View>
+
+
+
                                 <View style={{ marginTop: 50 }}>
+
+                                    <TextInput
+                                        placeholderTextColor="#404040"
+                                        style={{ height: 45, width: 350, borderWidth: 0.5, borderColor: badPassword ? 'red' : '#303030', padding: 7 }}
+                                        value={authStore.username}
+                                        onChange={(e) => (authStore.username = e.nativeEvent.text)}
+                                        placeholder="Nom d'utilisateur"
+                                    />
+
+
+                                    <TextInput
+                                        placeholderTextColor="#404040"
+
+                                        secureTextEntry={true}
+                                        value={authStore.password}
+                                        placeholder="Mot de passe"
+                                        onChange={(e) => (authStore.password = e.nativeEvent.text)}
+                                        style={{ marginTop: 10, height: 45, width: 350, borderWidth: 0.5, borderColor: badPassword ? 'red' : '#303030', padding: 7 }}
+
+                                    />
+
+                                </View>
+                            </Form>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+
+                                <Button
+                                    onPress={async () => {
+                                        await onLogin()
+                                    }}
+
+
+                                    style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
+                                >
+                                    <Text> Connexion</Text>
+                                </Button>
+
+                            </View>
+                        </View>
+
+                        :
+
+                        null}
+
+                    {isScreenPointVente ?
+                        <View>
+
+                            <Form style={styles.form}>
+                                <View style={{ flexDirection: 'row', marginTop: 15, marginLeft: 20, marginRight: 20 }}>
+                                    <Text>Connectez-vous ici si vous êtes une l'employé d'un point de vente. </Text>
+                                </View>
+
+                                <View style={{ flexDirection: 'row', marginTop: 15, height: 15 }}>
+                                    <Text style={{ color: 'red' }}>{badPassword ? "Votre nom d'utilisateur ou mot de passe est erronée" : "\n"} </Text>
+                                </View>
+
+                                <View style={{ marginTop: 50, alignItems: 'center' }}>
 
                                     <TextInput
                                         placeholderTextColor="#404040"
@@ -220,7 +247,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
                                 </View>
                             </Form>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
 
                                 <Button
                                     onPress={async () => {
@@ -234,33 +261,9 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                 </Button>
 
                             </View>
-                        </View>
-
-                        :
-
-                        null}
-
-                    {isScreenPointVente ?
-                        <View>
-                            <Text>Screen connexion point de vente</Text>
-                            <Text>Screen connexion point de vente</Text>
-
-                            <Text>Screen connexion point de vente</Text>
-
-                            <Text>Screen connexion point de vente</Text>
-
-                            <Text>Screen connexion point de vente</Text>
-
-                            <Text>Screen connexion point de vente</Text>
-                            <Text>Screen connexion point de vente</Text>
-
-                            <Text>Screen connexion point de vente</Text>
-
-                            <Text>Screen connexion point de vente</Text>
 
 
                         </View>
-
                         :
 
                         null}
@@ -362,6 +365,7 @@ const styles = StyleSheet.create({
     },
     form: {
         backgroundColor: "transparent",
+        alignItems: 'center',
     },
 
 });
