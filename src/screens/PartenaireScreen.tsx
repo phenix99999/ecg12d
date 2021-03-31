@@ -149,8 +149,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                             <TextInput
                                 placeholderTextColor="#404040"
                                 style={{ height: 45, top: 25, width: '100%', borderBottomWidth: 0.5, borderColor: '#303030', marginLeft: 17 }}
-                                value={""}
-                                onChange={(e) => (authStore.username = e.nativeEvent.text)}
+                                value={noDeCarteManuel}
+                                onChange={(e) => (setNoDeCarteManuel(e.nativeEvent.text))}
                                 placeholder="Numéro de carte"
                             />
 
