@@ -8,7 +8,8 @@ import SyncStorage from 'sync-storage';
 
 
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { Root } from "native-base";
+import Toast, { BaseToast } from 'react-native-toast-message';
+
 import { inject, observer } from "mobx-react";
 import {
 
@@ -16,26 +17,54 @@ import {
     Button,
 
     Form,
-
+    Container
 } from "native-base";
 import { Image, ImageBackground, RefreshControl, ScrollView, View, TextInput, Keyboard, ActivityIndicator, StatusBar, Platform, NativeModules, TouchableOpacity } from "react-native";
 import AuthStore from "../stores/AuthStore";
 import { authentificationGX } from '../utils/connectorGiveX';
+import { get, execScript } from '../utils/connectorFileMaker';
+
 import NetworkUtils from '../utils/NetworkUtils';
 
 const { StatusBarManager } = NativeModules;
 
+const toastConfig = {
+    nbCaractereInvalideCarte: () => (
+        <View style={{ height: 60, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
+            <View style={{ width: '70%', marginLeft: 10 }}>
+
+                <Text style={{ color: 'white' }}>{"Veuillez vérifier les numéros de cartes saisis. Vous devez saisir 21 chiffres"}</Text>
+            </View>
+
+            <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 40 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+        </View>
+    ),
+    carteInvalide: () => (
+        <View style={{ height: 200, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
+            <View style={{ width: '70%', marginLeft: 10, marginTop: 10 }}>
+
+                <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Si le problème persiste, il se peut que cette carte ne soit pas enregistrée dans notre système.
+                Le client peut contacter le service à la clientèle Coffrets Prestige au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
+                </Text>
+            </View>
+            <View style={{ width: '30%', justifyContent: 'center' }}>
+
+                <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 40 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+            </View>
+        </View>
+    )
+};
 
 
 let keyboardDidHideListener;
 
-const LoginScreen = ({ navigation, authStore }: Props) => {
+const PartenaireScreen = ({ navigation, authStore }: Props) => {
     const [isLoading, setLoading] = React.useState<Boolean>(false);
     const [isLoadingTemp, setLoadingTemp] = React.useState<Boolean>(false);
     const [hasPermission, setHasPermission] = React.useState(null);
     const [scanned, setScanned] = React.useState(false);
     const [showBarCodeScanner, setShowBarCodeScanner] = React.useState(false);
-    const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("");
+    const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("603628576371917334872");
 
     async function onLoginPartenaire() {
         let auth = await authentificationGX(authStore.username, authStore.password);
@@ -43,15 +72,48 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
     }
 
 
-    async function _keyboardDidHide() {
-        // alert("Keyboard did hide " + authStore.username.length + " " + authStore.password.length);
-        // if (!isLoadingTemp && authStore.password.length > 2) {
-        //     // alert("Avant executer onconnected");
-        //     setLoadingTemp(true);
-        //     await onLogin();
-        // }
-    }
 
+
+    async function getCardInfo() {
+
+        if (noDeCarteManuel.length != 21) {
+            Toast.show({
+                type: 'nbCaractereInvalideCarte',
+                autoHide: false,
+
+            });
+        } else {
+
+            let noDeCarteFM = noDeCarteManuel.substring(noDeCarteManuel.length - 10, noDeCarteManuel.length - 1);
+            let cardInfo = await get("Alain Simoneau", "4251", global.fmServer, global.fmDatabase, "api_mobile_CARTE_DETAILS", "&Numero_final=" + noDeCarteFM);
+            let nomCoffret = "";
+            let lienCoffretLogo = "";
+            let prixCoffret = ""
+            let balanceGiveX = "";
+            console.log(cardInfo);
+            if (cardInfo.length == 0) {
+                Toast.show({
+                    type: 'carteInvalide',
+                    autoHide: false,
+                });
+            } else {
+                lienCoffretLogo = cardInfo[0]['COFFRETS_dans_CM::CP_Coffret_Logo'];
+                lienCoffretLogo = "https://" + global.fmServer + lienCoffretLogo.replace(/&amp;/g, '&');
+                nomCoffret = cardInfo[0]['COFFRETS_dans_CM::CP_Titre'];
+                prixCoffret = cardInfo[0]['Prix_detail'];
+                balanceGiveX = cardInfo[0]['Givex_balance'];
+                navigation.navigate('PartenaireCarteScreen', { lienImage: lienCoffretLogo, nomCoffret: nomCoffret, prixCoffret: prixCoffret, balanceGiveX });
+            }
+            console.log(cardInfo);
+
+            // // console.log(cardInfo[0]['COFFRETS_dans_CM::CP_Coffret_Logo']);
+
+
+
+        }
+
+
+    }
 
 
     React.useEffect(() => {
@@ -60,22 +122,30 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
             setHasPermission(status === 'granted');
         }
 
-        getPermissions();
 
-        // alert(StatusBar.currentHeight);
-        if (SyncStorage.get('username')) {
-            authStore.username = SyncStorage.get('username');
+        const getCardInfoConst = async () => {
+            await getCardInfo();
+        }
+
+        if (noDeCarteManuel.length == 21) {
+            getCardInfoConst();
         }
 
 
-    });
+        getPermissions();
+
+
+    }, [noDeCarteManuel]);
 
     const handleBarCodeScanned = ({ type, data }) => {
         // setScanned(true);
         // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
         setNoDeCarteManuel(data);
         // setScanned(false);
+
+
     };
+
 
     if (!NetworkUtils.isNetworkAvailable()) {
         alert("Erreur de connexion");
@@ -90,7 +160,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
 
         <View>
-            { isLoading ?
+            {isLoading ?
                 <View style={[styles.container, styles.horizontal]}>
 
                     <ActivityIndicator size="large" color="black" />
@@ -105,7 +175,12 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
                 >
 
+                    <View style={{ flexDirection: 'row', zIndex: 5555, backgroundColor: 'black' }}>
+                        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+                    </View>
                     <SafeAreaView style={{ backgroundColor: '#231F20', height: 170, width: '100%' }}>
+
+
                         <View style={{ height: 80, justifyContent: 'center', alignItems: 'center' }}>
 
                             <Image source={require('../assets/images/headerTitle.png')} resizeMode={'contain'} style={{ alignItems: 'center', margin: 8, width: 200, height: 50 }} />
@@ -116,7 +191,21 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                     <View style={styles.containerBarCode}>
 
                         {showBarCodeScanner ?
-                            <View style={{ height: 250 }}>
+                            <View style={{ height: 250, justifyContent: 'center', alignItems: 'center' }}>
+                                <View
+                                    style={{
+                                        borderBottomColor: 'red',
+                                        borderBottomWidth: 4,
+                                        zIndex: 5554,
+                                        position: 'absolute',
+                                        width: '100%'
+                                    }}
+                                />
+                                <TouchableOpacity
+                                    onPress={() => setShowBarCodeScanner(true)}
+                                    style={{ zIndex: 5555, backgroundColor: '#e2e2e2', justifyContent: 'center', alignItems: 'center', width: 175, height: 38 }}>
+                                    <Text style={{ fontWeight: 'bold' }}>NUMÉRISER</Text>
+                                </TouchableOpacity>
 
                                 <BarCodeScanner
                                     onBarCodeScanned={handleBarCodeScanned}
@@ -125,9 +214,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                             </View>
                             :
                             <View>
-                                <ImageBackground source={require('../assets/images/code_bar.jpeg')} style={{ width: '100%', height: 175 }} >
+                                <ImageBackground source={require('../assets/images/code_bar.jpeg')} style={{ width: '100%', height: 250 }} >
                                     <View style={{ height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center' }}>
-
                                         <TouchableOpacity
                                             onPress={() => setShowBarCodeScanner(true)}
                                             style={{ backgroundColor: 'gray', justifyContent: 'center', alignItems: 'center', width: 175, height: 38 }}>
@@ -162,6 +250,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                             <Button
                                 onPress={async () => {
 
+                                    await getCardInfo();
+
                                 }}
 
 
@@ -182,7 +272,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         </View >
     );
 };
-export default inject("authStore")(observer(LoginScreen));
+export default inject("authStore")(observer(PartenaireScreen));
 
 const styles = StyleSheet.create({
     containerBarCode: {

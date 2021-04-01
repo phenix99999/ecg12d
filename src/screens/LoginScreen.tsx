@@ -43,6 +43,9 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         // alert(auth);
 
         if (auth) {
+
+            SyncStorage.set('username', authStore.username);
+            SyncStorage.set('password', authStore.password);
             navigation.navigate('PartenaireScreen');
         } else {
             setBadPassword(true);
@@ -69,7 +72,6 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();
             setHasPermission(status === 'granted');
         }
-
         // alert(StatusBar.currentHeight);
         if (SyncStorage.get('username')) {
             authStore.username = SyncStorage.get('username');

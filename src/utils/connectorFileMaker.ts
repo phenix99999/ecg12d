@@ -33,6 +33,7 @@ export function getRecords(fmResultSet) {
 
 export function formatData(records) {
     let formatedDataTemp = [];
+    console.log("########")
 
     for (let indexRecord = 0; indexRecord < records.length; indexRecord++) {
         for (let indexField = 0; indexField < records[indexRecord].children.length; indexField++) {
@@ -40,7 +41,10 @@ export function formatData(records) {
                 formatedDataTemp[indexRecord] = {};
             }
 
-            formatedDataTemp[indexRecord][records[indexRecord].children[indexField].attributes.name] = records[indexRecord].children[indexField].children[0].value;
+            // console.log(records[indexRecord].children[indexField]);
+            if (records[indexRecord].children[indexField].attributes.name) {
+                formatedDataTemp[indexRecord][records[indexRecord].children[indexField].attributes.name] = records[indexRecord].children[indexField].children[0].value;
+            }
 
             formatedDataTemp[indexRecord]['record-id'] = records[indexRecord]['attributes']['record-id'];
 
@@ -125,7 +129,7 @@ export async function edit(username, password, server, db, layout, recid, query)
 }
 
 
-export async function get(username, password, server, db, layout, query = null) {
+export async function get(username, password, server, db, layout, query = null, script = null) {
     const authHeader = 'Basic ' + base64.encode(`${username}:${password}`);
     var XMLParser = require('react-xml-parser');
     let url = "https://" + server + "/fmi/xml/fmresultset.xml?-findall&-db=" + db + "&-lay=" + layout;
@@ -140,7 +144,8 @@ export async function get(username, password, server, db, layout, query = null) 
         headers: { 'Authorization': authHeader }
     }).then(function (response) {
         data = new XMLParser().parseFromString(response.data);
-
+        // console.log("Data");
+        // console.log(data);
     }).catch(function (error) {
         // alert("No connexion!");
         errorAuth = true;
@@ -151,9 +156,15 @@ export async function get(username, password, server, db, layout, query = null) 
     }
 
     let fmResultSet = getFmResultSet(data);
-    let error = getError(fmResultSet);
-    let records = getRecords(fmResultSet);
-    let dataFormated = formatData(records);
 
+    // console.log(fmResultSet);
+
+    let error = getError(fmResultSet);
+    // console.log("Error");
+    // console.log(error);
+    let records = getRecords(fmResultSet);
+
+    let dataFormated = formatData(records);
+    // console.log(dataFormated);
     return dataFormated;
 }
