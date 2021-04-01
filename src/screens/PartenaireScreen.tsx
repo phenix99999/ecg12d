@@ -6,6 +6,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { LoginStackParamList, RootStackParamList } from "../types";
 import SyncStorage from 'sync-storage';
 
+import Torch from 'react-native-torch';
 
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import Toast, { BaseToast } from 'react-native-toast-message';
@@ -64,7 +65,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
     const [hasPermission, setHasPermission] = React.useState(null);
     const [scanned, setScanned] = React.useState(false);
     const [showBarCodeScanner, setShowBarCodeScanner] = React.useState(false);
-    const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("603628576371917334872");
+    const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("");
 
     async function onLoginPartenaire() {
         let auth = await authentificationGX(authStore.username, authStore.password);
@@ -76,7 +77,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
 
     async function getCardInfo() {
 
-        if (noDeCarteManuel.length != 21) {
+        if (noDeCarteManuel.length == 21) {
             Toast.show({
                 type: 'nbCaractereInvalideCarte',
                 autoHide: false,
@@ -119,9 +120,14 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
     React.useEffect(() => {
         const getPermissions = async () => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();
+            // const cameraAllowed = await Torch.requestCameraPermission(
+            //     'Camera Permissions', // dialog title
+            //     'We require camera permissions to use the torch on the back of your phone.' // dialog body
+            // );
+
             setHasPermission(status === 'granted');
         }
-
+        getPermissions();
 
         const getCardInfoConst = async () => {
             await getCardInfo();
@@ -132,7 +138,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
         }
 
 
-        getPermissions();
+
 
 
     }, [noDeCarteManuel]);
@@ -140,7 +146,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
     const handleBarCodeScanned = ({ type, data }) => {
         // setScanned(true);
         // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-        setNoDeCarteManuel(data);
+        setNoDeCarteManuel(data.trim());
         // setScanned(false);
 
 
@@ -261,6 +267,41 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                             </Button>
 
                         </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+
+                            <Button
+                                onPress={async () => {
+
+                                    Torch.switchState(true); // Turn ON
+
+
+                                }}
+
+
+                                style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
+                            >
+                                <Text style={{ fontSize: 14 }}> Flash ON</Text>
+                            </Button>
+
+                        </View>
+
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+
+                            <Button
+                                onPress={async () => {
+
+                                    Torch.switchState(false); // Turn ON
+
+                                }}
+
+
+                                style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
+                            >
+                                <Text style={{ fontSize: 14 }}> Flash OFF</Text>
+                            </Button>
+
+                        </View>
+
 
                     </View>
 
