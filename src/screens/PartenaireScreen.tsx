@@ -163,8 +163,8 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
     const handleBarCodeScanned = ({ type, data }) => {
         // setScanned(true);
         // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-  
-        setNoDeCarteManuel(data.replace(/ /g,''));
+
+        setNoDeCarteManuel(data.replace(/ /g, ''));
         // setScanned(false);
     };
 
@@ -240,7 +240,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                                     }}
                                 />
                                 <TouchableOpacity
-                                    onPress={() => setShowBarCodeScanner(true)}
+                                    onPress={() => setShowBarCodeScanner(false)}
                                     style={{ zIndex: 5555, backgroundColor: '#e2e2e2', justifyContent: 'center', alignItems: 'center', width: 175, height: 38 }}>
                                     <Text style={{ fontWeight: 'bold' }}>NUMÉRISER</Text>
                                 </TouchableOpacity>
