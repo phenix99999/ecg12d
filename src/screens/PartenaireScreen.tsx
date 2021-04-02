@@ -11,12 +11,17 @@ import Torch from 'react-native-torch';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import Toast, { BaseToast } from 'react-native-toast-message';
 
+import { Audio } from 'expo-av';
+
 import { inject, observer } from "mobx-react";
 import {
-
+    Body,
     Text,
     Button,
-
+    Left,
+    Row,
+    Right,
+    Icon,
     Form,
     Container
 } from "native-base";
@@ -24,7 +29,7 @@ import { Image, ImageBackground, RefreshControl, ScrollView, View, TextInput, Ke
 import AuthStore from "../stores/AuthStore";
 import { authentificationGX } from '../utils/connectorGiveX';
 import { get, execScript } from '../utils/connectorFileMaker';
-
+import { Sound } from "react-native-sound";
 import NetworkUtils from '../utils/NetworkUtils';
 
 const { StatusBarManager } = NativeModules;
@@ -66,6 +71,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
     const [scanned, setScanned] = React.useState(false);
     const [showBarCodeScanner, setShowBarCodeScanner] = React.useState(false);
     const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("");
+    const [sound, setSound] = React.useState();
 
     async function onLoginPartenaire() {
         let auth = await authentificationGX(authStore.username, authStore.password);
@@ -76,8 +82,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
 
 
     async function getCardInfo() {
-
-        if (noDeCarteManuel.length == 21) {
+        if (noDeCarteManuel.length != 21) {
             Toast.show({
                 type: 'nbCaractereInvalideCarte',
                 autoHide: false,
@@ -117,8 +122,20 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
     }
 
 
+    async function playBip() {
+
+        const { sound } = await Audio.Sound.createAsync(
+            require('../assets/bip.mp3')
+        );
+        setSound(sound);
+
+        await sound.playAsync();
+    }
+
     React.useEffect(() => {
         const getPermissions = async () => {
+
+
             const { status } = await BarCodeScanner.requestPermissionsAsync();
             // const cameraAllowed = await Torch.requestCameraPermission(
             //     'Camera Permissions', // dialog title
@@ -140,7 +157,6 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
 
 
 
-
     }, [noDeCarteManuel]);
 
     const handleBarCodeScanned = ({ type, data }) => {
@@ -148,8 +164,6 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
         // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
         setNoDeCarteManuel(data.trim());
         // setScanned(false);
-
-
     };
 
 
@@ -184,14 +198,30 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                     <View style={{ flexDirection: 'row', zIndex: 5555, backgroundColor: 'black' }}>
                         <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
                     </View>
-                    <SafeAreaView style={{ backgroundColor: '#231F20', height: 170, width: '100%' }}>
+                    <SafeAreaView style={{ backgroundColor: '#231F20', height: 122, width: '100%' }}>
+                        <Row>
 
 
-                        <View style={{ height: 80, justifyContent: 'center', alignItems: 'center' }}>
+                            <Left style={{ marginLeft: 10 }}>
+                                <Button
+                                    transparent
+                                    onPress={async () => {
+                                        navigation.openDrawer();
 
-                            <Image source={require('../assets/images/headerTitle.png')} resizeMode={'contain'} style={{ alignItems: 'center', margin: 8, width: 200, height: 50 }} />
-                        </View>
+                                    }}
+                                >
+                                    <Icon name="menu" type={"MaterialIcons"} style={{ fontSize: 30, color: 'white' }} />
+                                </Button>
+                            </Left>
 
+                            <Body style={{ height: 80 }}>
+
+                                <Image source={require('../assets/images/headerTitle.png')} resizeMode={'contain'} style={{ alignItems: 'center', margin: 8, width: 200, height: 50 }} />
+                            </Body>
+                            <Right>
+
+                            </Right>
+                        </Row>
                     </SafeAreaView>
 
                     <View style={styles.containerBarCode}>
@@ -214,7 +244,10 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                                 </TouchableOpacity>
 
                                 <BarCodeScanner
-                                    onBarCodeScanned={handleBarCodeScanned}
+                                    onBarCodeScanned={() => {
+                                        playBip();
+                                        handleBarCodeScanned
+                                    }}
                                     style={StyleSheet.absoluteFillObject}
                                 />
                             </View>
@@ -267,7 +300,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                             </Button>
 
                         </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                        {/* <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
 
                             <Button
                                 onPress={async () => {
@@ -300,7 +333,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                                 <Text style={{ fontSize: 14 }}> Flash OFF</Text>
                             </Button>
 
-                        </View>
+                        </View> */}
 
 
                     </View>

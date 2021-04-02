@@ -13,6 +13,7 @@ import PartenaireScreen from "../screens/PartenaireScreen";
 import PartenaireCarteScreen from "../screens/PartenaireCarteScreen";
 
 import SyncStorage from 'sync-storage';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // If you are not familiar with React Navigation, we recommend going through the
 // "Fundamentals" guide: https://reactnavigation.org/docs/getting-started
@@ -38,6 +39,46 @@ export default class App extends Component {
     }
 
     render() {
+        const Drawer = createDrawerNavigator();
+        function CustomDrawerContent(props) {
+            return (
+
+                <View>
+
+                    <View style={{ backgroundColor: '#231F20', height: 120 }}>
+                        <SafeAreaView style={{ alignItems: 'center', justifyContent: 'center', marginTop: 15 }}>
+                            <Text style={{ color: 'white', fontSize: 24 }}>Menu</Text>
+                        </SafeAreaView>
+                    </View>
+
+
+                    <TouchableOpacity style={{ flexDirection: 'row', padding: 20, borderBottomWidth: 1, borderColor: '#e2e2e2' }}
+                        onPress={() => {
+                            SyncStorage.remove('username');
+                            SyncStorage.remove('password');
+                            props.navigation.navigate('LoginScreen');
+                        }}
+                    >
+                        <Text>Deconnexion</Text>
+                    </TouchableOpacity>
+                </View>
+
+            );
+        }
+
+        function StackPartenaire() {
+
+            return (
+                <Stack.Navigator screenOptions={{ headerShown: false }} mode="modal" >
+                    <Stack.Screen name="PartenaireScreen" component={PartenaireScreen} />
+                    <Stack.Screen name="PartenaireCarteScreen" component={PartenaireCarteScreen} />
+                </Stack.Navigator>
+            );
+
+
+        }
+
+
         const Stack = createStackNavigator();
         global.fmServer = "cpfilemaker.com";
         global.fmDatabase = "Coffrets_Prestige";
@@ -58,6 +99,17 @@ export default class App extends Component {
                 </Stack.Navigator>
         }
 
+
+        navigation =
+            <Drawer.Navigator
+                drawerContent={(props) => <CustomDrawerContent {...props} />}
+
+            >
+                <Drawer.Screen name="LoginScreen" component={LoginScreen} />
+
+                <Drawer.Screen name="PartenaireScreen" component={StackPartenaire} />
+
+            </Drawer.Navigator>
         return (
             <NavigationContainer>
 

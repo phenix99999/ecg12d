@@ -98,22 +98,16 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         <Root>
             { isLoading ?
                 <View style={[styles.container, styles.horizontal]}>
-
                     <ActivityIndicator size="large" color="black" />
-
                 </View>
-
-
                 :
                 <ImageBackground
                     source={require("../assets/images/backgroundImage.jpg")}
                     style={{ width: '100%', height: '100%' }} imageStyle={{ opacity: 0.1 }}
 
                 >
-
                     <SafeAreaView style={{ backgroundColor: '#231F20', height: 170, width: '100%' }}>
                         <View style={{ height: 80, justifyContent: 'center', alignItems: 'center' }}>
-
                             <Image source={require('../assets/images/headerTitle.png')} resizeMode={'contain'} style={{ alignItems: 'center', margin: 8, width: 200, height: 50 }} />
                         </View>
 
