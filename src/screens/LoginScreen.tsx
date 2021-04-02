@@ -9,12 +9,9 @@ import SyncStorage from 'sync-storage';
 import { Root } from "native-base";
 import { inject, observer } from "mobx-react";
 import {
-
     Text,
     Button,
-
     Form,
-
 } from "native-base";
 import { Image, ImageBackground, RefreshControl, ScrollView, View, TextInput, Keyboard, ActivityIndicator, StatusBar, Platform, NativeModules, TouchableOpacity } from "react-native";
 import AuthStore from "../stores/AuthStore";

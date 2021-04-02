@@ -152,6 +152,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
 
         if (noDeCarteManuel.length == 21) {
             getCardInfoConst();
+            playBip();
         }
 
 
@@ -244,10 +245,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                                 </TouchableOpacity>
 
                                 <BarCodeScanner
-                                    onBarCodeScanned={() => {
-                                        playBip();
-                                        handleBarCodeScanned
-                                    }}
+                                    onBarCodeScanned={handleBarCodeScanned}
                                     style={StyleSheet.absoluteFillObject}
                                 />
                             </View>
@@ -260,8 +258,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                                             style={{ backgroundColor: 'gray', justifyContent: 'center', alignItems: 'center', width: 175, height: 38 }}>
                                             <Text>NUMÉRISER</Text>
                                         </TouchableOpacity>
-
-
+                
                                     </View>
                                 </ImageBackground>
 
