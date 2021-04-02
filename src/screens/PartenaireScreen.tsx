@@ -296,6 +296,22 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                                 <Text style={{ fontSize: 14 }}> SOUMETTRE</Text>
                             </Button>
 
+
+                            <Button
+                                onPress={async () => {
+
+                                    await playBip();
+
+                                }}
+
+
+                                style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
+                            >
+                                <Text style={{ fontSize: 14 }}> PLAY BIP</Text>
+                            </Button>
+
+
+
                         </View>
                         {/* <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
 
