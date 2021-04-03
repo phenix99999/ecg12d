@@ -56,7 +56,8 @@
     "react-native-unordered-list": "^1.0.4",
     "react-native-web": "~0.13.12",
     "react-xml-parser": "^1.1.8",
-    "sync-storage": "^0.4.2"
+    "sync-storage": "^0.4.2",
+    "expo-camera": "~9.0.0"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",

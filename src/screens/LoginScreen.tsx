@@ -64,6 +64,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
 
     React.useEffect(() => {
+        authStore.username="466428";
+        authStore.password="2197";
         // alert(StatusBarManager.HEIGHT);
         const getPermission = async () => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();

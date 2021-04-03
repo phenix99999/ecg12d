@@ -5,6 +5,7 @@ import Constants from "expo-constants";
 import { StackScreenProps } from "@react-navigation/stack";
 import { LoginStackParamList, RootStackParamList } from "../types";
 import SyncStorage from 'sync-storage';
+import { Camera } from 'expo-camera';
 
 import Torch from 'react-native-torch';
 
@@ -68,6 +69,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
     const [isLoading, setLoading] = React.useState<Boolean>(false);
     const [isLoadingTemp, setLoadingTemp] = React.useState<Boolean>(false);
     const [hasPermission, setHasPermission] = React.useState(null);
+    const [flash, setFlash] = React.useState("off");
     const [scanned, setScanned] = React.useState(false);
     const [showBarCodeScanner, setShowBarCodeScanner] = React.useState(false);
     const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("");
@@ -163,7 +165,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
     const handleBarCodeScanned = ({ type, data }) => {
         // setScanned(true);
         // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-
+        alert(data);
         setNoDeCarteManuel(data.replace(/ /g, ''));
         // setScanned(false);
     };
@@ -229,7 +231,24 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                     <View style={styles.containerBarCode}>
 
                         {showBarCodeScanner ?
-                            <View style={{ height: 250, justifyContent: 'center', alignItems: 'center' }}>
+                      <View style={{height: 400}}>
+                     <View style={{zIndex:9999999999,backgroundColor:'black',position:'absolute',flexDirection:'row'}}>
+                                <TouchableOpacity
+                                    onPress={()=> {
+                                        if(flash =='off'){
+                                            setFlash('torch')
+                                        }else{
+                                            setFlash('off');
+                                        }
+                                    }}
+                                >
+                                 <Icon name={flash == 'torch' ? "flashlight-off" : "flashlight"} type="MaterialCommunityIcons" style={{ color: 'white',fontWeight: 'bold',marginLeft:'94%' }}></Icon>
+                                </TouchableOpacity>
+                            </View>
+             
+                   
+
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                                 <View
                                     style={{
                                         borderBottomColor: 'red',
@@ -239,25 +258,41 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                                         width: '100%'
                                     }}
                                 />
+                              
+                                {/* <BarCodeScanner
+                                    onBarCodeScanned={handleBarCodeScanned}
+                                    style={StyleSheet.absoluteFillObject}
+                                /> */}
+                                <Camera
+                                                                  flashMode={flash}
+
+                                barCodeScannerSettings={{
+                                    barCodeTypes: [BarCodeScanner.Constants.BarCodeType.code128],
+                                  }}
+                                  onBarCodeScanned={handleBarCodeScanned}
+
+                                type={Camera.Constants.Type.back}>
+                                <View style={{height:400,width:500,alignItems:'center',justifyContent:'center'}}>
                                 <TouchableOpacity
                                     onPress={() => setShowBarCodeScanner(false)}
                                     style={{ zIndex: 5555, backgroundColor: '#e2e2e2', justifyContent: 'center', alignItems: 'center', width: 175, height: 38 }}>
                                     <Text style={{ fontWeight: 'bold' }}>NUMÉRISER</Text>
                                 </TouchableOpacity>
 
-                                <BarCodeScanner
-                                    onBarCodeScanned={handleBarCodeScanned}
-                                    style={StyleSheet.absoluteFillObject}
-                                />
+                                </View>
+                            </Camera>
                             </View>
+                            </View>
+                      
                             :
                             <View>
-                                <ImageBackground source={require('../assets/images/code_bar.jpeg')} style={{ width: '100%', height: 250 }} >
+                              
+                                <ImageBackground source={require('../assets/images/code_bar.jpeg')} style={{ width: '100%', height: 400 }} >
                                     <View style={{ height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                                         <TouchableOpacity
                                             onPress={() => setShowBarCodeScanner(true)}
-                                            style={{ backgroundColor: 'gray', justifyContent: 'center', alignItems: 'center', width: 175, height: 38 }}>
-                                            <Text>NUMÉRISER</Text>
+                                            style={{  backgroundColor: '#e2e2e2', justifyContent: 'center', alignItems: 'center', width: 175, height: 38 }}>
+                                    <Text style={{ fontWeight: 'bold' }}>NUMÉRISER</Text>
                                         </TouchableOpacity>
 
                                     </View>
