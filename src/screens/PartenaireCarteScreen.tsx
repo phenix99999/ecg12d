@@ -55,7 +55,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
             <SafeAreaView style={{ backgroundColor: '#231F20', height: 100, width: '100%' }}>
                 <Row>
                     <Left>
-                        <TouchableOpacity onPress={() =>  navigation.replace('PartenaireScreen')}>
+                        <TouchableOpacity onPress={() => navigation.replace('PartenaireScreen')}>
                             <Icon name="arrow-back" type="MaterialIcons" style={{ color: 'white', marginLeft: 15, fontWeight: 'bold' }}></Icon>
                         </TouchableOpacity>
                     </Left>
@@ -66,7 +66,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
             </SafeAreaView>
             <SafeAreaView style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <Image
-                    style={{ height: 175, width: 290, marginTop: 15 }}
+                    style={{ height: 135, width: 250, marginTop: 15 }}
                     source={
                         {
                             uri: route.params.lienImage,
@@ -79,32 +79,40 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
             </SafeAreaView >
             <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
-                <Text style={{ fontSize: 24 }}>Produit</Text>
-                <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 24 }}>{route.params.nomCoffret}</Text>
+                <Text style={{ fontSize: 16 }}>Produit</Text>
+                <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.nomCoffret}</Text>
 
             </View>
 
             <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
-                <Text style={{ fontSize: 24 }}>Prix de détail</Text>
-                <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 24 }}>{route.params.prixCoffret}</Text>
+                <Text style={{ fontSize: 16 }}>Prix de détail</Text>
+                <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.prixCoffret}</Text>
             </View>
 
 
             <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
-                <Text style={{ fontSize: 24 }}>Balance</Text>
-                <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 24 }}>{route.params.balanceGiveX}</Text>
+                <Text style={{ fontSize: 16 }}>Balance</Text>
+                <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.balanceGiveX}</Text>
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                <Button
-                    onPress={async () => {
-                        alert("Bientot");
-                        // await getCardInfo();
-                    }}
-                    style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
-                >
-                    <Text style={{ fontSize: 14 }}>ENCAISSER</Text>
-                </Button>
-            </View>
+            {route.params.balanceGiveX != 0.00
+                ?
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                    <Button
+                        onPress={async () => {
+                            alert("Bientot");
+                            // await getCardInfo();
+                        }}
+                        style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
+                    >
+                        <Text style={{ fontSize: 14 }}>ENCAISSER</Text>
+                    </Button>
+                </View>
+                :
+                <View style={{ flexDirection: 'row', marginLeft: 20, marginRight: 20, marginTop: 25 }}>
+                    <Text>Cette carte a déjà été encaissée. Le client peut contacter le service à la clientèle Coffrets Prestige au 1 800.701.9575. Merci de ne pas honorer la prestation.</Text>
+                </View>
+            }
+
 
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                 <Button

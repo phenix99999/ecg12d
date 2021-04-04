@@ -64,8 +64,9 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
 
     React.useEffect(() => {
-        authStore.username="466428";
-        authStore.password="2197";
+
+        authStore.username = "466428";
+        authStore.password = "2197";
         // alert(StatusBarManager.HEIGHT);
         const getPermission = async () => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -117,7 +118,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                     setPointVente(false);
                                 }}
                             >
-                                <Text style={{ color: 'white', marginRight: 20, fontSize: 13 }}>
+                                <Text style={{ color: 'white', marginRight: 20, fontSize: isScreenPartenaire ? 14 : 11 }}>
                                     Connexion partenaire
                                 </Text>
                             </TouchableOpacity>
@@ -127,7 +128,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                     setPartenaire(false);
                                 }}
                             >
-                                <Text style={{ color: 'white', marginRight: 20, fontSize: 13 }}>
+                                <Text style={{ color: 'white', marginRight: 20, fontSize: isScreenPointVente ? 14 : 11 }}>
                                     Connexion point de vente
                                 </Text>
                             </TouchableOpacity>
@@ -167,7 +168,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
 
 
-                                <View style={{ marginTop: 50 }}>
+                                <View style={{ marginTop: 15 }}>
 
                                     <TextInput
                                         placeholderTextColor="#404040"
@@ -223,7 +224,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                     <Text style={{ color: 'red' }}>{badPassword ? "Votre nom d'utilisateur ou mot de passe est erronée" : "\n"} </Text>
                                 </View>
 
-                                <View style={{ marginTop: 50, alignItems: 'center' }}>
+                                <View style={{ marginTop: 5, alignItems: 'center' }}>
 
                                     <TextInput
                                         placeholderTextColor="#404040"
