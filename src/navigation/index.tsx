@@ -84,24 +84,22 @@ export default class App extends Component {
         global.fmDatabase = "Coffrets_Prestige";
         // this.fmClient = new FMClient('cpfilemaker.com', 'Coffrets_Prestige', 'Basic QXBwbGljYXRpb25fbW9iaWxlOg==')
         let navigation;
+
+
         if (SyncStorage.get('username')) {
-            navigation = <Stack.Navigator screenOptions={{ headerShown: false }} >
-                <Stack.Screen name="PartenaireScreen" component={PartenaireScreen} />
-                <Stack.Screen name="LoginScreen" component={LoginScreen} />
-
-            </Stack.Navigator>
-        } else {
             navigation =
-                <Stack.Navigator screenOptions={{ headerShown: false }} >
-                    <Stack.Screen name="PartenaireScreen" component={PartenaireScreen} />
-                    <Stack.Screen name="LoginScreen" component={LoginScreen} />
-                    <Stack.Screen name="PartenaireCarteScreen" component={PartenaireCarteScreen} />
-                </Stack.Navigator>
-        }
+                <Drawer.Navigator
+                    drawerContent={(props) => <CustomDrawerContent {...props} />}
 
+                >
 
-        navigation =
-            <Drawer.Navigator
+                    <Drawer.Screen name="PartenaireScreen" component={StackPartenaire} />
+                    <Drawer.Screen name="LoginScreen" component={LoginScreen} />
+
+                </Drawer.Navigator>
+        } else {
+
+            navigation = <Drawer.Navigator
                 drawerContent={(props) => <CustomDrawerContent {...props} />}
 
             >
@@ -110,6 +108,9 @@ export default class App extends Component {
                 <Drawer.Screen name="PartenaireScreen" component={StackPartenaire} />
 
             </Drawer.Navigator>
+        }
+
+
         return (
             <NavigationContainer>
 
