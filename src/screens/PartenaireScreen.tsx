@@ -74,6 +74,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
     const [showBarCodeScanner, setShowBarCodeScanner] = React.useState(false);
     const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("");
     const [sound, setSound] = React.useState();
+    const [noDeCarteAutomatique, setNoDeCarteAutomatique] = React.useState("");
 
     async function onLoginPartenaire() {
         let auth = await authentificationGX(authStore.username, authStore.password);
@@ -84,7 +85,8 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
 
 
     async function getCardInfo() {
-        if (noDeCarteManuel.length != 21) {
+        if (noDeCarteAutomatique.length != 21) {
+            setNoDeCarteManuel(noDeCarteAutomatique);
             Toast.show({
                 type: 'nbCaractereInvalideCarte',
                 autoHide: false,
@@ -92,7 +94,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
             });
         } else {
 
-            let noDeCarteFM = noDeCarteManuel.substring(noDeCarteManuel.length - 10, noDeCarteManuel.length - 1);
+            let noDeCarteFM = noDeCarteAutomatique.substring(noDeCarteAutomatique.length - 10, noDeCarteAutomatique.length - 1);
             let cardInfo = await get("Alain Simoneau", "4251", global.fmServer, global.fmDatabase, "api_mobile_CARTE_DETAILS", "&Numero_final=" + noDeCarteFM);
             let nomCoffret = "";
             let lienCoffretLogo = "";
@@ -100,10 +102,13 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
             let balanceGiveX = "";
             console.log(cardInfo);
             if (cardInfo.length == 0) {
+                setNoDeCarteManuel(noDeCarteAutomatique);
+
                 Toast.show({
                     type: 'carteInvalide',
                     autoHide: false,
                 });
+                
             } else {
                 lienCoffretLogo = cardInfo[0]['COFFRETS_dans_CM::CP_Coffret_Logo'];
                 lienCoffretLogo = "https://" + global.fmServer + lienCoffretLogo.replace(/&amp;/g, '&');
@@ -111,9 +116,10 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                 prixCoffret = cardInfo[0]['Prix_detail'];
                 balanceGiveX = cardInfo[0]['Givex_balance'];
                 navigation.navigate('PartenaireCarteScreen', { lienImage: lienCoffretLogo, nomCoffret: nomCoffret, prixCoffret: prixCoffret, balanceGiveX });
+                // setNoDeCarteManuel("");
             }
-            console.log(cardInfo);
-
+            // console.log(cardInfo);
+        
             // // console.log(cardInfo[0]['COFFRETS_dans_CM::CP_Coffret_Logo']);
 
 
@@ -136,8 +142,6 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
 
     React.useEffect(() => {
         const getPermissions = async () => {
-
-
             const { status } = await BarCodeScanner.requestPermissionsAsync();
             // const cameraAllowed = await Torch.requestCameraPermission(
             //     'Camera Permissions', // dialog title
@@ -153,20 +157,20 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
             await getCardInfo();
         }
 
-        if (noDeCarteManuel.length == 21) {
+        if (noDeCarteAutomatique.length == 21) {
             getCardInfoConst();
         }
 
 
 
 
-    }, [noDeCarteManuel]);
+    }, [noDeCarteAutomatique]);
 
     const handleBarCodeScanned = ({ type, data }) => {
         // setScanned(true);
         // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
         // alert(data);
-        setNoDeCarteManuel(data.replace(/ /g, ''));
+        setNoDeCarteAutomatique(data.replace(/ /g, ''));
         // setScanned(false);
     };
 
@@ -276,11 +280,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                                         </View>
 
                                         <View style={{ height: 400, width: 500, alignItems: 'center', justifyContent: 'center' }}>
-                                            <TouchableOpacity
-                                                onPress={() => setShowBarCodeScanner(false)}
-                                                style={{ zIndex: 5555, backgroundColor: '#e2e2e2', justifyContent: 'center', alignItems: 'center', width: 175, height: 38, marginBottom: 30 }}>
-                                                <Text style={{ fontWeight: 'bold' }}>NUMÉRISER</Text>
-                                            </TouchableOpacity>
+                                       
 
                                         </View>
                                     </Camera>

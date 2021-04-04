@@ -55,7 +55,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
             <SafeAreaView style={{ backgroundColor: '#231F20', height: 100, width: '100%' }}>
                 <Row>
                     <Left>
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <TouchableOpacity onPress={() =>  navigation.replace('PartenaireScreen')}>
                             <Icon name="arrow-back" type="MaterialIcons" style={{ color: 'white', marginLeft: 15, fontWeight: 'bold' }}></Icon>
                         </TouchableOpacity>
                     </Left>
@@ -93,17 +93,13 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
             <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
                 <Text style={{ fontSize: 24 }}>Balance</Text>
                 <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 24 }}>{route.params.balanceGiveX}</Text>
-
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                 <Button
                     onPress={async () => {
                         alert("Bientot");
                         // await getCardInfo();
-
                     }}
-
-
                     style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
                 >
                     <Text style={{ fontSize: 14 }}>ENCAISSER</Text>
@@ -113,7 +109,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                 <Button
                     onPress={async () => {
-                        navigation.goBack();
+                        navigation.replace('PartenaireScreen');
 
                     }}
 
