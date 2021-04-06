@@ -64,7 +64,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
 
     React.useEffect(() => {
-
+        alert(SyncStorage.get('username'));
         authStore.username = "466428";
         authStore.password = "2197";
         // alert(StatusBarManager.HEIGHT);
