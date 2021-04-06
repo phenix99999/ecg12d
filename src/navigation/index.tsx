@@ -9,7 +9,8 @@ import { RootStackParamList, MainStackParamList, LoginStackParamList, DrawerStac
 import { createStackNavigator } from "@react-navigation/stack";
 type InitialRouteNames = "Logout" | "Login";
 import LoginScreen from "../screens/LoginScreen";
-import PartenaireScreen from "../screens/PartenaireScreen";
+import CarteScreen from "../screens/CarteScreen";
+import EmployeCarteScreen from "../screens/EmployeCarteScreen";
 import PartenaireCarteScreen from "../screens/PartenaireCarteScreen";
 
 import SyncStorage from 'sync-storage';
@@ -24,18 +25,19 @@ export default class App extends Component {
         super(props);
 
         this.state = {
-
+            isConnectedPartenaire: false,
         };
     }
 
 
     async componentDidMount() {
+        await SyncStorage.init();
+        if (SyncStorage.get('connectedPartenaire')) {
+            // alert("if component did mount");
+            // alert(SyncStorage.get('connectedPartenaire'));
+            this.setState({ isConnectedPartenaire: true });
+        }
 
-
-    }
-
-    componentDidUpdate() {
-        // alert("ALlo");
     }
 
     render() {
@@ -53,9 +55,10 @@ export default class App extends Component {
 
 
                     <TouchableOpacity style={{ flexDirection: 'row', padding: 20, borderBottomWidth: 1, borderColor: '#e2e2e2' }}
-                        onPress={() => {
-                            SyncStorage.remove('username');
-                            SyncStorage.remove('password');
+                        onPress={async () => {
+                            await SyncStorage.remove('username');
+                            await SyncStorage.remove('password');
+                            await SyncStorage.remove('connectedPartenaire');
                             props.navigation.navigate('LoginScreen');
                         }}
                     >
@@ -66,12 +69,14 @@ export default class App extends Component {
             );
         }
 
-        function StackPartenaire() {
+        function StackCarte() {
 
             return (
-                <Stack.Navigator screenOptions={{ headerShown: false }} mode="modal" >
-                    <Stack.Screen name="PartenaireScreen" component={PartenaireScreen} />
+                <Stack.Navigator screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="CarteScreen" component={CarteScreen} />
                     <Stack.Screen name="PartenaireCarteScreen" component={PartenaireCarteScreen} />
+                    <Stack.Screen name="EmployeCarteScreen" component={EmployeCarteScreen} />
+
                 </Stack.Navigator>
             );
 
@@ -83,38 +88,38 @@ export default class App extends Component {
         global.fmServer = "cpfilemaker.com";
         global.fmDatabase = "Coffrets_Prestige";
         // this.fmClient = new FMClient('cpfilemaker.com', 'Coffrets_Prestige', 'Basic QXBwbGljYXRpb25fbW9iaWxlOg==')
+        let navigationConnectedPartenaire;
         let navigation;
 
+        // alert("Render");
 
-        if (SyncStorage.get('username')) {
-            navigation =
-                <Drawer.Navigator
-                    drawerContent={(props) => <CustomDrawerContent {...props} />}
-
-                >
-
-                    <Drawer.Screen name="PartenaireScreen" component={StackPartenaire} />
-                    <Drawer.Screen name="LoginScreen" component={LoginScreen} />
-
-                </Drawer.Navigator>
-        } else {
-
-            navigation = <Drawer.Navigator
+        navigationConnectedPartenaire =
+            <Drawer.Navigator
                 drawerContent={(props) => <CustomDrawerContent {...props} />}
 
             >
+
+                <Drawer.Screen name="CarteScreen" component={StackCarte} />
                 <Drawer.Screen name="LoginScreen" component={LoginScreen} />
 
-                <Drawer.Screen name="PartenaireScreen" component={StackPartenaire} />
+            </Drawer.Navigator>;
 
-            </Drawer.Navigator>
-        }
+        // alert("ELSE");
+        navigation = <Drawer.Navigator
+            drawerContent={(props) => <CustomDrawerContent {...props} />}
+
+        >
+            <Drawer.Screen name="LoginScreen" component={LoginScreen} />
+
+            <Drawer.Screen name="CarteScreen" component={StackCarte} />
+
+        </Drawer.Navigator>;
 
 
         return (
             <NavigationContainer>
 
-                {navigation}
+                {SyncStorage.get('connectedPartenaire') ? navigationConnectedPartenaire : navigation}
 
             </NavigationContainer>
         )

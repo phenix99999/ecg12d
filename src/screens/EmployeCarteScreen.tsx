@@ -34,13 +34,17 @@ const { StatusBarManager } = NativeModules;
 
 let keyboardDidHideListener;
 
-const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
+const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
 
     console.log(route.params);
     React.useEffect(() => {
         console.log(route);
     });
+
+
+    const [nip, setNip] = React.useState(null);
+    const [facture, setFacture] = React.useState(null);
 
 
     if (!NetworkUtils.isNetworkAvailable()) {
@@ -59,7 +63,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                             <Icon name="arrow-back" type="MaterialIcons" style={{ color: 'white', marginLeft: 15, fontWeight: 'bold' }}></Icon>
                         </TouchableOpacity>
                     </Left>
-                    <Body><Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}> Encaissement</Text></Body>
+                    <Body><Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Activation</Text></Body>
                     <Right></Right>
                 </Row>
 
@@ -91,10 +95,18 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
 
             <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
-                <Text style={{ fontSize: 16 }}>Balance</Text>
-                <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.balanceGiveX}</Text>
+                <TextInput value={nip} style={styles.input} placeholder="Nip employé" placeholderTextColor="#404040"
+                    onChange={(e) => (setNip(e.nativeEvent.text))}
+                />
             </View>
-            {route.params.balanceGiveX != 0.00
+
+
+            <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
+                <TextInput value={facture} style={styles.input} placeholder="Facture" placeholderTextColor="#404040"
+                    onChange={(e) => (setFacture(e.nativeEvent.text))}
+                />
+            </View>
+            {route.params.balanceGiveX == 0.00
                 ?
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                     <Button
@@ -104,12 +116,12 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                         }}
                         style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
                     >
-                        <Text style={{ fontSize: 14 }}>ENCAISSER</Text>
+                        <Text style={{ fontSize: 14, color: 'white' }}>ACTIVER</Text>
                     </Button>
                 </View>
                 :
                 <View style={{ flexDirection: 'row', marginLeft: 20, marginRight: 20, marginTop: 25 }}>
-                    <Text>Cette carte a déjà été encaissée. Le client peut contacter le service à la clientèle Coffrets Prestige au 1 800.701.9575. Merci de ne pas honorer la prestation.</Text>
+                    <Text>Cette carte a déjà un solde.</Text>
                 </View>
             }
 
@@ -131,7 +143,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
         </View >
     );
 };
-export default inject("authStore")(observer(PartenaireCarteScreen));
+export default inject("authStore")(observer(EmployeCarteScreen));
 
 const styles = StyleSheet.create({
     containerBarCode: {
@@ -147,7 +159,11 @@ const styles = StyleSheet.create({
         justifyContent: "space-around",
         padding: 10
     },
+    input: {
+        fontSize: 18,
 
+        width: '100%'
+    },
     imgBackground: {
         width: "100%",
         height: "100%",

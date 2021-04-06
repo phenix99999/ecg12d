@@ -10,26 +10,28 @@ import Navigation from "./src/navigation";
 import { Provider } from "mobx-react";
 
 import { getNavigationState } from "./src/utils/PersistState";
+import SyncStorage from 'sync-storage';
 
 import Expo from "expo";
 
 import stores from "./src/stores/index";
 import { StyleProvider } from "native-base";
+import { actionFieldDecorator } from "mobx/lib/internal";
 
 export default function App() {
     const colorScheme = useColorScheme();
 
-    const [routeName, setRouteName] = React.useState<"Login" | "Logout">("Logout");
+    const [storageLoaded, setStorageLoaded] = React.useState(false);
     //const [fontReady, setFontReady] = React.useState<boolean>(false);
     global.fmServer = "vhmsoft.com";
     global.fmDatabase = "vhmsoft";
-    
+
     React.useEffect(() => {
-        const getRouteName = async () => {
-            const routeName = await getNavigationState();
-            setRouteName(routeName);
+        const storageLoad = async () => {
+            await SyncStorage.init();
+            setStorageLoaded(true);
         };
-        getRouteName();
+        storageLoad();
     }, []);
 
     //const isLoadingComplete = useCachedResources();
@@ -40,7 +42,7 @@ export default function App() {
     return (
         <Provider {...stores}>
             <SafeAreaProvider>
-                <Navigation colorScheme={colorScheme} initialRouteName={routeName} />
+                <Navigation />
                 <StatusBar />
             </SafeAreaProvider>
         </Provider>

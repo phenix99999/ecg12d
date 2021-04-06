@@ -87,6 +87,12 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
     async function getCardInfo() {
 
         let noDeCarte = "";
+        let navigateTo = "PartenaireCarteScreen";
+        if (SyncStorage.get('connectedPointDeVente') == true) {
+            navigateTo = "EmployeCarteScreen";
+        } else if (SyncStorage.get('connectedPartenaire') == true) {
+            navigateTo = "PartenaireCarteScreen";
+        }
 
         if (noDeCarteAutomatique.length == 21) {
             noDeCarte = noDeCarteAutomatique;
@@ -115,27 +121,19 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
             let balanceGiveX = "";
             console.log(cardInfo);
             if (cardInfo.length == 0) {
-
                 Toast.show({
                     type: 'carteInvalide',
                     autoHide: false,
                 });
-
             } else {
                 lienCoffretLogo = cardInfo[0]['COFFRETS_dans_CM::CP_Coffret_Logo'];
                 lienCoffretLogo = "https://" + global.fmServer + lienCoffretLogo.replace(/&amp;/g, '&');
                 nomCoffret = cardInfo[0]['COFFRETS_dans_CM::CP_Titre'];
                 prixCoffret = cardInfo[0]['Prix_detail'];
                 balanceGiveX = cardInfo[0]['Givex_balance'];
-                navigation.navigate('PartenaireCarteScreen', { lienImage: lienCoffretLogo, nomCoffret: nomCoffret, prixCoffret: prixCoffret, balanceGiveX });
+                navigation.navigate(navigateTo, { lienImage: lienCoffretLogo, nomCoffret: nomCoffret, prixCoffret: prixCoffret, balanceGiveX });
                 // setNoDeCarteManuel("");
             }
-            // console.log(cardInfo);
-
-            // // console.log(cardInfo[0]['COFFRETS_dans_CM::CP_Coffret_Logo']);
-
-
-
         }
 
 
@@ -248,7 +246,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                     <View style={styles.containerBarCode}>
 
                         {showBarCodeScanner ?
-                            <View style={{ height: 300 }}>
+                            <View  >
 
 
 
@@ -267,38 +265,40 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                                     onBarCodeScanned={handleBarCodeScanned}
                                     style={StyleSheet.absoluteFillObject}
                                 /> */}
-                                    <Camera
-                                        flashMode={flash}
+                                    <TouchableOpacity onPress={() => {
+                                        setFlash('off');
+                                        setShowBarCodeScanner(false);
+                                    }}
 
-                                        barCodeScannerSettings={{
-                                            barCodeTypes: [BarCodeScanner.Constants.BarCodeType.code128],
-                                        }}
-                                        onBarCodeScanned={handleBarCodeScanned}
+                                        style={{ height: 250, width: '100%' }}>
+                                        <Camera
+                                            flashMode={flash}
 
-                                        type={Camera.Constants.Type.back}>
-                                        <View style={{ zIndex: 9999999999, flexDirection: 'row-reverse', backgroundColor: 'transparent', height: 30 }}>
-                                            <TouchableOpacity
-                                                style={{ width: 75, left: 0, backgroundColor: 'transparent' }}
-                                                onPress={() => {
-                                                    if (flash == 'off') {
-                                                        setFlash('torch')
-                                                    } else {
-                                                        setFlash('off');
-                                                    }
-                                                }}
-                                            >
-                                                <Icon name={flash == 'torch' ? "flashlight-off" : "flashlight"} type="MaterialCommunityIcons" style={{ color: 'white' }} ></Icon>
-                                            </TouchableOpacity>
-                                        </View>
-
-                                        <TouchableOpacity style={{ height: 300, width: 500, alignItems: 'center', justifyContent: 'center' }} onPress={() => {
-                                            setFlash('off');
-                                            setShowBarCodeScanner(false);
-                                        }} />
-
+                                            barCodeScannerSettings={{
+                                                barCodeTypes: [BarCodeScanner.Constants.BarCodeType.code128],
+                                            }}
+                                            onBarCodeScanned={handleBarCodeScanned}
+                                            style={{ width: '100%', height: 250 }}
+                                            type={Camera.Constants.Type.back}>
+                                            <View style={{ zIndex: 9999999999, flexDirection: 'row-reverse', backgroundColor: 'transparent', height: 30 }}>
+                                                <TouchableOpacity
+                                                    style={{ backgroundColor: 'transparent' }}
+                                                    onPress={() => {
+                                                        if (flash == 'off') {
+                                                            setFlash('torch')
+                                                        } else {
+                                                            setFlash('off');
+                                                        }
+                                                    }}
+                                                >
+                                                    <Icon name={flash == 'torch' ? "flashlight-off" : "flashlight"} type="MaterialCommunityIcons" style={{ color: 'white' }} ></Icon>
+                                                </TouchableOpacity>
+                                            </View>
 
 
-                                    </Camera>
+                                        </Camera>
+                                    </TouchableOpacity>
+
                                 </View>
                             </View>
 
@@ -310,21 +310,25 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                                         source={{ uri: barcodePng }}
                                         style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}
                                         imageStyle={{ opacity: 0.3 }}>
-                                        <View style={{ height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center' }}>
-                                            <View
+                                        <View
 
-                                                style={{ backgroundColor: '#e2e2e2', justifyContent: 'center', alignItems: 'center', width: 175, height: 38 }}>
-                                                <Text style={{ fontWeight: 'bold' }}>NUMÉRISER</Text>
-                                            </View>
+                                            style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                            <Button light style={{ width: 200, justifyContent: 'center', alignItems: 'center' }} onPress={() => setShowBarCodeScanner(true)}>
+                                                <Text style={{ color: 'black' }}>NUMÉRISER</Text>
+                                            </Button>
+
                                         </View>
                                     </ImageBackground>
                                 </TouchableOpacity>
+
                             </View>
                         }
 
 
-                        <View style={{ flexDirection: 'row', width: '100%' }}>
 
+
+
+                        <View style={{ position: 'absolute', top: 275, width: '100%' }}>
                             <TextInput
                                 placeholderTextColor="#404040"
                                 style={{ height: 45, top: 25, width: '100%', borderBottomWidth: 0.5, borderColor: '#303030', marginLeft: 17 }}
@@ -332,60 +336,21 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                                 onChange={(e) => (setNoDeCarteManuel(e.nativeEvent.text))}
                                 placeholder="Numéro de carte"
                             />
+                            <View style={{ flexDirection: 'row', top: 55, alignItems: 'center', justifyContent: 'center' }}>
+                                <Button
+                                    onPress={async () => {
+                                        await getCardInfo();
+                                    }}
+
+
+                                    style={{ alignItems: 'center', justifyContent: 'center', width: 250, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
+                                >
+                                    <Text style={{ fontSize: 14, color: 'white' }}> SOUMETTRE</Text>
+                                </Button>
+
+
+                            </View>
                         </View>
-
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-
-                            <Button
-                                onPress={async () => {
-
-                                    await getCardInfo();
-
-                                }}
-
-
-                                style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
-                            >
-                                <Text style={{ fontSize: 14 }}> SOUMETTRE</Text>
-                            </Button>
-
-
-                        </View>
-                        {/* <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-
-                            <Button
-                                onPress={async () => {
-
-                                    Torch.switchState(true); // Turn ON
-
-
-                                }}
-
-
-                                style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
-                            >
-                                <Text style={{ fontSize: 14 }}> Flash ON</Text>
-                            </Button>
-
-                        </View>
-
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-
-                            <Button
-                                onPress={async () => {
-
-                                    Torch.switchState(false); // Turn ON
-
-                                }}
-
-
-                                style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
-                            >
-                                <Text style={{ fontSize: 14 }}> Flash OFF</Text>
-                            </Button>
-
-                        </View> */}
-
 
                     </View>
 
@@ -401,7 +366,7 @@ export default inject("authStore")(observer(PartenaireScreen));
 
 const styles = StyleSheet.create({
     containerBarCode: {
-
+        height: '100%',
 
     },
     container: {
@@ -446,7 +411,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     barcodeContainer: {
-        height: 300,
-        overflow: 'hidden'
+        height: 260,
+
     },
 });

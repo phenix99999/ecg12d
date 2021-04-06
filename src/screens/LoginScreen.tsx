@@ -20,10 +20,38 @@ import NetworkUtils from '../utils/NetworkUtils';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 
 const { StatusBarManager } = NativeModules;
+import { get, execScript } from '../utils/connectorFileMaker';
 
+import Toast, { BaseToast } from 'react-native-toast-message';
 
 
 let keyboardDidHideListener;
+
+const toastConfig = {
+    mauvaisMotDePasse: () => (
+        <View style={{ height: 60, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
+            <View style={{ width: '70%', marginLeft: 10 }}>
+
+                <Text style={{ color: 'white' }}>{"Veuillez vérifier le nom d'utilisateur ou le mot de passe."}</Text>
+            </View>
+
+            <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 40 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+        </View>
+    ),
+    mauvaisCodeSecurite: () => (
+        <View style={{ height: 60, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
+            <View style={{ width: '70%', marginLeft: 10, marginTop: 10 }}>
+
+                <Text style={{ color: 'white' }}>Veuillez vérifier votre code de sécurité.
+                </Text>
+            </View>
+            <View style={{ width: '30%', justifyContent: 'center' }}>
+
+                <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 40 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+            </View>
+        </View>
+    )
+};
 
 const LoginScreen = ({ navigation, authStore }: Props) => {
     const [isLoading, setLoading] = React.useState<Boolean>(false);
@@ -31,21 +59,47 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
     const [hasPermission, setHasPermission] = React.useState(null);
     const [scanned, setScanned] = React.useState(false);
     const [badPassword, setBadPassword] = React.useState<Boolean>(false);
-
+    const [codeDeSecurite, setCodeDeSecurite] = React.useState<String>("0753A2AC-7ADE-41F4-AAEA-C8231689828C");
     const [isScreenPartenaire, setPartenaire] = React.useState<Boolean>(true);
     const [isScreenPointVente, setPointVente] = React.useState<Boolean>(false);
 
-    async function onLogin() {
+    async function onLoginPartenaire() {
         let auth = await authentificationGX(authStore.username, authStore.password);
         // alert(auth);
 
         if (auth) {
-
+            SyncStorage.set('connectedPointDeVente', false);
+            SyncStorage.set('connectedPartenaire', true);
             SyncStorage.set('username', authStore.username);
             SyncStorage.set('password', authStore.password);
-            navigation.navigate('PartenaireScreen');
+            navigation.navigate('CarteScreen');
         } else {
-            setBadPassword(true);
+            Toast.show({
+                type: 'mauvaisMotDePasse',
+                autoHide: false,
+            });
+        }
+
+
+    }
+
+
+    async function onLoginEmploye() {
+
+        let auth = await get("Alain Simoneau", "4251", global.fmServer, global.fmDatabase, "api_mobile_SECURITE_POINT_DE_VENTE", "&Code_de_securite=" + codeDeSecurite);
+        // // alert(auth);
+        console.log(auth);
+
+        if (auth.length > 0) {
+            SyncStorage.set('connectedPartenaire', false);
+            SyncStorage.set('connectedPointDeVente', true);
+            navigation.navigate('CarteScreen');
+        } else {
+            Toast.show({
+                type: 'mauvaisCodeSecurite',
+                autoHide: false,
+            });
+
         }
 
 
@@ -54,19 +108,19 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
     async function _keyboardDidHide() {
         // alert("Keyboard did hide " + authStore.username.length + " " + authStore.password.length);
-        if (!isLoadingTemp && authStore.password.length > 2) {
-            // alert("Avant executer onconnected");
-            setLoadingTemp(true);
-            await onLogin();
-        }
+        // if (!isLoadingTemp && authStore.password.length > 2) {
+        //     // alert("Avant executer onconnected");
+        //     setLoadingTemp(true);
+        //     await onLoginPartenaire();
+        // }
     }
 
 
 
     React.useEffect(() => {
-        alert(SyncStorage.get('username'));
-        authStore.username = "466428";
-        authStore.password = "2197";
+        // alert(SyncStorage.get('username'));
+        // authStore.username = "466428";
+        // authStore.password = "2197";
         // alert(StatusBarManager.HEIGHT);
         const getPermission = async () => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -106,6 +160,9 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                     style={{ width: '100%', height: '100%' }} imageStyle={{ opacity: 0.1 }}
 
                 >
+                    <View style={{ flexDirection: 'row', zIndex: 5555, backgroundColor: 'black' }}>
+                        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+                    </View>
                     <SafeAreaView style={{ backgroundColor: '#231F20', height: 170, width: '100%' }}>
                         <View style={{ height: 80, justifyContent: 'center', alignItems: 'center' }}>
                             <Image source={require('../assets/images/headerTitle.png')} resizeMode={'contain'} style={{ alignItems: 'center', margin: 8, width: 200, height: 50 }} />
@@ -157,6 +214,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                     {isScreenPartenaire ?
 
                         <View>
+
                             <Form style={styles.form}>
                                 <View style={{ flexDirection: 'row', marginTop: 15 }}>
                                     <Text>Connectez-vous ici si vous êtes une entreprise partenaire. </Text>
@@ -196,7 +254,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
                                 <Button
                                     onPress={async () => {
-                                        await onLogin()
+                                        await onLoginPartenaire();
                                     }}
 
 
@@ -213,46 +271,39 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                         null}
 
                     {isScreenPointVente ?
-                        <View>
 
+                        <View>
                             <Form style={styles.form}>
-                                <View style={{ flexDirection: 'row', marginTop: 15, marginLeft: 20, marginRight: 20 }}>
-                                    <Text>Connectez-vous ici si vous êtes une l'employé d'un point de vente. </Text>
+                                <View style={{ flexDirection: 'row', marginTop: 15 }}>
+                                    <Text style={{ marginLeft: 25, marginRight: 25 }}>Connectez-vous ici si vous êtes l'employé d'un point de vente. </Text>
                                 </View>
 
                                 <View style={{ flexDirection: 'row', marginTop: 15, height: 15 }}>
                                     <Text style={{ color: 'red' }}>{badPassword ? "Votre nom d'utilisateur ou mot de passe est erronée" : "\n"} </Text>
                                 </View>
 
-                                <View style={{ marginTop: 5, alignItems: 'center' }}>
+
+
+                                <View style={{ marginTop: 15 }}>
 
                                     <TextInput
                                         placeholderTextColor="#404040"
-                                        style={{ height: 45, width: 350, borderWidth: 0.5, borderColor: '#303030', padding: 7 }}
-                                        value={authStore.username}
-                                        onChange={(e) => (authStore.username = e.nativeEvent.text)}
-                                        placeholder="Nom d'utilisateur"
+                                        style={{ height: 45, width: 350, borderWidth: 0.5, borderColor: badPassword ? 'red' : '#303030', padding: 7 }}
+                                        value={codeDeSecurite}
+                                        onChange={(e) => (setCodeDeSecurite(e.nativeEvent.text))}
+                                        placeholder="Code de sécurité"
                                     />
 
 
-                                    <TextInput
-                                        placeholderTextColor="#404040"
 
-                                        secureTextEntry={true}
-                                        value={authStore.password}
-                                        placeholder="Mot de passe"
-                                        onChange={(e) => (authStore.password = e.nativeEvent.text)}
-                                        style={{ marginTop: 10, height: 45, width: 350, borderWidth: 0.5, borderColor: '#303030', padding: 7 }}
-
-                                    />
 
                                 </View>
                             </Form>
-                            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
 
                                 <Button
                                     onPress={async () => {
-                                        await onLogin()
+                                        await onLoginEmploye()
                                     }}
 
 
@@ -262,9 +313,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                 </Button>
 
                             </View>
-
-
                         </View>
+
                         :
 
                         null}
@@ -367,6 +417,7 @@ const styles = StyleSheet.create({
     form: {
         backgroundColor: "transparent",
         alignItems: 'center',
+
     },
 
 });
