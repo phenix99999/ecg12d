@@ -23,28 +23,75 @@ import {
 } from "native-base";
 import { Image, ImageBackground, RefreshControl, ScrollView, View, TextInput, Keyboard, ActivityIndicator, StatusBar, Platform, NativeModules, TouchableOpacity } from "react-native";
 import AuthStore from "../stores/AuthStore";
-import { authentificationGX } from '../utils/connectorGiveX';
+import { authentificationGX, eliotActivateCard } from '../utils/connectorGiveX';
 import { get, execScript } from '../utils/connectorFileMaker';
 
 import NetworkUtils from '../utils/NetworkUtils';
+import Toast, { BaseToast } from 'react-native-toast-message';
 
 const { StatusBarManager } = NativeModules;
 
+const toastConfig = {
+    numeroDeFacturePasRempli: () => (
+
+        <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
+            <View style={{ width: '70%', marginLeft: 10, marginTop: 10 }}>
+                <Text style={{ color: 'white' }}>Veuillez spécifier le numéro de facture.</Text>
+            </View>
 
 
+            <TouchableOpacity onPress={() => {
+                Toast.hide();
+            }
+            } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, marginRight: 15, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+        </View>
+    ),
+    nipPasRempli: () => (
+        <View style={{ height: 60, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
+            <View style={{ width: '70%', marginLeft: 10, marginTop: 10 }}>
+
+                <Text style={{ color: 'white' }}>Veuillez spécifier le numéro d'employé.
+                </Text>
+            </View>
+            <View style={{ width: '30%', justifyContent: 'center' }}>
+
+                <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginRight: 15, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+            </View>
+        </View>
+    ),
+    nipInvalide: () => (
+        <View style={{ height: 55, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
+            <View style={{ width: '70%', marginLeft: 10, marginTop: 10 }}>
+
+                <Text style={{ color: 'white' }}>Le NIP employé n'est pas valide.
+                </Text>
+            </View>
+            <View style={{ width: '30%', justifyContent: 'center' }}>
+
+                <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginRight: 15, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+            </View>
+        </View>
+    ),
+};
+
+
+async function activateCard(nip, facture, cardFM, cardGiveX) {
+
+
+
+}
 let keyboardDidHideListener;
 
 const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
+    const [showToast, setShowToast] = React.useState(false);
 
-
-    console.log(route.params);
     React.useEffect(() => {
         console.log(route);
     });
 
 
-    const [nip, setNip] = React.useState(null);
-    const [facture, setFacture] = React.useState(null);
+    const [nip, setNip] = React.useState("");
+    const [facture, setFacture] = React.useState("");
 
 
     if (!NetworkUtils.isNetworkAvailable()) {
@@ -111,7 +158,56 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                     <Button
                         onPress={async () => {
-                            alert("Bientot");
+
+
+
+                            if (facture.length == 0) {
+                                setShowToast(true);
+
+                                Toast.show({
+                                    type: 'numeroDeFacturePasRempli',
+                                    autoHide: false,
+                                    position: 'bottom',
+                                });
+
+                            } else if (nip.length == 0) {
+                                setShowToast(true);
+
+                                Toast.show({
+                                    type: 'nipPasRempli',
+                                    autoHide: false,
+                                    position: 'bottom',
+                                });
+
+                            } else {
+                                let activation = await eliotActivateCard(route.params.noDeCarteFM, route.params.noDeCarte, facture, SyncStorage.get('codeDeSecurite'), nip);
+                                console.log(activation);
+                                if (activation.success) {
+                                    alert("DONE!");
+                                } else {
+                                    if (activation.error == "nipEmploye") {
+                                        setShowToast(true);
+
+                                        Toast.show({
+                                            type: 'nipInvalide',
+                                            autoHide: false,
+                                            position: 'bottom',
+                                        });
+
+                                    } else {
+                                        setShowToast(true);
+
+                                        Toast.show({
+                                            type: 'erreurInconnue',
+                                            autoHide: false,
+                                            position: 'bottom',
+                                        });
+                                    }
+                                }
+                            }
+
+
+
                             // await getCardInfo();
                         }}
                         style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
@@ -130,15 +226,19 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
                 <Button
                     onPress={async () => {
                         navigation.replace('CarteScreen');
-
                     }}
 
 
-                    style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "white", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
+                    style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "white", height: 40, padding: 15 }}
                 >
-                    <Text style={{ fontSize: 14, color: 'darkblue' }}> ANNULER</Text>
+                    <Text style={{ fontSize: 14, color: '#007CFF' }}> ANNULER</Text>
                 </Button>
             </View>
+
+            <View style={{ position: 'absolute', width: '95%', flexDirection: 'row', bottom: 0, marginLeft: 10, alignItems: 'center', justifyContent: 'center', marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
+                <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+            </View>
+
 
         </View >
     );

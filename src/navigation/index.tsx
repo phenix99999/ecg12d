@@ -72,7 +72,7 @@ export default class App extends Component {
         function StackCarte() {
 
             return (
-                <Stack.Navigator screenOptions={{ headerShown: false }}>
+                <Stack.Navigator screenOptions={{ headerShown: false }}  >
                     <Stack.Screen name="CarteScreen" component={CarteScreen} />
                     <Stack.Screen name="PartenaireCarteScreen" component={PartenaireCarteScreen} />
                     <Stack.Screen name="EmployeCarteScreen" component={EmployeCarteScreen} />

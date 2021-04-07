@@ -82,13 +82,19 @@ export async function add(username, password, server, db, layout, query) {
 
 }
 
-
-export async function execScript(username, password, server, db, layout, scriptName, scriptParam) {
-    const authHeader = 'Basic ' + base64.encode(`${username}:${password}`);
+// https://cpfilemaker.com/fmi/xml/fmresultset.xml?-db=Coffrets_Prestige&-lay=api_mobile_CARTE_DETAILS&-find=1&Numero_final=196566718&-script=Givex_GetBalance
+export async function execScript(username, password, server, db, layout, query, scriptName, scriptParam = false) {
+    const authHeader = 'Basic ' + base64.encode(`${"Alain Simoneau"}:${"4251"}`);
     var XMLParser = require('react-xml-parser');
 
-    let url = "https://" + server + "/fmi/xml/fmresultset.xml?-findall&-db=" + db + "&-lay=" + layout + "&-script=" + scriptName
-        + "&-script.param=" + scriptParam;
+    let url = "https://" + server + "/fmi/xml/fmresultset.xml?-db=" + db + "&-lay=" + layout + "&-find=1" + query + "&-script=" + scriptName
+
+    if (scriptParam) {
+        url += "&-script.param=" + scriptParam;
+    }
+
+
+    // + "&-script.param=" + scriptParam;
 
     console.log(url);
     let errorAuth = false;
@@ -103,6 +109,19 @@ export async function execScript(username, password, server, db, layout, scriptN
     });
 
 
+
+    let fmResultSet = getFmResultSet(data);
+
+    // console.log(fmResultSet);
+
+    let error = getError(fmResultSet);
+    // console.log("Error");
+    // console.log(error);
+    let records = getRecords(fmResultSet);
+
+    let dataFormated = formatData(records);
+    // console.log(dataFormated);
+    return dataFormated;
 
 }
 

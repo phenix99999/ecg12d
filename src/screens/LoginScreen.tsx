@@ -29,13 +29,13 @@ let keyboardDidHideListener;
 
 const toastConfig = {
     mauvaisMotDePasse: () => (
-        <View style={{ height: 60, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
-            <View style={{ width: '70%', marginLeft: 10 }}>
+        <View style={{ height: 60, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row' }}>
+            <View style={{ width: '70%', marginLeft: 10, marginTop: 10 }}>
 
-                <Text style={{ color: 'white' }}>{"Veuillez vérifier le nom d'utilisateur ou le mot de passe."}</Text>
+                <Text style={{ color: 'white' }}>{"Nom d'utilisateur ou mot de passe invalide."}</Text>
             </View>
 
-            <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 40 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center', marginRight: 25 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
         </View>
     ),
     mauvaisCodeSecurite: () => (
@@ -47,7 +47,7 @@ const toastConfig = {
             </View>
             <View style={{ width: '30%', justifyContent: 'center' }}>
 
-                <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 40 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center', marginRight: 25 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
             </View>
         </View>
     )
@@ -62,6 +62,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
     const [codeDeSecurite, setCodeDeSecurite] = React.useState<String>("0753A2AC-7ADE-41F4-AAEA-C8231689828C");
     const [isScreenPartenaire, setPartenaire] = React.useState<Boolean>(true);
     const [isScreenPointVente, setPointVente] = React.useState<Boolean>(false);
+    const [showToast, setShowToast] = React.useState<Boolean>(false);
 
     async function onLoginPartenaire() {
         let auth = await authentificationGX(authStore.username, authStore.password);
@@ -74,9 +75,11 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
             SyncStorage.set('password', authStore.password);
             navigation.navigate('CarteScreen');
         } else {
+            setShowToast(true);
             Toast.show({
                 type: 'mauvaisMotDePasse',
                 autoHide: false,
+                position: 'bottom',
             });
         }
 
@@ -91,13 +94,17 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         console.log(auth);
 
         if (auth.length > 0) {
+            alert(codeDeSecurite);
+            SyncStorage.set('codeDeSecurite', codeDeSecurite);
             SyncStorage.set('connectedPartenaire', false);
             SyncStorage.set('connectedPointDeVente', true);
             navigation.navigate('CarteScreen');
         } else {
+            setShowToast(true);
             Toast.show({
                 type: 'mauvaisCodeSecurite',
                 autoHide: false,
+                position: 'bottom',
             });
 
         }
@@ -160,9 +167,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                     style={{ width: '100%', height: '100%' }} imageStyle={{ opacity: 0.1 }}
 
                 >
-                    <View style={{ flexDirection: 'row', zIndex: 5555, backgroundColor: 'black' }}>
-                        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-                    </View>
+
                     <SafeAreaView style={{ backgroundColor: '#231F20', height: 170, width: '100%' }}>
                         <View style={{ height: 80, justifyContent: 'center', alignItems: 'center' }}>
                             <Image source={require('../assets/images/headerTitle.png')} resizeMode={'contain'} style={{ alignItems: 'center', margin: 8, width: 200, height: 50 }} />
@@ -175,7 +180,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                     setPointVente(false);
                                 }}
                             >
-                                <Text style={{ color: 'white', marginRight: 20, fontSize: isScreenPartenaire ? 14 : 11 }}>
+                                <Text style={{ color: 'white', marginRight: 20, fontSize: isScreenPartenaire ? 13 : 11 }}>
                                     Connexion partenaire
                                 </Text>
                             </TouchableOpacity>
@@ -185,11 +190,12 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                     setPartenaire(false);
                                 }}
                             >
-                                <Text style={{ color: 'white', marginRight: 20, fontSize: isScreenPointVente ? 14 : 11 }}>
+                                <Text style={{ color: 'white', marginRight: 20, fontSize: isScreenPointVente ? 13 : 11 }}>
                                     Connexion point de vente
                                 </Text>
                             </TouchableOpacity>
                         </View>
+
 
                         {isScreenPartenaire ?
 
@@ -313,6 +319,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                 </Button>
 
                             </View>
+
                         </View>
 
                         :
@@ -367,6 +374,10 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                             </Content>
                         </ScrollView>
                     </Container> */}
+
+                    <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
+                        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+                    </View>
                 </ImageBackground>
             }
 

@@ -37,26 +37,30 @@ const { StatusBarManager } = NativeModules;
 
 const toastConfig = {
     nbCaractereInvalideCarte: () => (
-        <View style={{ height: 60, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
+        <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
             <View style={{ width: '70%', marginLeft: 10 }}>
 
-                <Text style={{ color: 'white' }}>{"Veuillez vérifier les numéros de cartes saisis. Vous devez saisir 21 chiffres"}</Text>
+                <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Vous devez saisir 21 chiffres.</Text>
             </View>
 
-            <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 40 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+
+            <TouchableOpacity onPress={() => {
+                Toast.hide()
+            }
+            } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
         </View>
     ),
     carteInvalide: () => (
-        <View style={{ height: 200, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
-            <View style={{ width: '70%', marginLeft: 10, marginTop: 10 }}>
+        <View style={{ height: 215, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ width: '70%', marginLeft: 10, marginBottom: 5 }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Si le problème persiste, il se peut que cette carte ne soit pas enregistrée dans notre système.
                 Le client peut contacter le service à la clientèle Coffrets Prestige au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
                 </Text>
             </View>
-            <View style={{ width: '30%', justifyContent: 'center' }}>
+            <View style={{ width: '20%', justifyContent: 'center', alignItems: 'center' }}>
 
-                <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 40 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
             </View>
         </View>
     )
@@ -65,13 +69,15 @@ const toastConfig = {
 
 let keyboardDidHideListener;
 
-const PartenaireScreen = ({ navigation, authStore }: Props) => {
+const CarteScreen = ({ navigation, authStore }: Props) => {
     const [isLoading, setLoading] = React.useState<Boolean>(false);
     const [isLoadingTemp, setLoadingTemp] = React.useState<Boolean>(false);
     const [hasPermission, setHasPermission] = React.useState(null);
     const [flash, setFlash] = React.useState("off");
     const [scanned, setScanned] = React.useState(false);
     const [showBarCodeScanner, setShowBarCodeScanner] = React.useState(false);
+    const [showToast, setShowToast] = React.useState(false);
+
     const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("");
     const [sound, setSound] = React.useState();
     const [noDeCarteAutomatique, setNoDeCarteAutomatique] = React.useState("");
@@ -86,6 +92,10 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
 
     async function getCardInfo() {
 
+        // setShowToast(false);
+
+
+        // //603628726841965667180
         let noDeCarte = "";
         let navigateTo = "PartenaireCarteScreen";
         if (SyncStorage.get('connectedPointDeVente') == true) {
@@ -100,30 +110,32 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
             noDeCarte = noDeCarteManuel
         }
 
-
-
         if (noDeCarte.length != 21) {
-            if (noDeCarteManuel == "") {
-                setNoDeCarteManuel(noDeCarteAutomatique);
-            }
+
+            setShowToast(true);
+
             Toast.show({
                 type: 'nbCaractereInvalideCarte',
                 autoHide: false,
-
+                position: 'bottom',
             });
         } else {
 
             let noDeCarteFM = noDeCarte.substring(noDeCarte.length - 10, noDeCarte.length - 1);
-            let cardInfo = await get("Alain Simoneau", "4251", global.fmServer, global.fmDatabase, "api_mobile_CARTE_DETAILS", "&Numero_final=" + noDeCarteFM);
+            let cardInfo = await execScript("Alain Simoneau", "4251", global.fmServer, global.fmDatabase, "api_mobile_CARTE_DETAILS", "&Numero_final=" + noDeCarteFM, "Givex_GetBalance");
+            console.log("Card info");
+            console.log(cardInfo);
             let nomCoffret = "";
             let lienCoffretLogo = "";
             let prixCoffret = ""
             let balanceGiveX = "";
             console.log(cardInfo);
             if (cardInfo.length == 0) {
+                setShowToast(true);
                 Toast.show({
                     type: 'carteInvalide',
                     autoHide: false,
+                    position: 'bottom',
                 });
             } else {
                 lienCoffretLogo = cardInfo[0]['COFFRETS_dans_CM::CP_Coffret_Logo'];
@@ -131,7 +143,8 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                 nomCoffret = cardInfo[0]['COFFRETS_dans_CM::CP_Titre'];
                 prixCoffret = cardInfo[0]['Prix_detail'];
                 balanceGiveX = cardInfo[0]['Givex_balance'];
-                navigation.navigate(navigateTo, { lienImage: lienCoffretLogo, nomCoffret: nomCoffret, prixCoffret: prixCoffret, balanceGiveX });
+                // alert(noDeCarte);
+                navigation.navigate(navigateTo, { lienImage: lienCoffretLogo, nomCoffret: nomCoffret, prixCoffret: prixCoffret, balanceGiveX: balanceGiveX, noDeCarte: noDeCarte, noDeCarteFM: noDeCarteFM });
                 // setNoDeCarteManuel("");
             }
         }
@@ -151,6 +164,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
     }
 
     React.useEffect(() => {
+
         const getPermissions = async () => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();
             // const cameraAllowed = await Torch.requestCameraPermission(
@@ -170,8 +184,6 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
         if (noDeCarteAutomatique.length == 21) {
             getCardInfoConst();
         }
-
-
 
 
     }, [noDeCarteAutomatique]);
@@ -214,9 +226,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                 <View
                 >
 
-                    <View style={{ flexDirection: 'row', zIndex: 5555, backgroundColor: 'black' }}>
-                        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-                    </View>
+
                     <SafeAreaView style={{ backgroundColor: '#231F20', height: 122, width: '100%' }}>
                         <Row>
 
@@ -243,10 +253,10 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                         </Row>
                     </SafeAreaView>
 
-                    <View style={styles.containerBarCode}>
+                    <SafeAreaView style={styles.containerBarCode}>
 
                         {showBarCodeScanner ?
-                            <View  >
+                            <View   >
 
 
 
@@ -327,8 +337,7 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
 
 
 
-
-                        <View style={{ position: 'absolute', top: 275, width: '100%' }}>
+                        <View style={{ position: 'absolute', top: 240, width: '100%' }}>
                             <TextInput
                                 placeholderTextColor="#404040"
                                 style={{ height: 45, top: 25, width: '100%', borderBottomWidth: 0.5, borderColor: '#303030', marginLeft: 17 }}
@@ -352,6 +361,12 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
                             </View>
                         </View>
 
+
+
+                    </SafeAreaView>
+
+                    <View style={{ flexDirection: 'row', marginLeft: 10, alignItems: 'center', justifyContent: 'center', marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
+                        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
                     </View>
 
 
@@ -359,14 +374,15 @@ const PartenaireScreen = ({ navigation, authStore }: Props) => {
             }
 
 
+
         </View >
     );
 };
-export default inject("authStore")(observer(PartenaireScreen));
+export default inject("authStore")(observer(CarteScreen));
 
 const styles = StyleSheet.create({
     containerBarCode: {
-        height: '100%',
+        height: '85%',
 
     },
     container: {

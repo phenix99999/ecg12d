@@ -23,7 +23,7 @@ import {
 } from "native-base";
 import { Image, ImageBackground, RefreshControl, ScrollView, View, TextInput, Keyboard, ActivityIndicator, StatusBar, Platform, NativeModules, TouchableOpacity } from "react-native";
 import AuthStore from "../stores/AuthStore";
-import { authentificationGX } from '../utils/connectorGiveX';
+import { givexEncaissement } from '../utils/connectorGiveX';
 import { get, execScript } from '../utils/connectorFileMaker';
 
 import NetworkUtils from '../utils/NetworkUtils';
@@ -35,6 +35,7 @@ const { StatusBarManager } = NativeModules;
 let keyboardDidHideListener;
 
 const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
+    const [showToast, setShowToast] = React.useState(false);
 
 
     console.log(route.params);
@@ -45,6 +46,22 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
     if (!NetworkUtils.isNetworkAvailable()) {
         alert("Erreur de connexion");
+    }
+
+    async function encaisser() {
+        const montant = route.params.prixCoffret;
+        const cardGivex = route.params.noCarte;
+        const partnerUsername = SyncStorage.get('username');
+        const partnerPassword = SyncStorage.get('password');
+        alert("Faire autoriser device en premier");
+        // let returnEncaissement = await givexEncaissement(montant, cardGivex, partnerUsername, partnerPassword);
+        // console.log(returnEncaissement);
+        // if (returnEncaissement.success) {
+        //     alert("Success!");
+        // } else {
+        //     alert("Error!");
+        // }
+
     }
 
     const authHeader = 'Basic ' + base64.encode(`${"Alain Simoneau"}:${"4251"}`);
@@ -99,12 +116,12 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                     <Button
                         onPress={async () => {
-                            alert("Bientot");
+                            await encaisser();
                             // await getCardInfo();
                         }}
-                        style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
+                        style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 55, padding: 15 }}
                     >
-                        <Text style={{ fontSize: 14 }}>ENCAISSER</Text>
+                        <Text style={{ fontSize: 18, color: 'white' }}>ENCAISSER</Text>
                     </Button>
                 </View>
                 :
@@ -122,9 +139,9 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                     }}
 
 
-                    style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "white", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
+                    style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "white", height: 40, borderColor: '#303030', padding: 15 }}
                 >
-                    <Text style={{ fontSize: 14, color: 'darkblue' }}> ANNULER</Text>
+                    <Text style={{ fontSize: 18, color: '#007CFF' }}> ANNULER</Text>
                 </Button>
             </View>
 

@@ -23,9 +23,7 @@ export default function App() {
 
     const [storageLoaded, setStorageLoaded] = React.useState(false);
     //const [fontReady, setFontReady] = React.useState<boolean>(false);
-    global.fmServer = "vhmsoft.com";
-    global.fmDatabase = "vhmsoft";
-
+ 
     React.useEffect(() => {
         const storageLoad = async () => {
             await SyncStorage.init();
