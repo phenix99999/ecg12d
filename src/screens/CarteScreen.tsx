@@ -38,7 +38,7 @@ const { StatusBarManager } = NativeModules;
 const toastConfig = {
     nbCaractereInvalideCarte: () => (
         <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
-            <View style={{ width: '70%', marginLeft: 10 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Vous devez saisir 21 chiffres.</Text>
             </View>
@@ -52,7 +52,7 @@ const toastConfig = {
     ),
     carteInvalide: () => (
         <View style={{ height: 215, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-            <View style={{ width: '70%', marginLeft: 10, marginBottom: 5 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Si le problème persiste, il se peut que cette carte ne soit pas enregistrée dans notre système.
                 Le client peut contacter le service à la clientèle Coffrets Prestige au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
@@ -341,7 +341,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                             <TextInput
                                 placeholderTextColor="#404040"
                                 style={{ height: 45, top: 25, width: '100%', borderBottomWidth: 0.5, borderColor: '#303030', marginLeft: 17 }}
-                                value={noDeCarteManuel}
+                                value={noDeCarteManuel || "603628576371917334872"}
                                 onChange={(e) => (setNoDeCarteManuel(e.nativeEvent.text))}
                                 placeholder="Numéro de carte"
                             />
@@ -365,9 +365,9 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
                     </SafeAreaView>
 
-                    <View style={{ flexDirection: 'row', marginLeft: 10, alignItems: 'center', justifyContent: 'center', marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
-                        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-                    </View>
+                    {/* <View style={{ flexDirection: 'row', marginLeft: 10, alignItems: 'center', justifyContent: 'center', marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}> */}
+                    <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+                    {/* </View> */}
 
 
                 </View>

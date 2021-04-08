@@ -13,7 +13,7 @@ import {
     Button,
     Form,
 } from "native-base";
-import { Image, ImageBackground, RefreshControl, ScrollView, View, TextInput, Keyboard, ActivityIndicator, StatusBar, Platform, NativeModules, TouchableOpacity } from "react-native";
+import { Image, ImageBackground, RefreshControl, ScrollView, View, TextInput, Keyboard, ActivityIndicator, StatusBar, NativeModules, TouchableOpacity, Platform } from "react-native";
 import AuthStore from "../stores/AuthStore";
 import { authentificationGX } from '../utils/connectorGiveX';
 import NetworkUtils from '../utils/NetworkUtils';
@@ -26,28 +26,29 @@ import Toast, { BaseToast } from 'react-native-toast-message';
 
 
 let keyboardDidHideListener;
+console.disableYellowBox = true;
 
 const toastConfig = {
     mauvaisMotDePasse: () => (
         <View style={{ height: 60, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row' }}>
-            <View style={{ width: '70%', marginLeft: 10, marginTop: 10 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>{"Nom d'utilisateur ou mot de passe invalide."}</Text>
             </View>
 
-            <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center', marginRight: 25 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+            <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center', marginRight: 30 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
         </View>
     ),
     mauvaisCodeSecurite: () => (
         <View style={{ height: 60, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
-            <View style={{ width: '70%', marginLeft: 10, marginTop: 10 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, alignItems: 'center', justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier votre code de sécurité.
                 </Text>
             </View>
             <View style={{ width: '30%', justifyContent: 'center' }}>
 
-                <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center', marginRight: 25 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center', marginRight: 30 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
             </View>
         </View>
     )
@@ -155,8 +156,9 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
     return (
 
-
         <Root>
+            <StatusBar hidden />
+
             { isLoading ?
                 <View style={[styles.container, styles.horizontal]}>
                     <ActivityIndicator size="large" color="black" />
@@ -168,7 +170,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
                 >
 
-                    <SafeAreaView style={{ backgroundColor: '#231F20', height: 170, width: '100%' }}>
+                    <SafeAreaView style={{ backgroundColor: '#231F20', height: Platform.OS == "ios" ? 170 : 130, width: '100%' }}>
                         <View style={{ height: 80, justifyContent: 'center', alignItems: 'center' }}>
                             <Image source={require('../assets/images/headerTitle.png')} resizeMode={'contain'} style={{ alignItems: 'center', margin: 8, width: 200, height: 50 }} />
                         </View>
@@ -374,10 +376,20 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                             </Content>
                         </ScrollView>
                     </Container> */}
+                    {Platform.OS == 'ios' ?
+                        <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
+                            <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+                        </View>
 
-                    <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
-                        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-                    </View>
+                        :
+
+
+                        <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black' }}>
+                            {showToast ?
+                                <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+
+                                : null}
+                        </View>}
                 </ImageBackground>
             }
 

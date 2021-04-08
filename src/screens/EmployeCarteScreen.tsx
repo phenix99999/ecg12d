@@ -35,7 +35,7 @@ const toastConfig = {
     numeroDeFacturePasRempli: () => (
 
         <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
-            <View style={{ width: '70%', marginLeft: 10, marginTop: 10 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
                 <Text style={{ color: 'white' }}>Veuillez spécifier le numéro de facture.</Text>
             </View>
 
@@ -48,7 +48,7 @@ const toastConfig = {
     ),
     nipPasRempli: () => (
         <View style={{ height: 60, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
-            <View style={{ width: '70%', marginLeft: 10, marginTop: 10 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez spécifier le numéro d'employé.
                 </Text>
@@ -61,7 +61,7 @@ const toastConfig = {
     ),
     nipInvalide: () => (
         <View style={{ height: 55, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
-            <View style={{ width: '70%', marginLeft: 10, marginTop: 10 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Le NIP employé n'est pas valide.
                 </Text>

@@ -66,6 +66,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
     const authHeader = 'Basic ' + base64.encode(`${"Alain Simoneau"}:${"4251"}`);
 
+    console.log(route.params.lienImage);
     return (
 
         <View style={{ height: '100%', backgroundColor: 'white' }}>
@@ -81,7 +82,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                 </Row>
 
             </SafeAreaView>
-            <SafeAreaView style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: 'red' }}>
                 <Image
                     style={{ height: 135, width: 250, marginTop: 15 }}
                     source={
@@ -94,7 +95,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                     } />
 
 
-            </SafeAreaView >
+            </View >
             <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
                 <Text style={{ fontSize: 16 }}>Produit</Text>
                 <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.nomCoffret}</Text>
