@@ -23,7 +23,10 @@ export async function authentificationGX(username, password) {
 //GIVEX
 export async function givexEncaissement(card, amount, username, password) {
     let data = { "id": card, "params": ["fr", "9999", username, password, card, amount], "jsonrpc": "2.0", "method": "dc_901" }
+    console.log("DATA PAS BON ");
+    console.log(data);
     let response = await axios.post(GIVEX_HOST, data)
+    console.log(response);
     let result = response.data.result
     let code = result[1]
     if (code !== '0') {

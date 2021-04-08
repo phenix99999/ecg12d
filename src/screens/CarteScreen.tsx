@@ -78,7 +78,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
     const [showBarCodeScanner, setShowBarCodeScanner] = React.useState(false);
     const [showToast, setShowToast] = React.useState(false);
 
-    const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("");
+    const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("603628576371917334872");
     const [sound, setSound] = React.useState();
     const [noDeCarteAutomatique, setNoDeCarteAutomatique] = React.useState("");
 
@@ -123,13 +123,11 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
             let noDeCarteFM = noDeCarte.substring(noDeCarte.length - 10, noDeCarte.length - 1);
             let cardInfo = await execScript("Alain Simoneau", "4251", global.fmServer, global.fmDatabase, "api_mobile_CARTE_DETAILS", "&Numero_final=" + noDeCarteFM, "Givex_GetBalance");
-            console.log("Card info");
-            console.log(cardInfo);
             let nomCoffret = "";
             let lienCoffretLogo = "";
             let prixCoffret = ""
             let balanceGiveX = "";
-            console.log(cardInfo);
+            let encaissementPartiel = false;
             if (cardInfo.length == 0) {
                 setShowToast(true);
                 Toast.show({
@@ -143,9 +141,8 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                 nomCoffret = cardInfo[0]['COFFRETS_dans_CM::CP_Titre'];
                 prixCoffret = cardInfo[0]['Prix_detail'];
                 balanceGiveX = cardInfo[0]['Givex_balance'];
-                // alert(noDeCarte);
-                navigation.navigate(navigateTo, { lienImage: lienCoffretLogo, nomCoffret: nomCoffret, prixCoffret: prixCoffret, balanceGiveX: balanceGiveX, noDeCarte: noDeCarte, noDeCarteFM: noDeCarteFM });
-                // setNoDeCarteManuel("");
+                encaissementPartiel = cardInfo[0]['COFFRETS_dans_CM::Flag_encaissement_partiel'];
+                navigation.navigate(navigateTo, { lienImage: lienCoffretLogo, nomCoffret: nomCoffret, prixCoffret: prixCoffret, balanceGiveX: balanceGiveX, noDeCarte: noDeCarte, noDeCarteFM: noDeCarteFM, encaissementPartiel: encaissementPartiel });
             }
         }
 
@@ -341,7 +338,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                             <TextInput
                                 placeholderTextColor="#404040"
                                 style={{ height: 45, top: 25, width: '100%', borderBottomWidth: 0.5, borderColor: '#303030', marginLeft: 17 }}
-                                value={noDeCarteManuel || "603628576371917334872"}
+                                value={noDeCarteManuel}
                                 onChange={(e) => (setNoDeCarteManuel(e.nativeEvent.text))}
                                 placeholder="Numéro de carte"
                             />
