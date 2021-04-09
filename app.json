@@ -29,6 +29,7 @@
     },
     "android": {
       "package": "com.vhiculemedia.coffretprestige",
+      "versionCode": 2,
       "permissions": [
         "CAMERA"
       ]
