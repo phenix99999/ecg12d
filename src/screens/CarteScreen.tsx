@@ -39,7 +39,7 @@ const { StatusBarManager } = NativeModules;
 const toastConfig = {
     nbCaractereInvalideCarte: () => (
         <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
-            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Vous devez saisir 21 chiffres.</Text>
             </View>
@@ -57,8 +57,8 @@ const toastConfig = {
         </View>
     ),
     carteInvalide: () => (
-        <View style={{ height: 215, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+        <View style={{ height: Platform.OS === "ios" ? 200 : 100, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '95%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Si le problème persiste, il se peut que cette carte ne soit pas enregistrée dans notre système.
                 Le client peut contacter le service à la clientèle Coffrets Prestige au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
@@ -225,7 +225,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
     return (
 
 
-        <Root style={{ zIndex: 50 }}>
+        <Root>
             <StatusBar hidden />
 
             <View
@@ -392,27 +392,23 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
             </View>
 
-
             {Platform.OS == 'ios' ?
                 <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
-
                     <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
                 </View>
+
                 :
 
-                <View>
 
-                    <View style={{ width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, backgroundColor: 'black' }}>
-
+                <View style={{ width: '96%', opacity: showToast ? 1 : 0, bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black' }}>
+                    {showToast ?
                         <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-                    </View>
 
-                    <View style={{ opacity: 0, width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, backgroundColor: 'black' }}>
+                        :
+                        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} style={{ display: "none" }} />
 
-                        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-                    </View>
-                </View>
-            }
+                    }
+                </View>}
 
 
         </Root>

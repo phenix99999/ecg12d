@@ -35,7 +35,7 @@ const toastConfig = {
     numeroDeFacturePasRempli: () => (
 
         <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
-            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
                 <Text style={{ color: 'white' }}>Veuillez spécifier le numéro de facture.</Text>
             </View>
 
@@ -48,41 +48,62 @@ const toastConfig = {
     ),
     nipPasRempli: () => (
         <View style={{ height: 60, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
-            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez spécifier le numéro d'employé.
                 </Text>
             </View>
-            <View style={{ width: '30%', justifyContent: 'center' }}>
 
-                <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginRight: 15, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
-            </View>
+            {Platform.OS == "ios" ?
+
+                <TouchableOpacity onPress={() => {
+                    Toast.hide()
+                }
+                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+
+                :
+                null
+            }
         </View>
     ),
     nipInvalide: () => (
         <View style={{ height: 55, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
-            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Le NIP employé n'est pas valide.
                 </Text>
             </View>
-            <View style={{ width: '30%', justifyContent: 'center' }}>
 
-                <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginRight: 15, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
-            </View>
+            {Platform.OS == "ios" ?
+
+                <TouchableOpacity onPress={() => {
+                    Toast.hide()
+                }
+                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+
+                :
+                null
+            }
         </View>
     ),
     erreurInconnue: () => (
         <View style={{ height: 55, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
-            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>La carte n'est pas activable pour une raison inconnu.
                 </Text>
             </View>
-            <View style={{ width: '30%', justifyContent: 'center' }}>
 
-                <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginRight: 15, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
-            </View>
+            {Platform.OS == "ios" ?
+
+                <TouchableOpacity onPress={() => {
+                    Toast.hide()
+                }
+                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+
+                :
+                null
+            }
         </View>
     ),
 };
@@ -172,8 +193,8 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
                         Toast.show({
                             type: 'numeroDeFacturePasRempli',
-                            autoHide: false,
-                            position: 'top',
+                            autoHide: Platform.OS == "ios" ? false : true,
+                            position: 'bottom',
                         });
 
                     } else if (nip.length == 0) {
@@ -181,8 +202,8 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
                         Toast.show({
                             type: 'nipPasRempli',
-                            autoHide: false,
-                            position: 'top',
+                            autoHide: Platform.OS == "ios" ? false : true,
+                            position: 'bottom',
                         });
 
                     } else {
@@ -196,8 +217,8 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
                                 Toast.show({
                                     type: 'nipInvalide',
-                                    autoHide: false,
-                                    position: 'top',
+                                    autoHide: Platform.OS == "ios" ? false : true,
+                                    position: 'bottom',
                                 });
 
                             } else {
@@ -205,8 +226,8 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
                                 Toast.show({
                                     type: 'erreurInconnue',
-                                    autoHide: false,
-                                    position: 'top',
+                                    autoHide: Platform.OS == "ios" ? false : true,
+                                    position: 'bottom',
                                 });
                             }
                         }
@@ -231,7 +252,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
                 }}
 
 
-                style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "white", height: 40, padding: 15 }}
+                style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 125, backgroundColor: "white", height: 40, padding: 15 }}
             >
                 <Text style={{ fontSize: 14, color: '#007CFF' }}> ANNULER</Text>
             </Button>
@@ -239,19 +260,22 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
         {Platform.OS == 'ios' ?
             <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
-
                 <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
             </View>
+
             :
 
-            <View style={{ width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black' }}>
 
+            <View style={{ zIndex: 9999, width: '96%', opacity: showToast ? 1 : 0, bottom: 50, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black' }}>
                 {showToast ?
                     <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
 
-                    : <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} style={{ display: 'none' }} />}
-            </View>
-        }
+                    :
+                    <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} style={{ display: "none" }} />
+
+                }
+            </View>}
+
 
 
     </View >;

@@ -36,44 +36,62 @@ const toastConfig = {
     balanceInvalide: () => (
 
         <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
-            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
                 <Text style={{ color: 'white' }}>Le montant est invalide.</Text>
             </View>
 
 
-            <TouchableOpacity onPress={() => {
-                Toast.hide();
+            {Platform.OS == "ios" ?
+
+                <TouchableOpacity onPress={() => {
+                    Toast.hide()
+                }
+                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+
+                :
+                null
             }
-            } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, marginRight: 15, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
         </View>
     ),
 
     balanceInsuffisante: () => (
         <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
-            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
                 <Text style={{ color: 'white' }}>Le montant à encaisser doit être inférieur que la balance.</Text>
             </View>
 
 
-            <TouchableOpacity onPress={() => {
-                Toast.hide();
+            {Platform.OS == "ios" ?
+
+                <TouchableOpacity onPress={() => {
+                    Toast.hide()
+                }
+                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+
+                :
+                null
             }
-            } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, marginRight: 15, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
         </View>
     ),
 
     erreurInnatendue: () => (
 
         <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
-            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
                 <Text style={{ color: 'white' }}>Une erreur innatendue est survenue. Veuillez en parler avec votre fournisseur.</Text>
             </View>
 
 
-            <TouchableOpacity onPress={() => {
-                Toast.hide();
+            {Platform.OS == "ios" ?
+
+                <TouchableOpacity onPress={() => {
+                    Toast.hide()
+                }
+                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+
+                :
+                null
             }
-            } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, marginRight: 15, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
         </View>
     ),
 };
@@ -274,27 +292,28 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                         }}
 
 
-                        style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "white", height: 40, borderColor: '#303030', padding: 15 }}
+                        style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 125, backgroundColor: "white", height: 40, borderColor: '#303030', padding: 15 }}
                     >
                         <Text style={{ fontSize: 18, color: '#007CFF' }}> ANNULER</Text>
                     </Button>
                 </View>
-                {Platform.OS == "ios" ?
-                    <View style={{ position: 'absolute', width: '95%', flexDirection: 'row', bottom: 0, marginLeft: 10, alignItems: 'center', justifyContent: 'center', marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
+                {Platform.OS == 'ios' ?
+                    <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
                         <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
                     </View>
 
-
                     :
-                    <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black' }}>
 
-                        {showToast == true ?
+
+                    <View style={{ width: '96%', opacity: showToast ? 1 : 0, bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black' }}>
+                        {showToast ?
                             <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-                            :
-                            null}
-                    </View>
 
-                }
+                            :
+                            <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} style={{ display: "none" }} />
+
+                        }
+                    </View>}
 
             </View >
     }
