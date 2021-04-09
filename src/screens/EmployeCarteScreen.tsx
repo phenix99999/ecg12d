@@ -113,7 +113,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
         <SafeAreaView style={{ backgroundColor: '#231F20', height: 100, width: '100%' }}>
             <Row>
                 <Left>
-                    <TouchableOpacity onPress={() => navigation.replace('CarteScreen')}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Icon name="arrow-back" type="MaterialIcons" style={{ color: 'white', marginLeft: 15, fontWeight: 'bold' }}></Icon>
                     </TouchableOpacity>
                 </Left>
@@ -173,7 +173,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
                         Toast.show({
                             type: 'numeroDeFacturePasRempli',
                             autoHide: false,
-                            position: 'bottom',
+                            position: 'top',
                         });
 
                     } else if (nip.length == 0) {
@@ -182,7 +182,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
                         Toast.show({
                             type: 'nipPasRempli',
                             autoHide: false,
-                            position: 'bottom',
+                            position: 'top',
                         });
 
                     } else {
@@ -197,7 +197,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
                                 Toast.show({
                                     type: 'nipInvalide',
                                     autoHide: false,
-                                    position: 'bottom',
+                                    position: 'top',
                                 });
 
                             } else {
@@ -206,7 +206,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
                                 Toast.show({
                                     type: 'erreurInconnue',
                                     autoHide: false,
-                                    position: 'bottom',
+                                    position: 'top',
                                 });
                             }
                         }
@@ -227,7 +227,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
             <Button
                 onPress={async () => {
-                    navigation.replace('CarteScreen');
+                    navigation.goBack();
                 }}
 
 
@@ -237,9 +237,21 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
             </Button>
         </View>
 
-        <View style={{ position: 'absolute', width: '95%', flexDirection: 'row', bottom: 0, marginLeft: 10, alignItems: 'center', justifyContent: 'center', marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
-            <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-        </View>
+        {Platform.OS == 'ios' ?
+            <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
+
+                <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+            </View>
+            :
+
+            <View style={{ width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black' }}>
+
+                {showToast ?
+                    <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+
+                    : <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} style={{ display: 'none' }} />}
+            </View>
+        }
 
 
     </View >;

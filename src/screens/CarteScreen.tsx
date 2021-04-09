@@ -24,7 +24,8 @@ import {
     Right,
     Icon,
     Form,
-    Container
+    Container,
+    Root,
 } from "native-base";
 import { Image, ImageBackground, RefreshControl, ScrollView, View, TextInput, Keyboard, ActivityIndicator, StatusBar, Platform, NativeModules, TouchableOpacity } from "react-native";
 import AuthStore from "../stores/AuthStore";
@@ -38,7 +39,7 @@ const { StatusBarManager } = NativeModules;
 const toastConfig = {
     nbCaractereInvalideCarte: () => (
         <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
-            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Vous devez saisir 21 chiffres.</Text>
             </View>
@@ -57,7 +58,7 @@ const toastConfig = {
     ),
     carteInvalide: () => (
         <View style={{ height: 215, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Si le problème persiste, il se peut que cette carte ne soit pas enregistrée dans notre système.
                 Le client peut contacter le service à la clientèle Coffrets Prestige au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
@@ -104,7 +105,6 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
         // setShowToast(false);
 
-
         // //603628726841965667180
         let noDeCarte = "";
         let navigateTo = "PartenaireCarteScreen";
@@ -130,6 +130,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                 position: 'bottom',
             });
         } else {
+            setLoading(true);
 
             let noDeCarteFM = noDeCarte.substring(noDeCarte.length - 10, noDeCarte.length - 1);
             let cardInfo = await execScript("Alain Simoneau", "4251", global.fmServer, global.fmDatabase, "api_mobile_CARTE_DETAILS", "&Numero_final=" + noDeCarteFM, "Givex_GetBalance");
@@ -139,6 +140,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
             let balanceGiveX = "";
             let encaissementPartiel = false;
             if (cardInfo.length == 0) {
+                setLoading(false);
                 setShowToast(true);
                 Toast.show({
                     type: 'carteInvalide',
@@ -151,8 +153,11 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                 nomCoffret = cardInfo[0]['COFFRETS_dans_CM::CP_Titre'];
                 prixCoffret = cardInfo[0]['Prix_detail'];
                 balanceGiveX = cardInfo[0]['Givex_balance'];
+                setShowToast(false);
                 encaissementPartiel = cardInfo[0]['COFFRETS_dans_CM::Flag_encaissement_partiel'];
                 navigation.navigate(navigateTo, { lienImage: lienCoffretLogo, nomCoffret: nomCoffret, prixCoffret: prixCoffret, balanceGiveX: balanceGiveX, noDeCarte: noDeCarte, noDeCarteFM: noDeCarteFM, encaissementPartiel: encaissementPartiel });
+
+                setLoading(false);
             }
         }
 
@@ -171,7 +176,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
     }
 
     React.useEffect(() => {
-
+        setLoading(false);
         const getPermissions = async () => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();
             // const cameraAllowed = await Torch.requestCameraPermission(
@@ -220,183 +225,197 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
     return (
 
 
-        <View>
-            {isLoading ?
-                <View style={[styles.container, styles.horizontal]}>
+        <Root style={{ zIndex: 50 }}>
+            <StatusBar hidden />
 
-                    <ActivityIndicator size="large" color="black" />
-
-                </View>
+            <View
+            >
 
 
-                :
-                <View
-                >
+                <SafeAreaView style={{ backgroundColor: '#231F20', height: 122, width: '100%' }}>
+                    <Row>
 
 
-                    <SafeAreaView style={{ backgroundColor: '#231F20', height: 122, width: '100%' }}>
-                        <Row>
+                        <Left style={{ marginLeft: 10 }}>
+                            <Button
+                                transparent
+                                onPress={async () => {
+                                    navigation.openDrawer();
+
+                                }}
+                            >
+                                <Icon name="menu" type={"MaterialIcons"} style={{ fontSize: 30, color: 'white' }} />
+                            </Button>
+                        </Left>
+
+                        <Body style={{ height: 80 }}>
+
+                            <Image source={require('../assets/images/headerTitle.png')} resizeMode={'contain'} style={{ alignItems: 'center', margin: 8, width: 200, height: 50 }} />
+                        </Body>
+                        <Right>
+
+                        </Right>
+                    </Row>
+                </SafeAreaView>
+
+                <SafeAreaView style={styles.containerBarCode}>
+
+                    {showBarCodeScanner ?
+                        <View   >
 
 
-                            <Left style={{ marginLeft: 10 }}>
-                                <Button
-                                    transparent
-                                    onPress={async () => {
-                                        navigation.openDrawer();
 
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                <View
+                                    style={{
+                                        borderBottomColor: 'red',
+                                        borderBottomWidth: 4,
+                                        zIndex: 5554,
+                                        position: 'absolute',
+                                        width: '100%'
                                     }}
-                                >
-                                    <Icon name="menu" type={"MaterialIcons"} style={{ fontSize: 30, color: 'white' }} />
-                                </Button>
-                            </Left>
+                                />
 
-                            <Body style={{ height: 80 }}>
-
-                                <Image source={require('../assets/images/headerTitle.png')} resizeMode={'contain'} style={{ alignItems: 'center', margin: 8, width: 200, height: 50 }} />
-                            </Body>
-                            <Right>
-
-                            </Right>
-                        </Row>
-                    </SafeAreaView>
-
-                    <SafeAreaView style={styles.containerBarCode}>
-
-                        {showBarCodeScanner ?
-                            <View   >
-
-
-
-                                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                    <View
-                                        style={{
-                                            borderBottomColor: 'red',
-                                            borderBottomWidth: 4,
-                                            zIndex: 5554,
-                                            position: 'absolute',
-                                            width: '100%'
-                                        }}
-                                    />
-
-                                    {/* <BarCodeScanner
+                                {/* <BarCodeScanner
                                     onBarCodeScanned={handleBarCodeScanned}
                                     style={StyleSheet.absoluteFillObject}
                                 /> */}
-                                    <TouchableOpacity onPress={() => {
-                                        setFlash('off');
-                                        setShowBarCodeScanner(false);
-                                    }}
+                                <TouchableOpacity onPress={() => {
+                                    setFlash('off');
+                                    setShowBarCodeScanner(false);
+                                }
+                                }
 
-                                        style={{ height: 250, width: '100%' }}>
-                                        <Camera
-                                            flashMode={flash}
+                                    style={{ height: 250, width: '100%', backgroundColor: 'red' }}>
+                                    <Camera
+                                        flashMode={flash}
 
-                                            barCodeScannerSettings={{
-                                                barCodeTypes: [BarCodeScanner.Constants.BarCodeType.code128],
-                                            }}
-                                            onBarCodeScanned={handleBarCodeScanned}
-                                            style={{ width: '100%', height: 250 }}
-                                            type={Camera.Constants.Type.back}>
-                                            <View style={{ zIndex: 9999999999, flexDirection: 'row-reverse', backgroundColor: 'transparent', height: 30 }}>
-                                                <TouchableOpacity
-                                                    style={{ backgroundColor: 'transparent' }}
-                                                    onPress={() => {
-                                                        if (flash == 'off') {
-                                                            setFlash('torch')
-                                                        } else {
-                                                            setFlash('off');
-                                                        }
-                                                    }}
-                                                >
-                                                    <Icon name={flash == 'torch' ? "flashlight-off" : "flashlight"} type="MaterialCommunityIcons" style={{ color: 'white' }} ></Icon>
-                                                </TouchableOpacity>
-                                            </View>
-
-
-                                        </Camera>
-                                    </TouchableOpacity>
-
-                                </View>
-                            </View>
-
-                            :
-                            <View>
-                                <TouchableOpacity style={[styles.barcodeContainer]} onPress={() => setShowBarCodeScanner(true)}>
-                                    <ImageBackground
-                                        resizeMode={'cover'}
-                                        source={{ uri: barcodePng }}
-                                        style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}
-                                        imageStyle={{ opacity: 0.3 }}>
-                                        <View
-
-                                            style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                            <Button light style={{ width: 200, justifyContent: 'center', alignItems: 'center' }} onPress={() => setShowBarCodeScanner(true)}>
-                                                <Text style={{ color: 'black' }}>NUMÉRISER</Text>
-                                            </Button>
-
+                                        barCodeScannerSettings={{
+                                            barCodeTypes: [BarCodeScanner.Constants.BarCodeType.code128],
+                                        }}
+                                        onBarCodeScanned={handleBarCodeScanned}
+                                        style={{ width: '100%', height: 250 }}
+                                        type={Camera.Constants.Type.back}>
+                                        <View style={{ zIndex: 9999999999, flexDirection: 'row-reverse', backgroundColor: 'transparent', height: 30 }}>
+                                            <TouchableOpacity
+                                                style={{ backgroundColor: 'transparent' }}
+                                                onPress={() => {
+                                                    if (flash == 'off') {
+                                                        setFlash('torch')
+                                                    } else {
+                                                        setFlash('off');
+                                                    }
+                                                }}
+                                            >
+                                                <Icon name={flash == 'torch' ? "flashlight-off" : "flashlight"} type="MaterialCommunityIcons" style={{ color: 'white' }} ></Icon>
+                                            </TouchableOpacity>
                                         </View>
-                                    </ImageBackground>
+
+
+                                    </Camera>
                                 </TouchableOpacity>
-
-                            </View>
-                        }
-
-
-
-
-                        <View style={{ position: 'absolute', top: 240, width: '100%' }}>
-                            <TextInput
-                                keyboardType="numeric"
-                                placeholderTextColor="#404040"
-                                style={{ height: 45, top: 25, width: '100%', borderBottomWidth: 0.5, borderColor: '#303030', marginLeft: 17 }}
-                                value={noDeCarteManuel}
-                                onChange={(e) => (setNoDeCarteManuel(e.nativeEvent.text))}
-                                placeholder="Numéro de carte"
-                            />
-                            <View style={{ flexDirection: 'row', top: 55, alignItems: 'center', justifyContent: 'center' }}>
-                                <Button
-                                    onPress={async () => {
-                                        await getCardInfo();
-                                    }}
-
-
-                                    style={{ alignItems: 'center', justifyContent: 'center', width: 250, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
-                                >
-                                    <Text style={{ fontSize: 14, color: 'white' }}> SOUMETTRE</Text>
-                                </Button>
-
 
                             </View>
                         </View>
 
-
-
-                    </SafeAreaView>
-
-
-                    {Platform.OS == 'ios' ?
-                        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-
-
                         :
+                        <View>
+                            <TouchableOpacity style={[styles.barcodeContainer]} onPress={() => setShowBarCodeScanner(true)}>
+                                <ImageBackground
+                                    resizeMode={'cover'}
+                                    source={{ uri: barcodePng }}
+                                    style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}
+                                    imageStyle={{ opacity: 0.3 }}>
+                                    <View
+
+                                        style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                        <Button light style={{ width: 200, justifyContent: 'center', alignItems: 'center' }} onPress={() => setShowBarCodeScanner(true)}>
+                                            <Text style={{ color: 'black' }}>NUMÉRISER</Text>
+                                        </Button>
+
+                                    </View>
+                                </ImageBackground>
+                            </TouchableOpacity>
+
+                        </View>
+                    }
 
 
 
-                        showToast ?
-                            <View>
-                                <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-                            </View>
-                            : null}
+
+                    <View style={{ position: 'absolute', top: 240, width: '100%' }}>
+                        <TextInput
+                            keyboardType="numeric"
+                            placeholderTextColor="#404040"
+                            style={{ height: 45, top: 25, width: '100%', borderBottomWidth: 0.5, borderColor: '#303030', marginLeft: 17 }}
+                            value={noDeCarteManuel}
+                            onChange={(e) => {
+                                setNoDeCarteManuel(e.nativeEvent.text)
+                            }
+                            }
+                            placeholder="Numéro de carte"
+                        />
+                        <View style={{ flexDirection: 'row', top: 55, alignItems: 'center', justifyContent: 'center' }}>
+                            <Button
+                                onPress={async () => {
+
+                                    await getCardInfo();
+                                }}
+
+
+                                style={{ alignItems: 'center', justifyContent: 'center', width: 250, backgroundColor: "#DF0024", height: 50, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
+                            >
+
+                                {!isLoading ?
+                                    <Text style={{ fontSize: 14, color: 'white' }}> SOUMETTRE </Text>
+
+                                    :
+                                    <ActivityIndicator size="large" color="white" />
+
+
+                                }
+
+                            </Button>
+
+
+                        </View>
+                    </View>
+
+
+
+                </SafeAreaView>
 
 
 
 
+
+
+            </View>
+
+
+            {Platform.OS == 'ios' ?
+                <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
+
+                    <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+                </View>
+                :
+
+                <View>
+
+                    <View style={{ width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, backgroundColor: 'black' }}>
+
+                        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+                    </View>
+
+                    <View style={{ opacity: 0, width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, backgroundColor: 'black' }}>
+
+                        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+                    </View>
                 </View>
             }
 
 
-
-        </View >
+        </Root>
     );
 };
 export default inject("authStore")(observer(CarteScreen));

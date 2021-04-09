@@ -88,9 +88,6 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
 
     console.log(route.params);
-    React.useEffect(() => {
-        console.log(route);
-    });
 
 
     if (!NetworkUtils.isNetworkAvailable()) {
@@ -99,50 +96,48 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
     async function encaisser() {
         let montant = route.params.balanceGiveX;
-
+        let error = true;
         if (route.params.encaissementPartiel == true) {
             if (!montantAEncaisser || montantAEncaisser == "0" || montantAEncaisser == "0.0" || montantAEncaisser == "0.00" || montantAEncaisser.search("^[0-9]+(\.[0-9]{1,2})?$") == -1) {
-                // alert("ALLO");
+                error = true;
                 setShowToast(true);
                 Toast.show({
                     type: 'balanceInvalide',
-                    autoHide: false,
+                    autoHide: Platform.OS == "ios" ? false : true,
                     position: 'bottom',
                 });
             } else {
-
-
+                error = true;
                 montant = montantAEncaisser;
                 if (montant > route.params.balanceGiveX) {
                     setShowToast(true);
                     Toast.show({
                         type: 'balanceInsuffisante',
-                        autoHide: false,
+                        autoHide: Platform.OS == "ios" ? false : true,
                         position: 'bottom',
                     });
                 }
             }
         }
 
+        if (!error) {
+            const cardGivex = route.params.noDeCarte;
+            const partnerUsername = SyncStorage.get('username');
+            const partnerPassword = SyncStorage.get('password');
 
-        const cardGivex = route.params.noDeCarte;
-        const partnerUsername = SyncStorage.get('username');
-        const partnerPassword = SyncStorage.get('password');
+            let returnEncaissement = await givexEncaissement(cardGivex, montant, partnerUsername, partnerPassword);
 
-        let returnEncaissement = await givexEncaissement(cardGivex, montant, partnerUsername, partnerPassword);
-
-        if (returnEncaissement.success) {
-            setSuccess(true);
-        } else {
-            setShowToast(true);
-            Toast.show({
-                type: 'erreurInnatendue',
-                autoHide: false,
-                position: 'bottom',
-            });
+            if (returnEncaissement.success) {
+                setSuccess(true);
+            } else {
+                setShowToast(true);
+                Toast.show({
+                    type: 'erreurInnatendue',
+                    autoHide: Platform.OS == "ios" ? false : true,
+                    position: 'bottom',
+                });
+            }
         }
-
-
 
 
     }
@@ -251,7 +246,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
 
 
-                {route.params.balanceGiveX != 0.00
+                {route.params.balanceGiveX == 0.00
                     ?
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                         <Button
@@ -284,9 +279,22 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                         <Text style={{ fontSize: 18, color: '#007CFF' }}> ANNULER</Text>
                     </Button>
                 </View>
-                <View style={{ position: 'absolute', width: '95%', flexDirection: 'row', bottom: 0, marginLeft: 10, alignItems: 'center', justifyContent: 'center', marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
-                    <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-                </View>
+                {Platform.OS == "ios" ?
+                    <View style={{ position: 'absolute', width: '95%', flexDirection: 'row', bottom: 0, marginLeft: 10, alignItems: 'center', justifyContent: 'center', marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
+                        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+                    </View>
+
+
+                    :
+                    <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black' }}>
+
+                        {showToast == true ?
+                            <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+                            :
+                            null}
+                    </View>
+
+                }
 
             </View >
     }
