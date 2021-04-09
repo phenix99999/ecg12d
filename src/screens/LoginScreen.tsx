@@ -36,7 +36,14 @@ const toastConfig = {
                 <Text style={{ color: 'white' }}>{"Nom d'utilisateur ou mot de passe invalide."}</Text>
             </View>
 
-            <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center', marginRight: 30 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+            {Platform.OS == "ios" ?
+                <View style={{ width: '30%', justifyContent: 'center' }}>
+
+                    <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center', marginRight: 30 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+                </View>
+                :
+                null
+            }
         </View>
     ),
     mauvaisCodeSecurite: () => (
@@ -46,10 +53,13 @@ const toastConfig = {
                 <Text style={{ color: 'white' }}>Veuillez vérifier votre code de sécurité.
                 </Text>
             </View>
-            <View style={{ width: '30%', justifyContent: 'center' }}>
+            {Platform.OS == "ios" ?
+                <View style={{ width: '30%', justifyContent: 'center' }}>
+                    <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center', marginRight: 30 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+                </View>
 
-                <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 45, marginTop: 4, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center', marginRight: 30 }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
-            </View>
+                : null}
+
         </View>
     )
 };
@@ -77,11 +87,21 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
             navigation.navigate('CarteScreen');
         } else {
             setShowToast(true);
-            Toast.show({
-                type: 'mauvaisMotDePasse',
-                autoHide: false,
-                position: 'bottom',
-            });
+            if (Platform.OS === 'ios') {
+                Toast.show({
+                    type: 'mauvaisMotDePasse',
+                    autoHide: false,
+                    position: 'bottom',
+                });
+            } else {
+                Toast.show({
+                    type: 'mauvaisMotDePasse',
+                    autoHide: true,
+                    position: 'bottom',
+                });
+            }
+
+
         }
 
 
@@ -95,18 +115,27 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         console.log(auth);
 
         if (auth.length > 0) {
-            alert(codeDeSecurite);
+            // alert(codeDeSecurite);
             SyncStorage.set('codeDeSecurite', codeDeSecurite);
             SyncStorage.set('connectedPartenaire', false);
             SyncStorage.set('connectedPointDeVente', true);
             navigation.navigate('CarteScreen');
         } else {
             setShowToast(true);
-            Toast.show({
-                type: 'mauvaisCodeSecurite',
-                autoHide: false,
-                position: 'bottom',
-            });
+            if (Platform.OS === 'ios') {
+                Toast.show({
+                    type: 'mauvaisCodeSecurite',
+                    autoHide: false,
+                    position: 'bottom',
+                });
+            } else {
+                Toast.show({
+                    type: 'mauvaisCodeSecurite',
+                    autoHide: true,
+                    position: 'bottom',
+                });
+            }
+
 
         }
 

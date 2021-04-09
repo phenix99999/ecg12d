@@ -38,30 +38,40 @@ const { StatusBarManager } = NativeModules;
 const toastConfig = {
     nbCaractereInvalideCarte: () => (
         <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
-            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Vous devez saisir 21 chiffres.</Text>
             </View>
 
+            {Platform.OS == "ios" ?
 
-            <TouchableOpacity onPress={() => {
-                Toast.hide()
+                <TouchableOpacity onPress={() => {
+                    Toast.hide()
+                }
+                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+
+                :
+                null
             }
-            } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
         </View>
     ),
     carteInvalide: () => (
         <View style={{ height: 215, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-            <View style={{ width: Platform.OS === 'ios' ? '70%' : '75%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Si le problème persiste, il se peut que cette carte ne soit pas enregistrée dans notre système.
                 Le client peut contacter le service à la clientèle Coffrets Prestige au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
                 </Text>
             </View>
-            <View style={{ width: '20%', justifyContent: 'center', alignItems: 'center' }}>
+            {Platform.OS == "ios" ?
 
-                <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
-            </View>
+                <View style={{ width: '20%', justifyContent: 'center', alignItems: 'center' }}>
+
+                    <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+                </View>
+                :
+
+                null}
         </View>
     )
 };
@@ -78,7 +88,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
     const [showBarCodeScanner, setShowBarCodeScanner] = React.useState(false);
     const [showToast, setShowToast] = React.useState(false);
 
-    const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("603628576371917334872");
+    const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("603628244252171570733");
     const [sound, setSound] = React.useState();
     const [noDeCarteAutomatique, setNoDeCarteAutomatique] = React.useState("");
 
@@ -116,7 +126,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
             Toast.show({
                 type: 'nbCaractereInvalideCarte',
-                autoHide: false,
+                autoHide: Platform.OS == "ios" ? false : true,
                 position: 'bottom',
             });
         } else {
@@ -132,7 +142,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                 setShowToast(true);
                 Toast.show({
                     type: 'carteInvalide',
-                    autoHide: false,
+                    autoHide: Platform.OS == "ios" ? false : true,
                     position: 'bottom',
                 });
             } else {
@@ -336,6 +346,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
                         <View style={{ position: 'absolute', top: 240, width: '100%' }}>
                             <TextInput
+                                keyboardType="numeric"
                                 placeholderTextColor="#404040"
                                 style={{ height: 45, top: 25, width: '100%', borderBottomWidth: 0.5, borderColor: '#303030', marginLeft: 17 }}
                                 value={noDeCarteManuel}
@@ -362,9 +373,22 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
                     </SafeAreaView>
 
-                    {/* <View style={{ flexDirection: 'row', marginLeft: 10, alignItems: 'center', justifyContent: 'center', marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}> */}
-                    <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-                    {/* </View> */}
+
+                    {Platform.OS == 'ios' ?
+                        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+
+
+                        :
+
+
+
+                        showToast ?
+                            <View>
+                                <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+                            </View>
+                            : null}
+
+
 
 
                 </View>
