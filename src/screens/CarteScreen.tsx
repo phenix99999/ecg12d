@@ -148,7 +148,6 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                     position: 'bottom',
                 });
             } else {
-                setFlash("off");
                 lienCoffretLogo = cardInfo[0]['COFFRETS_dans_CM::CP_Coffret_Logo'];
                 lienCoffretLogo = "https://" + global.fmServer + lienCoffretLogo.replace(/&amp;/g, '&');
                 nomCoffret = cardInfo[0]['COFFRETS_dans_CM::CP_Titre'];
@@ -157,7 +156,6 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                 setShowToast(false);
                 encaissementPartiel = cardInfo[0]['COFFRETS_dans_CM::Flag_encaissement_partiel'];
                 navigation.navigate(navigateTo, { lienImage: lienCoffretLogo, nomCoffret: nomCoffret, prixCoffret: prixCoffret, balanceGiveX: balanceGiveX, noDeCarte: noDeCarte, noDeCarteFM: noDeCarteFM, encaissementPartiel: encaissementPartiel });
-
                 setLoading(false);
             }
         }
@@ -172,7 +170,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
             require('../assets/bip.mp3')
         );
         setSound(sound);
-
+        setFlash("off");
         await sound.playAsync();
     }
 
