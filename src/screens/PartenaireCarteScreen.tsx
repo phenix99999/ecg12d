@@ -143,7 +143,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
             const cardGivex = route.params.noDeCarte;
             const partnerUsername = SyncStorage.get('username');
             const partnerPassword = SyncStorage.get('password');
-            alert("ICI");
+          
             let returnEncaissement = await givexEncaissement(cardGivex, montant, partnerUsername, partnerPassword);
 
             if (returnEncaissement.success) {
