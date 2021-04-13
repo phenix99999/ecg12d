@@ -46,9 +46,9 @@ const toastConfig = {
 
             {Platform.OS == "ios" ?
 
-                <TouchableOpacity onPress={() => {
+                <TouchableOpacity onPress={() =>
                     Toast.hide()
-                }
+
                 } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
 
                 :
@@ -148,6 +148,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                     position: 'bottom',
                 });
             } else {
+                setFlash("off");
                 lienCoffretLogo = cardInfo[0]['COFFRETS_dans_CM::CP_Coffret_Logo'];
                 lienCoffretLogo = "https://" + global.fmServer + lienCoffretLogo.replace(/&amp;/g, '&');
                 nomCoffret = cardInfo[0]['COFFRETS_dans_CM::CP_Titre'];

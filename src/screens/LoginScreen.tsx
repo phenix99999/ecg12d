@@ -110,7 +110,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
         let auth = await get("Alain Simoneau", "4251", global.fmServer, global.fmDatabase, "api_mobile_SECURITE_POINT_DE_VENTE", "&Code_de_securite=" + codeDeSecurite);
         // // alert(auth);
-   
+
         if (auth.length > 0) {
             // alert(codeDeSecurite);
             SyncStorage.set('codeDeSecurite', codeDeSecurite);
@@ -149,11 +149,12 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         // }
     }
 
- 
+
 
     React.useEffect(() => {
-       authStore.username = "";
-       authStore.password = "";
+        // alert(SyncStorage.get('username'));
+        authStore.username = "";
+        authStore.password = "";
         // alert(SyncStorage.get('username'));
         // authStore.username = "466428";
         // authStore.password = "2197";
@@ -171,7 +172,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         return () => {
             Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
         }
-    },[]);
+    }, []);
 
     if (!NetworkUtils.isNetworkAvailable()) {
         alert("Erreur de connexion");

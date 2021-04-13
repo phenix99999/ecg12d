@@ -76,6 +76,7 @@ export default class App extends Component {
                     <Stack.Screen name="CarteScreen" component={CarteScreen} />
                     <Stack.Screen name="PartenaireCarteScreen" component={PartenaireCarteScreen} />
                     <Stack.Screen name="EmployeCarteScreen" component={EmployeCarteScreen} />
+                    <Stack.Screen name="LoginScreen" component={LoginScreen} />
 
                 </Stack.Navigator>
             );
@@ -100,7 +101,7 @@ export default class App extends Component {
             >
 
                 <Drawer.Screen name="CarteScreen" component={StackCarte} />
-                <Drawer.Screen name="LoginScreen" component={LoginScreen} />
+                {/* <Drawer.Screen name="LoginScreen" component={LoginScreen} /> */}
 
             </Drawer.Navigator>;
 
@@ -109,7 +110,7 @@ export default class App extends Component {
             drawerContent={(props) => <CustomDrawerContent {...props} />}
 
         >
-            <Drawer.Screen name="LoginScreen" component={LoginScreen} />
+            {/* <Drawer.Screen name="LoginScreen" component={LoginScreen} /> */}
 
             <Drawer.Screen name="CarteScreen" component={StackCarte} />
 
