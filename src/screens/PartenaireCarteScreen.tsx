@@ -220,7 +220,8 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                 </SafeAreaView>
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                     <Image
-                        style={{ height: 135, width: 250, marginTop: 15 }}
+                        style={{ height: 200, width: 300, marginTop: 15 }}
+                        resizeMode={'contain'}
                         source={
                             {
                                 uri: route.params.lienImage,

@@ -89,7 +89,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
     const [showBarCodeScanner, setShowBarCodeScanner] = React.useState(false);
     const [showToast, setShowToast] = React.useState(false);
 
-    const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("603628244252171570733");
+    const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("");
     const [sound, setSound] = React.useState();
     const [noDeCarteAutomatique, setNoDeCarteAutomatique] = React.useState("");
 

@@ -70,7 +70,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
     const [hasPermission, setHasPermission] = React.useState(null);
     const [scanned, setScanned] = React.useState(false);
     const [badPassword, setBadPassword] = React.useState<Boolean>(false);
-    const [codeDeSecurite, setCodeDeSecurite] = React.useState<String>("0753A2AC-7ADE-41F4-AAEA-C8231689828C");
+    const [codeDeSecurite, setCodeDeSecurite] = React.useState<String>("");
     const [isScreenPartenaire, setPartenaire] = React.useState<Boolean>(true);
     const [isScreenPointVente, setPointVente] = React.useState<Boolean>(false);
     const [showToast, setShowToast] = React.useState<Boolean>(false);
@@ -100,8 +100,6 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                     position: 'bottom',
                 });
             }
-
-
         }
 
 
@@ -112,8 +110,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
         let auth = await get("Alain Simoneau", "4251", global.fmServer, global.fmDatabase, "api_mobile_SECURITE_POINT_DE_VENTE", "&Code_de_securite=" + codeDeSecurite);
         // // alert(auth);
-        console.log(auth);
-
+   
         if (auth.length > 0) {
             // alert(codeDeSecurite);
             SyncStorage.set('codeDeSecurite', codeDeSecurite);
