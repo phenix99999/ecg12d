@@ -149,9 +149,11 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         // }
     }
 
-
+ 
 
     React.useEffect(() => {
+       authStore.username = "";
+       authStore.password = "";
         // alert(SyncStorage.get('username'));
         // authStore.username = "466428";
         // authStore.password = "2197";
@@ -169,7 +171,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         return () => {
             Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
         }
-    });
+    },[]);
 
     if (!NetworkUtils.isNetworkAvailable()) {
         alert("Erreur de connexion");
