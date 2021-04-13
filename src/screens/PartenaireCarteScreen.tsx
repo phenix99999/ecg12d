@@ -265,7 +265,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
 
 
-                {route.params.balanceGiveX == 0.00
+                {route.params.balanceGiveX > 0.00
                     ?
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                         <Button
