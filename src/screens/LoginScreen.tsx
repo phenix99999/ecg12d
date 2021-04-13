@@ -18,6 +18,7 @@ import AuthStore from "../stores/AuthStore";
 import { authentificationGX } from '../utils/connectorGiveX';
 import NetworkUtils from '../utils/NetworkUtils';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import { useIsFocused } from "@react-navigation/native";
 
 const { StatusBarManager } = NativeModules;
 import { get, execScript } from '../utils/connectorFileMaker';
@@ -142,22 +143,21 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
     async function _keyboardDidHide() {
         // alert("Keyboard did hide " + authStore.username.length + " " + authStore.password.length);
-        // if (!isLoadingTemp && authStore.password.length > 2) {
-        //     // alert("Avant executer onconnected");
-        //     setLoadingTemp(true);
-        //     await onLoginPartenaire();
-        // }
+        if (authStore.password.length > 2) {
+
+            await onLoginPartenaire();
+        }
     }
 
 
+    const isFocused = useIsFocused();
 
     React.useEffect(() => {
         // alert(SyncStorage.get('username'));
         authStore.username = "";
         authStore.password = "";
-        // alert(SyncStorage.get('username'));
-        // authStore.username = "466428";
-        // authStore.password = "2197";
+        setCodeDeSecurite("");
+
         // alert(StatusBarManager.HEIGHT);
         const getPermission = async () => {
             const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -172,7 +172,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         return () => {
             Keyboard.removeListener("keyboardDidHide", _keyboardDidHide);
         }
-    }, []);
+    }, [isFocused]);
 
     if (!NetworkUtils.isNetworkAvailable()) {
         alert("Erreur de connexion");
@@ -461,6 +461,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#0F29AC",
     },
     horizontalRule: {
+
         borderBottomColor: "black",
         borderBottomWidth: 1,
         marginTop: 10,

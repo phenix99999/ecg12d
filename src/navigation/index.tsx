@@ -56,9 +56,10 @@ export default class App extends Component {
 
                     <TouchableOpacity style={{ flexDirection: 'row', padding: 20, borderBottomWidth: 1, borderColor: '#e2e2e2' }}
                         onPress={async () => {
-                            await SyncStorage.remove('username');
                             await SyncStorage.remove('password');
+                            await SyncStorage.get('codeDeSecurite');
                             await SyncStorage.remove('connectedPartenaire');
+                            await SyncStorage.remove('connectedPointDeVente');
                             props.navigation.navigate('LoginScreen');
                         }}
                     >
@@ -71,14 +72,28 @@ export default class App extends Component {
 
         function StackCarte() {
 
-            return (
+            let stack =
                 <Stack.Navigator screenOptions={{ headerShown: false }}  >
+
+                    <Stack.Screen name="LoginScreen" component={LoginScreen} />
+                    <Stack.Screen name="CarteScreen" component={CarteScreen} />
+                    <Stack.Screen name="PartenaireCarteScreen" component={PartenaireCarteScreen} />
+                    <Stack.Screen name="EmployeCarteScreen" component={EmployeCarteScreen} />
+
+                </Stack.Navigator>;
+
+
+            if (SyncStorage.get('connectedPointDeVente') || SyncStorage.get('connectedPartenaire')) {
+                stack = <Stack.Navigator screenOptions={{ headerShown: false }}  >
                     <Stack.Screen name="CarteScreen" component={CarteScreen} />
                     <Stack.Screen name="PartenaireCarteScreen" component={PartenaireCarteScreen} />
                     <Stack.Screen name="EmployeCarteScreen" component={EmployeCarteScreen} />
                     <Stack.Screen name="LoginScreen" component={LoginScreen} />
 
-                </Stack.Navigator>
+                </Stack.Navigator>;
+            }
+            return (
+                stack
             );
 
 
@@ -94,34 +109,21 @@ export default class App extends Component {
 
         // alert("Render");
 
-        navigationConnectedPartenaire =
+        navigation =
             <Drawer.Navigator
                 drawerContent={(props) => <CustomDrawerContent {...props} />}
 
             >
 
                 <Drawer.Screen name="CarteScreen" component={StackCarte} />
-                {/* <Drawer.Screen name="LoginScreen" component={LoginScreen} /> */}
 
             </Drawer.Navigator>;
-
-        // alert("ELSE");
-        navigation = <Drawer.Navigator
-            drawerContent={(props) => <CustomDrawerContent {...props} />}
-
-        >
-            {/* <Drawer.Screen name="LoginScreen" component={LoginScreen} /> */}
-
-            <Drawer.Screen name="CarteScreen" component={StackCarte} />
-
-        </Drawer.Navigator>;
 
 
         return (
             <NavigationContainer>
 
-                {SyncStorage.get('connectedPartenaire') ? navigationConnectedPartenaire : navigation}
-
+                {navigation}
             </NavigationContainer>
         )
     }
