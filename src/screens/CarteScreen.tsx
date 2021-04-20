@@ -196,7 +196,6 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
             getCardInfoConst();
         }
 
-
     }, [noDeCarteAutomatique]);
 
     const handleBarCodeScanned = ({ type, data }) => {
