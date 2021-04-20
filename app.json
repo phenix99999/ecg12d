@@ -2,7 +2,7 @@
   "expo": {
     "name": "Coffrets Prestige",
     "slug": "coffrets-prestige",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "platforms": [
@@ -29,7 +29,7 @@
     },
     "android": {
       "package": "com.vhiculemedia.coffretprestige",
-      "versionCode": 2,
+      "versionCode": 3,
       "permissions": [
         "CAMERA"
       ]
