@@ -105,7 +105,6 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
     const [success, setSuccess] = React.useState(false);
 
 
-    console.log(route.params);
 
 
     if (!NetworkUtils.isNetworkAvailable()) {
@@ -113,7 +112,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
     }
 
     async function encaisser() {
-       
+
         let montant = route.params.balanceGiveX;
         let error = false;
         if (route.params.encaissementPartiel == true) {
@@ -143,7 +142,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
             const cardGivex = route.params.noDeCarte;
             const partnerUsername = SyncStorage.get('username');
             const partnerPassword = SyncStorage.get('password');
-          
+
             let returnEncaissement = await givexEncaissement(cardGivex, montant, partnerUsername, partnerPassword);
 
             if (returnEncaissement.success) {
