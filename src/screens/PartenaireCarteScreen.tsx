@@ -104,18 +104,15 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
     const [montantAEncaisser, setMontantAEncaisser] = React.useState(null);
     const [success, setSuccess] = React.useState(false);
 
-
-
-
     if (!NetworkUtils.isNetworkAvailable()) {
         alert("Erreur de connexion");
     }
 
     async function encaisser() {
-
         let montant = route.params.balanceGiveX;
         let error = false;
         if (route.params.encaissementPartiel == true) {
+
             if (!montantAEncaisser || montantAEncaisser == "0" || montantAEncaisser == "0.0" || montantAEncaisser == "0.00" || montantAEncaisser.search("^[0-9]+(\.[0-9]{1,2})?$") == -1) {
                 error = true;
                 setShowToast(true);
@@ -125,9 +122,9 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                     position: 'bottom',
                 });
             } else {
-                error = true;
-                montant = montantAEncaisser;
-                if (montant > route.params.balanceGiveX) {
+                if (montantAEncaisser > montant) {
+                    error = true;
+                    montant = montantAEncaisser;
                     setShowToast(true);
                     Toast.show({
                         type: 'balanceInsuffisante',
@@ -136,6 +133,8 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                     });
                 }
             }
+        } else {
+            setMontantAEncaisser(route.params.balanceGiveX);
         }
 
         if (!error) {
@@ -143,7 +142,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
             const partnerUsername = SyncStorage.get('username');
             const partnerPassword = SyncStorage.get('password');
 
-            let returnEncaissement = await givexEncaissement(cardGivex, montant, partnerUsername, partnerPassword);
+            let returnEncaissement = await givexEncaissement(cardGivex, montantAEncaisser, partnerUsername, partnerPassword);
 
             if (returnEncaissement.success) {
                 setSuccess(true);
