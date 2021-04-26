@@ -54,10 +54,10 @@ export async function eliotLog(cardGivex, username, message) {
 
 export async function eliotActivateCard(cardFM, cardGivex, facture, code_securite, no_employee) {
 
-    let scriptParams = [cardGivex, code_securite, no_employee, facture]
+    let scriptParams = [cardGivex, code_securite, no_employee, facture];
+    // let scriptParamsText = cardGivex + "\n" + code_securite + "\n" + no_employee + "\n" + facture;
 
-
-    const fmResult = await execScript("Alain Simoneau", "4251", fmServer, fmDatabase, 'api_mobile_GIVEX_ACTIVATION', "&Numero_final=" + cardFM, "api_mobile_Givex_Activation", scriptParams.join("\n"));
+    const fmResult = await execScript("Alain Simoneau", "4251", fmServer, fmDatabase, 'api_mobile_GIVEX_ACTIVATION', "&Numero_final=" + cardFM, "api_mobile_Givex_Activation", scriptParams);
     console.log(fmResult);
 
     let givexJSON = fmResult[0]["Givex_result"];

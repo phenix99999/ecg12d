@@ -43,6 +43,9 @@ export default class App extends Component {
     render() {
         const Drawer = createDrawerNavigator();
         function CustomDrawerContent(props) {
+
+
+
             return (
 
                 <View>
@@ -56,11 +59,40 @@ export default class App extends Component {
 
                     <TouchableOpacity style={{ flexDirection: 'row', padding: 20, borderBottomWidth: 1, borderColor: '#e2e2e2' }}
                         onPress={async () => {
-                            await SyncStorage.remove('password');
-                            await SyncStorage.get('codeDeSecurite');
-                            await SyncStorage.remove('connectedPartenaire');
-                            await SyncStorage.remove('connectedPointDeVente');
-                            props.navigation.navigate('LoginScreen');
+
+                            Alert.alert(
+                                "Attention",
+                                "Êtes-vous sur de vouloir déconnecter?",
+                                [
+                                    {
+                                        text: "Oui",
+                                        onPress: async () => {
+                                            await SyncStorage.remove('password');
+                                            await SyncStorage.get('codeDeSecurite');
+                                            await SyncStorage.remove('connectedPartenaire');
+                                            await SyncStorage.remove('connectedPointDeVente');
+                                            props.navigation.navigate('LoginScreen');
+
+                                        }
+                                    },
+                                    {
+                                        text: "Non",
+                                        onPress: () => console.log("Cancel Pressed"),
+                                        style: "cancel"
+                                    },
+
+                                ]
+                            );
+
+
+
+
+                            // await SyncStorage.remove('password');
+                            // await SyncStorage.get('codeDeSecurite');
+                            // await SyncStorage.remove('connectedPartenaire');
+                            // await SyncStorage.remove('connectedPointDeVente');
+                            // props.navigation.navigate('LoginScreen');
+
                         }}
                     >
                         <Text>Deconnexion</Text>

@@ -253,8 +253,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                         <View>
 
                             <Form style={styles.form}>
-                                <View style={{ flexDirection: 'row', marginTop: 15 }}>
-                                    <Text>Connectez-vous ici si vous êtes une entreprise partenaire. </Text>
+                                <View style={{ flexDirection: 'row', marginTop: 15, }}>
+                                    <Text style={{ textAlign: 'center' }}>Connectez-vous ici si vous êtes une entreprise partenaire.</Text>
                                 </View>
 
                                 <View style={{ flexDirection: 'row', marginTop: 15, height: 15 }}>

@@ -57,7 +57,7 @@ const toastConfig = {
         </View>
     ),
     carteInvalide: () => (
-        <View style={{ height: Platform.OS === "ios" ? 200 : 100, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{ height: Platform.OS === "ios" ? 200 : 150, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '95%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Si le problème persiste, il se peut que cette carte ne soit pas enregistrée dans notre système.
@@ -123,7 +123,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
         if (noDeCarte.length != 21) {
 
             setShowToast(true);
-
+            // alert("ICI");
             Toast.show({
                 type: 'nbCaractereInvalideCarte',
                 autoHide: Platform.OS == "ios" ? false : true,
@@ -353,7 +353,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                             }
                             placeholder="Numéro de carte"
                         />
-                        <View style={{ flexDirection: 'row', top: 55, alignItems: 'center', justifyContent: 'center' }}>
+                        <View style={{ flexDirection: 'row', top: 55, alignItems: 'center', justifyContent: 'center', zIndex: 1 }}>
                             <Button
                                 onPress={async () => {
 
@@ -391,14 +391,14 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
             </View>
 
             {Platform.OS == 'ios' ?
-                <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
+                <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 555555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
                     <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
                 </View>
 
                 :
 
 
-                <View style={{ width: '96%', opacity: showToast ? 1 : 0, bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black' }}>
+                <View style={{ width: '96%', opacity: showToast ? 1 : 0, bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 555555, backgroundColor: 'black' }}>
                     {showToast ?
                         <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
 

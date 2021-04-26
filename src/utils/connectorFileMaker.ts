@@ -90,7 +90,7 @@ export async function execScript(username, password, server, db, layout, query, 
     let url = "https://" + server + "/fmi/xml/fmresultset.xml?-db=" + db + "&-lay=" + layout + "&-find=1" + query + "&-script=" + scriptName
 
     if (scriptParam) {
-        url += "&-script.param=" + scriptParam;
+        url += "&-script.param=" + scriptParam.join('%0A');
     }
 
 
@@ -102,6 +102,7 @@ export async function execScript(username, password, server, db, layout, query, 
     await axios.post(url, {}, {
         headers: { 'Authorization': authHeader }
     }).then(function (response) {
+        console.log(response);
         data = new XMLParser().parseFromString(response.data);
     }).catch(function (error) {
         alert("ERROR");

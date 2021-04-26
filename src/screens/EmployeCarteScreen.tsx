@@ -28,6 +28,7 @@ import { get, execScript } from '../utils/connectorFileMaker';
 
 import NetworkUtils from '../utils/NetworkUtils';
 import Toast, { BaseToast } from 'react-native-toast-message';
+import { addHiddenFinalProp } from "mobx/lib/internal";
 
 const { StatusBarManager } = NativeModules;
 
@@ -46,6 +47,21 @@ const toastConfig = {
             } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, marginRight: 15, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
         </View>
     ),
+    carteDejaActiver: () => (
+
+        <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+                <Text style={{ color: 'white' }}>Cette carte a déjà été activé.</Text>
+            </View>
+
+
+            <TouchableOpacity onPress={() => {
+                Toast.hide();
+            }
+            } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, marginRight: 15, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+        </View>
+    ),
+
     nipPasRempli: () => (
         <View style={{ height: 60, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
@@ -71,6 +87,26 @@ const toastConfig = {
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Le NIP employé n'est pas valide.
+                </Text>
+            </View>
+
+            {Platform.OS == "ios" ?
+
+                <TouchableOpacity onPress={() => {
+                    Toast.hide()
+                }
+                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+
+                :
+                null
+            }
+        </View>
+    ),
+    certificatInexistant: () => (
+        <View style={{ height: 55, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+
+                <Text style={{ color: 'white' }}>Le certificat est inexistant.
                 </Text>
             </View>
 
@@ -117,7 +153,9 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
     const [success, setSuccess] = React.useState(false);
 
     React.useEffect(() => {
-        console.log(route.params.balanceGiveX);
+
+
+
     });
 
 
@@ -144,104 +182,128 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
         </SafeAreaView>
         <SafeAreaView style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <Image
-                        style={{ height: 200, width: 300, marginTop: 15 }}
-                        resizeMode={'contain'}
-                        source={
-                            {
-                                uri: route.params.lienImage,
-                                headers: {
-                                    Authorization: authHeader
-                                }
-                            }
-                        } />
+            <Image
+                style={{ height: 200, width: 300, marginTop: 15 }}
+                resizeMode={'contain'}
+                source={
+                    {
+                        uri: route.params.lienImage,
+                        headers: {
+                            Authorization: authHeader
+                        }
+                    }
+                } />
 
 
         </SafeAreaView >
-        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
+        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 10 }}>
             <Text style={{ fontSize: 16 }}>Produit</Text>
             <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.nomCoffret}</Text>
 
         </View>
 
-        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
+        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 10 }}>
             <Text style={{ fontSize: 16 }}>Prix de détail</Text>
             <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.prixCoffret}</Text>
         </View>
 
 
-        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
+        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 10 }}>
             <TextInput value={nip} style={styles.input} placeholder="Nip employé" placeholderTextColor="#404040"
                 onChange={(e) => (setNip(e.nativeEvent.text))}
             />
         </View>
 
 
-        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
+        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 10 }}>
             <TextInput value={facture} style={styles.input} placeholder="Facture" placeholderTextColor="#404040"
                 onChange={(e) => (setFacture(e.nativeEvent.text))}
             />
         </View>
 
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-            <Button
-                onPress={async () => {
+            {facture.length > 0 && nip.length > 0 ?
+
+                <Button
+
+                    onPress={async () => {
 
 
+                        if (facture.length == 0) {
+                            setShowToast(true);
 
-                    if (facture.length == 0) {
-                        setShowToast(true);
+                            Toast.show({
+                                type: 'numeroDeFacturePasRempli',
+                                autoHide: Platform.OS == "ios" ? false : true,
+                                position: 'bottom',
+                            });
 
-                        Toast.show({
-                            type: 'numeroDeFacturePasRempli',
-                            autoHide: Platform.OS == "ios" ? false : true,
-                            position: 'bottom',
-                        });
+                        } else if (nip.length == 0) {
+                            setShowToast(true);
 
-                    } else if (nip.length == 0) {
-                        setShowToast(true);
+                            Toast.show({
+                                type: 'nipPasRempli',
+                                autoHide: Platform.OS == "ios" ? false : true,
+                                position: 'bottom',
+                            });
 
-                        Toast.show({
-                            type: 'nipPasRempli',
-                            autoHide: Platform.OS == "ios" ? false : true,
-                            position: 'bottom',
-                        });
-
-                    } else {
-                        let activation = await eliotActivateCard(route.params.noDeCarteFM, route.params.noDeCarte, facture, SyncStorage.get('codeDeSecurite'), nip);
-
-                        if (activation.success) {
-                            setSuccess(true);
                         } else {
-                            if (activation.error == "nipEmploye") {
-                                setShowToast(true);
+                            let activation = await eliotActivateCard(route.params.noDeCarteFM, route.params.noDeCarte, facture, SyncStorage.get('codeDeSecurite'), nip);
 
-                                Toast.show({
-                                    type: 'nipInvalide',
-                                    autoHide: Platform.OS == "ios" ? false : true,
-                                    position: 'bottom',
-                                });
-
+                            if (activation.success) {
+                                setSuccess(true);
                             } else {
-                                setShowToast(true);
+                                if (activation.error == "nipEmploye") {
+                                    setShowToast(true);
 
-                                Toast.show({
-                                    type: 'erreurInconnue',
-                                    autoHide: Platform.OS == "ios" ? false : true,
-                                    position: 'bottom',
-                                });
+                                    Toast.show({
+                                        type: 'nipInvalide',
+                                        autoHide: Platform.OS == "ios" ? false : true,
+                                        position: 'bottom',
+                                    });
+
+
+                                } else if (activation.error.includes("Carte déjà activée")) {
+                                    setShowToast(true);
+
+                                    Toast.show({
+                                        type: 'carteDejaActiver',
+                                        autoHide: Platform.OS == "ios" ? false : true,
+                                        position: 'bottom',
+                                    });
+
+                                } else if (activation.error.includes("Certificat inexistant")) {
+                                    setShowToast(true);
+
+                                    Toast.show({
+                                        type: 'certificatInexistant',
+                                        autoHide: Platform.OS == "ios" ? false : true,
+                                        position: 'bottom',
+                                    });
+
+                                } else {
+                                    setShowToast(true);
+
+                                    Toast.show({
+                                        type: 'erreurInconnue',
+                                        autoHide: Platform.OS == "ios" ? false : true,
+                                        position: 'bottom',
+                                    });
+                                }
                             }
                         }
+
+
+
+                        // await getCardInfo();
                     }
+                    }
+                    style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
+                >
+                    <Text style={{ fontSize: 14, color: 'white' }}>ACTIVER</Text>
+                </Button>
+                : null}
 
-
-
-                    // await getCardInfo();
-                }}
-                style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
-            >
-                <Text style={{ fontSize: 14, color: 'white' }}>ACTIVER</Text>
-            </Button>
         </View>
 
 
@@ -259,23 +321,31 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
             </Button>
         </View>
 
-        {Platform.OS == 'ios' ?
-            <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
-                <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-            </View>
-
-            :
 
 
-            <View style={{ zIndex: 9999, width: '96%', opacity: showToast ? 1 : 0, bottom: 50, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black' }}>
-                {showToast ?
+
+
+
+
+        {
+            Platform.OS == 'ios' ?
+                <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
                     <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+                </View>
 
-                    :
-                    <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} style={{ display: "none" }} />
+                :
 
-                }
-            </View>}
+
+                <View style={{ zIndex: 9999, width: '96%', opacity: showToast ? 1 : 0, bottom: 50, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black' }}>
+                    {showToast ?
+                        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+
+                        :
+                        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+
+                    }
+                </View>
+        }
 
 
 
