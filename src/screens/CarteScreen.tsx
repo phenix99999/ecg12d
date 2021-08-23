@@ -6,7 +6,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { LoginStackParamList, RootStackParamList } from "../types";
 import SyncStorage from 'sync-storage';
 import { Camera } from 'expo-camera';
-
+import En from '../../en.json'
 import Torch from 'react-native-torch';
 
 import { BarCodeScanner } from 'expo-barcode-scanner';
@@ -56,12 +56,50 @@ const toastConfig = {
             }
         </View>
     ),
+    nbCaractereInvalideCarteE: () => (
+        <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+
+                <Text style={{ color: 'white' }}>Please check the card numbers entered. You must enter 21 digits.</Text>
+            </View>
+
+            {Platform.OS == "ios" ?
+
+                <TouchableOpacity onPress={() =>
+                    Toast.hide()
+
+                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+
+                :
+                null
+            }
+        </View>
+    ),
     carteInvalide: () => (
         <View style={{ height: Platform.OS === "ios" ? 200 : 150, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '95%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Si le problème persiste, il se peut que cette carte ne soit pas enregistrée dans notre système.
-                Le client peut contacter le service à la clientèle Coffrets Prestige au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
+                Le client peut contacter le service à la clientèle Giftjoy au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
+                </Text>
+            </View>
+            {Platform.OS == "ios" ?
+
+                <View style={{ width: '20%', justifyContent: 'center', alignItems: 'center' }}>
+
+                    <TouchableOpacity onPress={() => Toast.hide()} style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+                </View>
+                :
+
+                null}
+        </View>
+    ),
+    carteInvalideE: () => (
+        <View style={{ height: Platform.OS === "ios" ? 200 : 150, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '95%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+
+                <Text style={{ color: 'white' }}>Please check the card numbers entered. If the problem persists, this card may not be registered in our system.
+                The customer can contact Giftjoy customer service at 1800.701.9575. Please do not honor the service until the card is registered and activated.
                 </Text>
             </View>
             {Platform.OS == "ios" ?
@@ -93,13 +131,14 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
     const [sound, setSound] = React.useState();
     const [noDeCarteAutomatique, setNoDeCarteAutomatique] = React.useState("");
 
+    const [isEnglish, setIsEnglish] = React.useState<Boolean>(false);
+    const [langChange, setLangChange] = React.useState(SyncStorage.get('language') != null ? SyncStorage.get('language') : 'en');
+
+
     async function onLoginPartenaire() {
         let auth = await authentificationGX(authStore.username, authStore.password);
         return auth;
     }
-
-
-
 
     async function getCardInfo() {
 
@@ -123,12 +162,20 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
         if (noDeCarte.length != 21) {
 
             setShowToast(true);
-            // alert("ICI");
-            Toast.show({
-                type: 'nbCaractereInvalideCarte',
-                autoHide: Platform.OS == "ios" ? false : true,
-                position: 'bottom',
-            });
+            if(langChange == 'en'){
+                Toast.show({
+                    type: 'nbCaractereInvalideCarteE',
+                    autoHide: Platform.OS == "ios" ? false : true,
+                    position: 'bottom',
+                });
+            }else{
+                Toast.show({
+                    type: 'nbCaractereInvalideCarte',
+                    autoHide: Platform.OS == "ios" ? false : true,
+                    position: 'bottom',
+                });
+            }
+           
         } else {
             setLoading(true);
 
@@ -142,11 +189,20 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
             if (cardInfo.length == 0) {
                 setLoading(false);
                 setShowToast(true);
-                Toast.show({
-                    type: 'carteInvalide',
-                    autoHide: Platform.OS == "ios" ? false : true,
-                    position: 'bottom',
-                });
+                if(langChange =='en' ){
+                    Toast.show({
+                        type: 'carteInvalideE',
+                        autoHide: Platform.OS == "ios" ? false : true,
+                        position: 'bottom',
+                    });
+                }else{
+                    Toast.show({
+                        type: 'carteInvalide',
+                        autoHide: Platform.OS == "ios" ? false : true,
+                        position: 'bottom',
+                    });
+                }   
+               
             } else {
                 lienCoffretLogo = cardInfo[0]['COFFRETS_dans_CM::CP_Coffret_Logo'];
                 lienCoffretLogo = "https://" + global.fmServer + lienCoffretLogo.replace(/&amp;/g, '&');
@@ -155,13 +211,15 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                 balanceGiveX = cardInfo[0]['Givex_balance'];
                 setShowToast(false);
                 encaissementPartiel = cardInfo[0]['COFFRETS_dans_CM::Flag_encaissement_partiel'];
-                navigation.navigate(navigateTo, { lienImage: lienCoffretLogo, nomCoffret: nomCoffret, prixCoffret: prixCoffret, balanceGiveX: balanceGiveX, noDeCarte: noDeCarte, noDeCarteFM: noDeCarteFM, encaissementPartiel: encaissementPartiel });
+                navigation.navigate(navigateTo, { lienImage: lienCoffretLogo, nomCoffret: nomCoffret,
+                     prixCoffret: prixCoffret, balanceGiveX: balanceGiveX, noDeCarte: noDeCarte, noDeCarteFM: noDeCarteFM, encaissementPartiel: encaissementPartiel });
                 setLoading(false);
             }
         }
 
 
     }
+
 
 
     async function playBip() {
@@ -250,9 +308,33 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
                             <Image source={require('../assets/images/headerTitle.png')} resizeMode={'contain'} style={{ alignItems: 'center', margin: 8, width: 200, height: 50 }} />
                         </Body>
-                        <Right>
+                         <Right>
+                         <TouchableOpacity   style={{ alignItems: 'center', justifyContent: 'center',marginRight:15,
+                            marginTop: 5}} onPress ={() =>{
+                                if(isEnglish == true){
+                                    setLangChange('en');
+                                    SyncStorage.set('language','en');
+                                }else if (isEnglish == false){
+                                    setLangChange('fr');
+                                    SyncStorage.set('language','fr');
+                                }
+                                setIsEnglish(!isEnglish);
+                            
+                                
+                            }}>
+                             
 
-                        </Right>
+                        { isEnglish ?      <Image 
+                                  source={require('../assets/images/drapeu_Canada.png')}
+                                  style ={{height : 35, width:35, borderRadius : 35/2}} /> :      <Image 
+                                  source={require('../assets/images/imagefrancais.jpeg')}
+                                  style ={{height : 35, width:35, borderRadius : 35/2}} />}
+                               { isEnglish ? <Text style={{fontSize:25,textAlign:'center',color:'white'}}>En</Text> : <Text style={{fontSize:25,color:'white'}}>Fr</Text>}
+                            </TouchableOpacity>
+                                      
+                                
+               
+                </Right>
                     </Row>
                 </SafeAreaView>
 
@@ -328,7 +410,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
                                         style={{ justifyContent: 'center', alignItems: 'center' }}>
                                         <Button light style={{ width: 200, justifyContent: 'center', alignItems: 'center' }} onPress={() => setShowBarCodeScanner(true)}>
-                                            <Text style={{ color: 'black' }}>NUMÉRISER</Text>
+                                        <Text style={{ color: 'black' }}>{langChange == 'en' ? `${En.Numériser}` :'NUMÉRISER'}</Text>
                                         </Button>
 
                                     </View>
@@ -351,7 +433,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                                 setNoDeCarteManuel(e.nativeEvent.text)
                             }
                             }
-                            placeholder="Numéro de carte"
+                            placeholder={langChange == 'en' ?`${En["Numéro de la carte"]}`: "Numéro de carte"}
                         />
                         <View style={{ flexDirection: 'row', top: 55, alignItems: 'center', justifyContent: 'center', zIndex: 1 }}>
                             <Button
@@ -365,7 +447,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                             >
 
                                 {!isLoading ?
-                                    <Text style={{ fontSize: 14, color: 'white' }}> SOUMETTRE </Text>
+                                     <Text style={{ fontSize: 14, color: 'white' }}> {langChange == 'en' ? `${En["Soumettre "]} `:'SOUMETTRE'} </Text>
 
                                     :
                                     <ActivityIndicator size="large" color="white" />
