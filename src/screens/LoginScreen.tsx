@@ -20,7 +20,7 @@ import NetworkUtils from '../utils/NetworkUtils';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { useIsFocused } from "@react-navigation/native";
 
-import {Row,Left,Right,Body } from  'native-base'
+import { Row, Left, Right, Body } from 'native-base'
 const { StatusBarManager } = NativeModules;
 import { get, execScript } from '../utils/connectorFileMaker';
 
@@ -121,24 +121,24 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
             SyncStorage.set('connectedPartenaire', true);
             SyncStorage.set('username', authStore.username);
             SyncStorage.set('password', authStore.password);
-    
+
             navigation.navigate('CarteScreen');
         } else {
             setShowToast(true);
-                if(langChange == 'en'){
-                    Toast.show({
-                        type: 'mauvaisMotDePasseE',
-                        autoHide: false,
-                        position: 'bottom',
-                    });
-                }else{
-                    Toast.show({
-                        type: 'mauvaisMotDePasseF',
-                        autoHide: false,
-                        position: 'bottom',
-                    });
-                }
-        
+            if (langChange == 'en') {
+                Toast.show({
+                    type: 'mauvaisMotDePasseE',
+                    autoHide: false,
+                    position: 'bottom',
+                });
+            } else {
+                Toast.show({
+                    type: 'mauvaisMotDePasseF',
+                    autoHide: false,
+                    position: 'bottom',
+                });
+            }
+
 
         }
 
@@ -160,20 +160,20 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
             navigation.navigate('CarteScreen');
         } else {
             setShowToast(true);
-                if(langChange == 'en'){
-                    Toast.show({
-                        type: 'mauvaisCodeSecuriteE',
-                        autoHide: false,
-                        position: 'bottom',
-                    });
-                }else{
-                    Toast.show({
-                        type: 'mauvaisCodeSecuriteF',
-                        autoHide: false,
-                        position: 'bottom',
-                    });
-                }
-              
+            if (langChange == 'en') {
+                Toast.show({
+                    type: 'mauvaisCodeSecuriteE',
+                    autoHide: false,
+                    position: 'bottom',
+                });
+            } else {
+                Toast.show({
+                    type: 'mauvaisCodeSecuriteF',
+                    autoHide: false,
+                    position: 'bottom',
+                });
+            }
+
         }
 
 
@@ -225,8 +225,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
     return (
 
-        <Root>
-            <StatusBar hidden />
+        <View>
+
 
             { isLoading ?
                 <View style={[styles.container, styles.horizontal]}>
@@ -239,45 +239,49 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
                 >
 
-                    <SafeAreaView style={{ backgroundColor: '#231F20', height: Platform.OS == "ios" ? 170 : 130, width: '100%' }}>
+                    <SafeAreaView style={{ backgroundColor: '#231F20', height: Platform.OS == "ios" ? 170 : 180, width: '100%', }}>
                         <Row>
-                  
-                        <Left>
-           
-                        </Left>
-                        <Body>
-                        <Image source={require('../assets/images/headerTitle.png')} resizeMode={'contain'} style={{ alignItems: 'center',
-                         margin: 8, width: 200, height: 50 }} />
-                          
-                        </Body>
-                      
-                      <Right>
-                      <TouchableOpacity   style={{ alignItems: 'center', justifyContent: 'center',marginRight:15,
-                            marginTop: 5}} onPress ={() =>{
-                                if(isEnglish == true){
-                                    setLangChange('en');
-                                    SyncStorage.set('language','en');
-                                }else if (isEnglish == false){
-                                    setLangChange('fr');
-                                    SyncStorage.set('language','fr');
-                                }
-                                setIsEnglish(!isEnglish);
-                            
-                                
-                            }}>
-                             
 
-                        { isEnglish ?      <Image 
-                                  source={require('../assets/images/drapeu_Canada.png')}
-                                  style ={{height : 35, width:35, borderRadius : 35/2}} /> :      <Image 
-                                  source={require('../assets/images/imagefrancais.jpeg')}
-                                  style ={{height : 35, width:35, borderRadius : 35/2}} />}
-                               { isEnglish ? <Text style={{fontSize:25,textAlign:'center',color:'white'}}>En</Text> : <Text style={{fontSize:25,color:'white'}}>Fr</Text>}
-                            </TouchableOpacity>
-                                      
-                     
-                      </Right>
-                      </Row>
+                            <Left>
+
+                            </Left>
+                            <Body style ={{marginTop: Platform.OS == "ios" ? null :40}}>
+                                <Image source={require('../assets/images/headerTitle.png')} resizeMode={'contain'} style={{
+                                    alignItems: 'center',
+                                    margin: 8, width: 200, height: 50
+                                }} />
+
+                            </Body>
+
+                            <Right style ={{marginTop: Platform.OS == "ios" ? null :  40}}>
+                                <TouchableOpacity style={{
+                                    alignItems: 'center', justifyContent: 'center', marginRight: 15,
+                                    marginTop: 5
+                                }} onPress={() => {
+                                    if (isEnglish == true) {
+                                        setLangChange('en');
+                                        SyncStorage.set('language', 'en');
+                                    } else if (isEnglish == false) {
+                                        setLangChange('fr');
+                                        SyncStorage.set('language', 'fr');
+                                    }
+                                    setIsEnglish(!isEnglish);
+
+
+                                }}>
+
+
+                                    {isEnglish ? <Image
+                                        source={require('../assets/images/drapeu_Canada.png')}
+                                        style={{ height: 35, width: 35, borderRadius: 35 / 2 }} /> : <Image
+                                        source={require('../assets/images/francais.png')}
+                                        style={{ height: 35, width: 35, borderRadius: 35 / 2 }} />}
+                                    {isEnglish ? <Text style={{ fontSize: 25, textAlign: 'center', color: 'white' }}>En</Text> : <Text style={{ fontSize: 25, color: 'white' }}>Fr</Text>}
+                                </TouchableOpacity>
+
+
+                            </Right>
+                        </Row>
                         {/* <View style={{ height: 80, justifyContent: 'center', alignItems: 'center',backgroundColor:'yellow' }}>
                             <Image source={require('../assets/images/logo_vide_noir_giftjoy-01.png')}
                              resizeMode={'contain'} style={{ alignItems: 'center', margin: 8, width: 200, height: 50 }} />
@@ -311,7 +315,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                 }}
                             >
                                 <Text style={{ color: 'white', marginRight: 20, fontSize: isScreenPartenaire ? 13 : 11 }}>
-                                    {langChange === 'en' ?` ${En["Connexion partenaire"]}`: 'Connexion partenaire' }
+                                    {langChange === 'en' ? ` ${En["Connexion partenaire"]}` : 'Connexion partenaire'}
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={{ width: '50%', padding: 5, alignItems: 'center' }}
@@ -321,7 +325,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                 }}
                             >
                                 <Text style={{ color: 'white', marginRight: 20, fontSize: isScreenPointVente ? 13 : 11 }}>
-                                  {langChange == 'en' ? `${En["Connexion point de vente"]}` :' Connexion point de vente '}
+                                    {langChange == 'en' ? `${En["Connexion point de vente"]}` : ' Connexion point de vente '}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -347,194 +351,198 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                             null}
                     </SafeAreaView>
 
-               
+
                     {isScreenPartenaire ?
 
-<View>
+                        <View>
 
-    <Form style={styles.form}>
-        <View style={{ flexDirection: 'row', marginTop: 15,marginLeft:25,marginRight:25,justifyContent:'center' }}>
-            <Text  >{langChange == 'en' ? `${En["Connectez-vous ici si vous etes une entreprise partenaire"]}`:'Connectez-vous ici si vous êtes une entreprise partenaire.' }</Text>
-        </View>
+                            <Form style={styles.form}>
+                                <View style={{ flexDirection: 'row', marginTop: 15, marginLeft: 25, marginRight: 25, justifyContent: 'center' }}>
+                                    <Text  >{langChange == 'en' ? `${En["Connectez-vous ici si vous etes une entreprise partenaire"]}` : 'Connectez-vous ici si vous êtes une entreprise partenaire.'}</Text>
+                                </View>
 
-        <View style={{ flexDirection: 'row', marginTop: 15, height: 15 }}>
-            <Text style={{ color: 'red' }}>{badPassword ? "Votre nom d'utilisateur ou mot de passe est erronée" : "\n"} </Text>
-        </View>
-
-
-
-        <View style={{ marginTop: 15 }}>
-
-            <TextInput
-                placeholderTextColor="#404040"
-                style={{ height: 45, width: 350, borderWidth: 0.5, borderColor: badPassword ? 'red' : '#303030', padding: 7 }}
-                value={authStore.username}
-                onChange={(e) => (authStore.username = e.nativeEvent.text)}
-                placeholder={langChange =='en' ?`${En["Nom d'utilisateur"]}`:"Nom d'utilisateur"}
-            />
-
-
-            <TextInput
-                placeholderTextColor="#404040"
-
-                secureTextEntry={true}
-                value={authStore.password}
-                placeholder={langChange == 'en'? `${En["Mot de Passe"]}`:"Mot de passe"}
-                onChange={(e) => (authStore.password = e.nativeEvent.text)}
-                style={{ marginTop: 10, height: 45, width: 350, borderWidth: 0.5, borderColor: badPassword ? 'red' : '#303030', padding: 7 }}
-
-            />
-
-        </View>
-    </Form>
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-
-        <Button
-            onPress={async () => {
-              
-                await onLoginPartenaire();
-            }}
-
-
-            style={{ alignItems: 'center', justifyContent: 'center', 
-            width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
-        >
-            <Text style={{color:'white'}}> {langChange == 'en' ? `${En.Connexion}`:'Connexion'}</Text>
-        </Button>
-
-    </View>
-</View>
-
-:
-
-null}
-
-{isScreenPointVente ?
-
-<View>
-    <Form style={styles.form}>
-        <View style={{ flexDirection: 'row', marginTop: 15 }}>
-            <Text style={{ marginLeft: 25, marginRight: 25 }}>{langChange == 'en' ? `${En["Connectez-vous ici si vous êtes l'employé d'un point de vente."]}`:'Connectez-vous ici si vous êtes l\'employé d\'un point de vente.'} </Text>
-        </View>
-
-        <View style={{ flexDirection: 'row', marginTop: 15, height: 15 }}>
-            <Text style={{ color: 'red' }}>{badPassword ? "Votre nom d'utilisateur ou mot de passe est erronée" : "\n"} </Text>
-        </View>
+                                <View style={{ flexDirection: 'row', marginTop: 15, height: 15 }}>
+                                    <Text style={{ color: 'red' }}>{badPassword ? "Votre nom d'utilisateur ou mot de passe est erronée" : "\n"} </Text>
+                                </View>
 
 
 
-        <View style={{ marginTop: 15 }}>
+                                <View style={{ marginTop: 15 }}>
 
-            <TextInput
-                placeholderTextColor="#404040"
-                style={{ height: 45, width: 350, borderWidth: 0.5, borderColor: badPassword ? 'red' : '#303030', padding: 7 }}
-                value={codeDeSecurite}
-                onChange={(e) => (setCodeDeSecurite(e.nativeEvent.text))}
-                placeholder={langChange == 'en' ? `${En["Code de sécurité"]}`:"Code de sécurité"}
-            />
-
-
+                                    <TextInput
+                                        placeholderTextColor="#404040"
+                                        style={{ height: 45, width: 350, borderWidth: 0.5, borderColor: badPassword ? 'red' : '#303030', padding: 7 }}
+                                        value={authStore.username}
+                                        onChange={(e) => (authStore.username = e.nativeEvent.text)}
+                                        placeholder={langChange == 'en' ? `${En["Nom d'utilisateur"]}` : "Nom d'utilisateur"}
+                                    />
 
 
-        </View>
-    </Form>
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                                    <TextInput
+                                        placeholderTextColor="#404040"
 
-        <Button
-            onPress={async () => {
-                if (codeDeSecurite.length == 0) {
-                    setShowToast(true);
+                                        secureTextEntry={true}
+                                        value={authStore.password}
+                                        placeholder={langChange == 'en' ? `${En["Mot de Passe"]}` : "Mot de passe"}
+                                        onChange={(e) => (authStore.password = e.nativeEvent.text)}
+                                        style={{ marginTop: 10, height: 45, width: 350, borderWidth: 0.5, borderColor: badPassword ? 'red' : '#303030', padding: 7 }}
 
-                    if(langChange == 'en'){
-                        Toast.show({
-                            type: 'mauvaisCodeSecuriteE',
-                            autoHide: Platform.OS == "ios" ? false : true,
-                            position: 'bottom',
-                        });
-                    }else{
-                        Toast.show({
-                            type: 'mauvaisCodeSecuriteF',
-                            autoHide: Platform.OS == "ios" ? false : true,
-                            position: 'bottom',
-                        });
-                    }
-                }else{
-                    
-                    await onLoginEmploye()
-                }
+                                    />
 
-            }}
+                                </View>
+                            </Form>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+
+                                <Button
+                                    onPress={async () => {
+
+                                        await onLoginPartenaire();
+                                    }}
 
 
-            style={{ alignItems: 'center', justifyContent: 'center', width: 250, 
-            marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
-        >
-            <Text style={{color:'white'}}> {langChange == 'en' ? `${En.Connexion}`:'Connexion'}</Text>
-        </Button>
+                                    style={{
+                                        alignItems: 'center', justifyContent: 'center',
+                                        width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15
+                                    }}
+                                >
+                                    <Text style={{ color: 'white' }}> {langChange == 'en' ? `${En.Connexion}` : 'Connexion'}</Text>
+                                </Button>
 
-    </View>
+                            </View>
+                        </View>
 
-</View>
+                        :
 
-:
+                        null}
 
-null}
+                    {isScreenPointVente ?
 
+                        <View>
+                            <Form style={styles.form}>
+                                <View style={{ flexDirection: 'row', marginTop: 15 }}>
+                                    <Text style={{ marginLeft: 25, marginRight: 25 }}>{langChange == 'en' ? `${En["Connectez-vous ici si vous êtes l'employé d'un point de vente."]}` : 'Connectez-vous ici si vous êtes l\'employé d\'un point de vente.'} </Text>
+                                </View>
 
-
-{/* <Container style={{ flexGrow: 1, flex: 1, backgroundColor: 'transparent', top: 200 }}>
-<ScrollView style={{ width: "100%" }} contentContainerStyle={styles.content}>
-    <Content style={{ flexGrow: 1, flex: 1, flexDirection: "row" }}>
-        <View style={[styles.subContainer, { justifyContent: "flex-start" }]}>
-            <Form style={styles.form}>
-                <TextInput
-                    placeholderTextColor="#404040"
-                    style={{ height: 45, width: 200, borderWidth: 0.5, borderColor: '#303030', padding: 7 }}
-                    value={authStore.username}
-                    onChange={(e) => (authStore.username = e.nativeEvent.text)}
-                    placeholder="Nom d'utilisateur"
-                />
-                <TextInput
-                    placeholderTextColor="#404040"
-                    secureTextEntry={true}
-                    value={authStore.password}
-                    placeholder="Mot de passe"
-                    onChange={(e) => (authStore.password = e.nativeEvent.text)}
-                    style={{ marginTop: 10, height: 45, width: 200, borderWidth: 0.5, borderColor: '#303030', padding: 7 }}
-                />
-            </Form>
-            <Button
-                onPress={async () => {
-                    await onLogin()
-                }}
-                style={{ justifyContent: 'center', marginTop: 52, backgroundColor: "#1f4598", height: 40, width: '100%', borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
-            >
-                <Text> Connexion</Text>
-            </Button>
-        </View>
-    </Content>
-</ScrollView>
-</Container> */}
-{Platform.OS == 'ios' ?
-<View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
-    <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-</View>
-
-:
-
-
-<View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black' }}>
-    {showToast ?
-        <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-
-        : null}
-</View>}
-</ImageBackground>
-}
+                                <View style={{ flexDirection: 'row', marginTop: 15, height: 15 }}>
+                                    <Text style={{ color: 'red' }}>{badPassword ? "Votre nom d'utilisateur ou mot de passe est erronée" : "\n"} </Text>
+                                </View>
 
 
 
-        </Root >
+                                <View style={{ marginTop: 15 }}>
+
+                                    <TextInput
+                                        placeholderTextColor="#404040"
+                                        style={{ height: 45, width: 350, borderWidth: 0.5, borderColor: badPassword ? 'red' : '#303030', padding: 7 }}
+                                        value={codeDeSecurite}
+                                        onChange={(e) => (setCodeDeSecurite(e.nativeEvent.text))}
+                                        placeholder={langChange == 'en' ? `${En["Code de sécurité"]}` : "Code de sécurité"}
+                                    />
+
+
+
+
+                                </View>
+                            </Form>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+
+                                <Button
+                                    onPress={async () => {
+                                        if (codeDeSecurite.length == 0) {
+                                            setShowToast(true);
+
+                                            if (langChange == 'en') {
+                                                Toast.show({
+                                                    type: 'mauvaisCodeSecuriteE',
+                                                    autoHide: Platform.OS == "ios" ? false : true,
+                                                    position: 'bottom',
+                                                });
+                                            } else {
+                                                Toast.show({
+                                                    type: 'mauvaisCodeSecuriteF',
+                                                    autoHide: Platform.OS == "ios" ? false : true,
+                                                    position: 'bottom',
+                                                });
+                                            }
+                                        } else {
+
+                                            await onLoginEmploye()
+                                        }
+
+                                    }}
+
+
+                                    style={{
+                                        alignItems: 'center', justifyContent: 'center', width: 250,
+                                        marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15
+                                    }}
+                                >
+                                    <Text style={{ color: 'white' }}> {langChange == 'en' ? `${En.Connexion}` : 'Connexion'}</Text>
+                                </Button>
+
+                            </View>
+
+                        </View>
+
+                        :
+
+                        null}
+
+
+
+                    {/* <Container style={{ flexGrow: 1, flex: 1, backgroundColor: 'transparent', top: 200 }}>
+            <ScrollView style={{ width: "100%" }} contentContainerStyle={styles.content}>
+                <Content style={{ flexGrow: 1, flex: 1, flexDirection: "row" }}>
+                    <View style={[styles.subContainer, { justifyContent: "flex-start" }]}>
+                        <Form style={styles.form}>
+                            <TextInput
+                                placeholderTextColor="#404040"
+                                style={{ height: 45, width: 200, borderWidth: 0.5, borderColor: '#303030', padding: 7 }}
+                                value={authStore.username}
+                                onChange={(e) => (authStore.username = e.nativeEvent.text)}
+                                placeholder="Nom d'utilisateur"
+                            />
+                            <TextInput
+                                placeholderTextColor="#404040"
+                                secureTextEntry={true}
+                                value={authStore.password}
+                                placeholder="Mot de passe"
+                                onChange={(e) => (authStore.password = e.nativeEvent.text)}
+                                style={{ marginTop: 10, height: 45, width: 200, borderWidth: 0.5, borderColor: '#303030', padding: 7 }}
+                            />
+                        </Form>
+                        <Button
+                            onPress={async () => {
+                                await onLogin()
+                            }}
+                            style={{ justifyContent: 'center', marginTop: 52, backgroundColor: "#1f4598", height: 40, width: '100%', borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
+                        >
+                            <Text> Connexion</Text>
+                        </Button>
+                    </View>
+                </Content>
+            </ScrollView>
+            </Container> */}
+                    {Platform.OS == 'ios' ?
+                        <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
+                            <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+                        </View>
+
+                        :
+
+
+                        <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black' }}>
+                            {showToast ?
+                                <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+
+                                : null}
+                        </View>}
+                </ImageBackground>
+            }
+
+
+
+        </View >
     );
 };
 export default inject("authStore")(observer(LoginScreen));

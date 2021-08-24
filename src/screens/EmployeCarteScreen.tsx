@@ -277,15 +277,15 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
     const authHeader = 'Basic ' + base64.encode(`${"Alain Simoneau"}:${"4251"}`);
     let render = <View style={{ height: '100%', backgroundColor: 'white' }}>
-        <SafeAreaView style={{ backgroundColor: '#231F20', height: 100, width: '100%' }}>
+        <SafeAreaView style={{ backgroundColor: '#231F20',  height: Platform.OS == "ios" ? 100 : 120, width: '100%' }}>
             <Row>
-                <Left>
+                <Left style={{marginTop: Platform.OS == "ios" ? null :30}}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Icon name="arrow-back" type="MaterialIcons" style={{ color: 'white', marginLeft: 15, fontWeight: 'bold' }}></Icon>
                     </TouchableOpacity>
                 </Left>
-                <Body><Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>{langChange == 'en' ? `${En.Activation}` : 'Activation'}</Text></Body>
-                <Right>
+                <Body ><Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold',marginTop:Platform.OS == "ios" ?null : 30 }}>{langChange == 'en' ? `${En.Activation}` : 'Activation'}</Text></Body>
+                <Right style={{marginTop:Platform.OS == "ios" ? null : 40}}>
                 <TouchableOpacity   style={{ alignItems: 'center', justifyContent: 'center',marginRight:15,
                       marginBottom: 5}} onPress ={() =>{
                           if(isEnglish == true){
@@ -304,7 +304,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
                   { isEnglish ?      <Image 
                             source={require('../assets/images/drapeu_Canada.png')}
                             style ={{height : 35, width:35, borderRadius : 35/2}} /> :      <Image 
-                            source={require('../assets/images/imagefrancais.jpeg')}
+                            source={require('../assets/images/francais.png')}
                             style ={{height : 35, width:35, borderRadius : 35/2}} />}
                          { isEnglish ? <Text style={{fontSize:25,textAlign:'center',color:'white'}}>En</Text> : <Text style={{fontSize:25,color:'white'}}>Fr</Text>}
                       </TouchableOpacity>

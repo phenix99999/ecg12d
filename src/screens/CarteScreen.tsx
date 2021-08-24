@@ -282,17 +282,16 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
 
         <Root>
-            <StatusBar hidden />
 
             <View
             >
 
 
-                <SafeAreaView style={{ backgroundColor: '#231F20', height: 122, width: '100%' }}>
+                <SafeAreaView style={{ backgroundColor: '#231F20', height: Platform.OS == "ios" ? 170 : 150, width: '100%' }}>
                     <Row>
 
 
-                        <Left style={{ marginLeft: 10 }}>
+                        <Left style={{ marginLeft: 8,marginTop:Platform.OS == "ios" ? null : 40 }}>
                             <Button
                                 transparent
                                 onPress={async () => {
@@ -304,11 +303,11 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                             </Button>
                         </Left>
 
-                        <Body style={{ height: 80 }}>
+                        <Body style={{ height: 80,marginTop: Platform.OS == "ios" ? null : 40 }}>
 
                             <Image source={require('../assets/images/headerTitle.png')} resizeMode={'contain'} style={{ alignItems: 'center', margin: 8, width: 200, height: 50 }} />
                         </Body>
-                         <Right>
+                         <Right style ={{marginTop:Platform.OS == "ios" ? null : 40}}>
                          <TouchableOpacity   style={{ alignItems: 'center', justifyContent: 'center',marginRight:15,
                             marginTop: 5}} onPress ={() =>{
                                 if(isEnglish == true){
@@ -327,7 +326,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                         { isEnglish ?      <Image 
                                   source={require('../assets/images/drapeu_Canada.png')}
                                   style ={{height : 35, width:35, borderRadius : 35/2}} /> :      <Image 
-                                  source={require('../assets/images/imagefrancais.jpeg')}
+                                  source={require('../assets/images/francais.png')}
                                   style ={{height : 35, width:35, borderRadius : 35/2}} />}
                                { isEnglish ? <Text style={{fontSize:25,textAlign:'center',color:'white'}}>En</Text> : <Text style={{fontSize:25,color:'white'}}>Fr</Text>}
                             </TouchableOpacity>
