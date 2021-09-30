@@ -34,6 +34,9 @@ import { get, execScript } from '../utils/connectorFileMaker';
 import { Sound } from "react-native-sound";
 import NetworkUtils from '../utils/NetworkUtils';
 
+import { useFocusEffect } from '@react-navigation/native';
+
+
 const { StatusBarManager } = NativeModules;
 
 const toastConfig = {
@@ -132,7 +135,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
     const [noDeCarteAutomatique, setNoDeCarteAutomatique] = React.useState("");
 
     const [isEnglish, setIsEnglish] = React.useState<Boolean>(false);
-    const [langChange, setLangChange] = React.useState(SyncStorage.get('language') != null ? SyncStorage.get('language') : 'en');
+    const [langChange, setLangChange] = React.useState("");
 
 
     async function onLoginPartenaire() {
@@ -162,20 +165,20 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
         if (noDeCarte.length != 21) {
 
             setShowToast(true);
-            if(langChange == 'en'){
+            if (langChange == 'en') {
                 Toast.show({
                     type: 'nbCaractereInvalideCarteE',
                     autoHide: Platform.OS == "ios" ? false : true,
                     position: 'bottom',
                 });
-            }else{
+            } else {
                 Toast.show({
                     type: 'nbCaractereInvalideCarte',
                     autoHide: Platform.OS == "ios" ? false : true,
                     position: 'bottom',
                 });
             }
-           
+
         } else {
             setLoading(true);
 
@@ -189,20 +192,20 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
             if (cardInfo.length == 0) {
                 setLoading(false);
                 setShowToast(true);
-                if(langChange =='en' ){
+                if (langChange == 'en') {
                     Toast.show({
                         type: 'carteInvalideE',
                         autoHide: Platform.OS == "ios" ? false : true,
                         position: 'bottom',
                     });
-                }else{
+                } else {
                     Toast.show({
                         type: 'carteInvalide',
                         autoHide: Platform.OS == "ios" ? false : true,
                         position: 'bottom',
                     });
-                }   
-               
+                }
+
             } else {
                 lienCoffretLogo = cardInfo[0]['COFFRETS_dans_CM::CP_Coffret_Logo'];
                 lienCoffretLogo = "https://" + global.fmServer + lienCoffretLogo.replace(/&amp;/g, '&');
@@ -211,8 +214,10 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                 balanceGiveX = cardInfo[0]['Givex_balance'];
                 setShowToast(false);
                 encaissementPartiel = cardInfo[0]['COFFRETS_dans_CM::Flag_encaissement_partiel'];
-                navigation.navigate(navigateTo, { lienImage: lienCoffretLogo, nomCoffret: nomCoffret,
-                     prixCoffret: prixCoffret, balanceGiveX: balanceGiveX, noDeCarte: noDeCarte, noDeCarteFM: noDeCarteFM, encaissementPartiel: encaissementPartiel });
+                navigation.navigate(navigateTo, {
+                    lienImage: lienCoffretLogo, nomCoffret: nomCoffret,
+                    prixCoffret: prixCoffret, balanceGiveX: balanceGiveX, noDeCarte: noDeCarte, noDeCarteFM: noDeCarteFM, encaissementPartiel: encaissementPartiel
+                });
                 setLoading(false);
             }
         }
@@ -231,30 +236,89 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
         setFlash("off");
         await sound.playAsync();
     }
+    useFocusEffect(
 
-    React.useEffect(() => {
-        setLoading(false);
-        const getPermissions = async () => {
-            const { status } = await BarCodeScanner.requestPermissionsAsync();
-            // const cameraAllowed = await Torch.requestCameraPermission(
-            //     'Camera Permissions', // dialog title
-            //     'We require camera permissions to use the torch on the back of your phone.' // dialog body
-            // );
+        React.useCallback(() => {
 
-            setHasPermission(status === 'granted');
-        }
-        getPermissions();
+            setLoading(false);
 
-        const getCardInfoConst = async () => {
-            await playBip();
-            await getCardInfo();
-        }
+            if (SyncStorage.get('language') == null) {
+                setLangChange('fr');
+                setIsEnglish(false);
+            } else if (SyncStorage.get('language') == 'fr') {
+                setLangChange('fr');
+                setIsEnglish(false);
+            } else if (SyncStorage.get('language') == 'en') {
+                setLangChange('en');
+                setIsEnglish(true);
+            }
 
-        if (noDeCarteAutomatique.length == 21) {
-            getCardInfoConst();
-        }
 
-    }, [noDeCarteAutomatique]);
+
+
+            const getPermissions = async () => {
+                const { status } = await BarCodeScanner.requestPermissionsAsync();
+                // const cameraAllowed = await Torch.requestCameraPermission(
+                //     'Camera Permissions', // dialog title
+                //     'We require camera permissions to use the torch on the back of your phone.' // dialog body
+                // );
+
+                setHasPermission(status === 'granted');
+            }
+            getPermissions();
+
+            const getCardInfoConst = async () => {
+                await playBip();
+                await getCardInfo();
+            }
+
+            if (noDeCarteAutomatique.length == 21) {
+                getCardInfoConst();
+            }
+
+        }, [noDeCarteAutomatique]));
+
+
+
+    // React.useEffect(() => {
+    //     setLoading(false);
+
+    //     alert(SyncStorage.get('language'));
+    //     if (SyncStorage.get('language') == null) {
+    //         setLangChange('fr');
+    //         setIsEnglish(false);
+    //     } else if (SyncStorage.get('language') == 'fr') {
+    //         setLangChange('fr');
+    //         setIsEnglish(false);
+    //     } else if (SyncStorage.get('language') == 'en') {
+    //         setLangChange('en');
+    //         setIsEnglish(true);
+    //     }
+
+
+
+
+    //     const getPermissions = async () => {
+    //         const { status } = await BarCodeScanner.requestPermissionsAsync();
+    //         // const cameraAllowed = await Torch.requestCameraPermission(
+    //         //     'Camera Permissions', // dialog title
+    //         //     'We require camera permissions to use the torch on the back of your phone.' // dialog body
+    //         // );
+
+    //         setHasPermission(status === 'granted');
+    //     }
+    //     getPermissions();
+
+    //     const getCardInfoConst = async () => {
+    //         await playBip();
+    //         await getCardInfo();
+    //     }
+
+    //     if (noDeCarteAutomatique.length == 21) {
+    //         getCardInfoConst();
+    //     }
+
+    // }, [noDeCarteAutomatique]);
 
     const handleBarCodeScanned = ({ type, data }) => {
         // setScanned(true);
@@ -291,7 +355,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                     <Row>
 
 
-                        <Left style={{ marginLeft: 8,marginTop:Platform.OS == "ios" ? null : 40 }}>
+                        <Left style={{ marginLeft: 8, marginTop: Platform.OS == "ios" ? null : 40 }}>
                             <Button
                                 transparent
                                 onPress={async () => {
@@ -303,37 +367,39 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                             </Button>
                         </Left>
 
-                        <Body style={{ height: 80,marginTop: Platform.OS == "ios" ? null : 40 }}>
+                        <Body style={{ height: 80, marginTop: Platform.OS == "ios" ? null : 40 }}>
 
                             <Image source={require('../assets/images/headerTitle.png')} resizeMode={'contain'} style={{ alignItems: 'center', margin: 8, width: 200, height: 50 }} />
                         </Body>
-                         <Right style ={{marginTop:Platform.OS == "ios" ? null : 40}}>
-                         <TouchableOpacity   style={{ alignItems: 'center', justifyContent: 'center',marginRight:15,
-                            marginTop: 5}} onPress ={() =>{
-                                if(isEnglish == true){
-                                    setLangChange('en');
-                                    SyncStorage.set('language','en');
-                                }else if (isEnglish == false){
+                        <Right style={{ marginTop: Platform.OS == "ios" ? null : 40 }}>
+                            <TouchableOpacity style={{
+                                alignItems: 'center', justifyContent: 'center', marginRight: 15,
+                                marginTop: 5
+                            }} onPress={() => {
+                                if (isEnglish == true) {
                                     setLangChange('fr');
-                                    SyncStorage.set('language','fr');
+                                    SyncStorage.set('language', 'fr');
+                                } else if (isEnglish == false) {
+                                    setLangChange('en');
+                                    SyncStorage.set('language', 'en');
                                 }
                                 setIsEnglish(!isEnglish);
-                            
-                                
-                            }}>
-                             
 
-                        { isEnglish ?      <Image 
-                                  source={require('../assets/images/drapeu_Canada.png')}
-                                  style ={{height : 35, width:35, borderRadius : 35/2}} /> :      <Image 
-                                  source={require('../assets/images/francais.png')}
-                                  style ={{height : 35, width:35, borderRadius : 35/2}} />}
-                               { isEnglish ? <Text style={{fontSize:25,textAlign:'center',color:'white'}}>En</Text> : <Text style={{fontSize:25,color:'white'}}>Fr</Text>}
+
+                            }}>
+
+
+                                {isEnglish ? <Image
+                                    source={require('../assets/images/drapeu_Canada.png')}
+                                    style={{ height: 35, width: 35, borderRadius: 35 / 2 }} /> : <Image
+                                    source={require('../assets/images/drapeu_Canada.png')}
+                                    style={{ height: 35, width: 35, borderRadius: 35 / 2 }} />}
+                                {isEnglish ? <Text style={{ fontSize: 25, textAlign: 'center', color: 'white' }}>En</Text> : <Text style={{ fontSize: 25, color: 'white' }}>Fr</Text>}
                             </TouchableOpacity>
-                                      
-                                
-               
-                </Right>
+
+
+
+                        </Right>
                     </Row>
                 </SafeAreaView>
 
@@ -409,7 +475,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
                                         style={{ justifyContent: 'center', alignItems: 'center' }}>
                                         <Button light style={{ width: 200, justifyContent: 'center', alignItems: 'center' }} onPress={() => setShowBarCodeScanner(true)}>
-                                        <Text style={{ color: 'black' }}>{langChange == 'en' ? `${En.Numériser}` :'NUMÉRISER'}</Text>
+                                            <Text style={{ color: 'black' }}>{langChange == 'en' ? `${En.Numériser}` : 'NUMÉRISER'}</Text>
                                         </Button>
 
                                     </View>
@@ -432,7 +498,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                                 setNoDeCarteManuel(e.nativeEvent.text)
                             }
                             }
-                            placeholder={langChange == 'en' ?`${En["Numéro de la carte"]}`: "Numéro de carte"}
+                            placeholder={langChange == 'en' ? `${En["Numéro de la carte"]}` : "Numéro de carte"}
                         />
                         <View style={{ flexDirection: 'row', top: 55, alignItems: 'center', justifyContent: 'center', zIndex: 1 }}>
                             <Button
@@ -446,7 +512,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                             >
 
                                 {!isLoading ?
-                                     <Text style={{ fontSize: 14, color: 'white' }}> {langChange == 'en' ? `${En["Soumettre "]} `:'SOUMETTRE'} </Text>
+                                    <Text style={{ fontSize: 14, color: 'white' }}> {langChange == 'en' ? `${En["Soumettre "]} ` : 'SOUMETTRE'} </Text>
 
                                     :
                                     <ActivityIndicator size="large" color="white" />

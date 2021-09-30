@@ -109,8 +109,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
     const [isScreenPartenaire, setPartenaire] = React.useState<Boolean>(true);
     const [isScreenPointVente, setPointVente] = React.useState<Boolean>(false);
     const [showToast, setShowToast] = React.useState<Boolean>(false);
-    const [isEnglish, setIsEnglish] = React.useState<Boolean>(SyncStorage.get('language') == 'fr' ? true : false);
-    const [langChange, setLangChange] = React.useState(SyncStorage.get('language') != null ? SyncStorage.get('language') : 'en');
+    const [isEnglish, setIsEnglish] = React.useState<Boolean>(false);
+    const [langChange, setLangChange] = React.useState("");
 
     async function onLoginPartenaire() {
         let auth = await authentificationGX(authStore.username, authStore.password);
@@ -193,6 +193,20 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
     const isFocused = useIsFocused();
 
     React.useEffect(() => {
+
+
+        if (SyncStorage.get('language') == null) {
+            setLangChange('fr');
+            setIsEnglish(false);
+        } else if (SyncStorage.get('language') == 'fr') {
+            setLangChange('fr');
+            setIsEnglish(false);
+        } else if (SyncStorage.get('language') == 'en') {
+            setLangChange('en');
+            setIsEnglish(true);
+        }
+
+
         // alert(SyncStorage.get('username'));
         authStore.username = "";
         authStore.password = "";
@@ -245,7 +259,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                             <Left>
 
                             </Left>
-                            <Body style ={{marginTop: Platform.OS == "ios" ? null :40}}>
+                            <Body style={{ marginTop: Platform.OS == "ios" ? null : 40 }}>
                                 <Image source={require('../assets/images/headerTitle.png')} resizeMode={'contain'} style={{
                                     alignItems: 'center',
                                     margin: 8, width: 200, height: 50
@@ -253,17 +267,17 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
                             </Body>
 
-                            <Right style ={{marginTop: Platform.OS == "ios" ? null :  40}}>
+                            <Right style={{ marginTop: Platform.OS == "ios" ? null : 40 }}>
                                 <TouchableOpacity style={{
                                     alignItems: 'center', justifyContent: 'center', marginRight: 15,
                                     marginTop: 5
                                 }} onPress={() => {
                                     if (isEnglish == true) {
-                                        setLangChange('en');
-                                        SyncStorage.set('language', 'en');
-                                    } else if (isEnglish == false) {
                                         setLangChange('fr');
                                         SyncStorage.set('language', 'fr');
+                                    } else if (isEnglish == false) {
+                                        setLangChange('en');
+                                        SyncStorage.set('language', 'en');
                                     }
                                     setIsEnglish(!isEnglish);
 
@@ -271,11 +285,11 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                 }}>
 
 
-                                    {isEnglish ? <Image
+                                    <Image
                                         source={require('../assets/images/drapeu_Canada.png')}
-                                        style={{ height: 35, width: 35, borderRadius: 35 / 2 }} /> : <Image
-                                        source={require('../assets/images/francais.png')}
-                                        style={{ height: 35, width: 35, borderRadius: 35 / 2 }} />}
+                                        style={{ height: 35, width: 35, borderRadius: 35 / 2 }} />
+
+
                                     {isEnglish ? <Text style={{ fontSize: 25, textAlign: 'center', color: 'white' }}>En</Text> : <Text style={{ fontSize: 25, color: 'white' }}>Fr</Text>}
                                 </TouchableOpacity>
 

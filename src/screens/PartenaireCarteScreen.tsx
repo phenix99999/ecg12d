@@ -27,6 +27,8 @@ import AuthStore from "../stores/AuthStore";
 import { givexEncaissement } from '../utils/connectorGiveX';
 import { get, execScript } from '../utils/connectorFileMaker';
 
+import { useFocusEffect } from '@react-navigation/native';
+
 import NetworkUtils from '../utils/NetworkUtils';
 import Toast, { BaseToast } from 'react-native-toast-message';
 
@@ -47,8 +49,10 @@ const toastConfig = {
                 <TouchableOpacity onPress={() => {
                     Toast.hide()
                 }
-                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3,
-                 alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+                } style={{
+                    marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3,
+                    alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center'
+                }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
 
                 :
                 null
@@ -68,8 +72,10 @@ const toastConfig = {
                 <TouchableOpacity onPress={() => {
                     Toast.hide()
                 }
-                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3,
-                 alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+                } style={{
+                    marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3,
+                    alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center'
+                }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
 
                 :
                 null
@@ -163,11 +169,29 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
     const [montantAEncaisser, setMontantAEncaisser] = React.useState(null);
     const [success, setSuccess] = React.useState(false);
     const [isEnglish, setIsEnglish] = React.useState<Boolean>(false);
-    const [langChange, setLangChange] = React.useState(SyncStorage.get('language') != null ? SyncStorage.get('language') : 'en');
+    const [langChange, setLangChange] = React.useState("");
 
     if (!NetworkUtils.isNetworkAvailable()) {
         alert("Erreur de connexion");
     }
+
+    useFocusEffect(
+        React.useCallback(() => {
+            if (SyncStorage.get('language') == null) {
+                setLangChange('fr');
+                setIsEnglish(false);
+            } else if (SyncStorage.get('language') == 'fr') {
+                setLangChange('fr');
+                setIsEnglish(false);
+            } else if (SyncStorage.get('language') == 'en') {
+                setLangChange('en');
+                setIsEnglish(true);
+            }
+
+        }, []));
+
+
+
 
 
     async function encaisser() {
@@ -178,20 +202,20 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
             if (!montantAEncaisser || montantAEncaisser == "0" || montantAEncaisser == "0.0" || montantAEncaisser == "0.00" || montantAEncaisser.search("^[0-9]+(\.[0-9]{1,2})?$") == -1) {
                 error = true;
                 setShowToast(true);
-                if(langChange == 'fr'){
+                if (langChange == 'fr') {
                     Toast.show({
                         type: 'balanceInvalide',
                         autoHide: Platform.OS == "ios" ? false : true,
                         position: 'bottom',
                     });
-                }else{
+                } else {
                     Toast.show({
                         type: 'balanceInvalideE',
                         autoHide: Platform.OS == "ios" ? false : true,
                         position: 'bottom',
                     });
                 }
-          
+
             } else {
                 if (montantAEncaisser > montant) {
                     error = true;
@@ -218,14 +242,14 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
             if (returnEncaissement.success) {
                 setSuccess(true);
             } else {
-                if(langChange == 'fr'){
+                if (langChange == 'fr') {
                     setShowToast(true);
                     Toast.show({
                         type: 'erreurInnatendue',
                         autoHide: Platform.OS == "ios" ? false : true,
                         position: 'bottom',
                     });
-                }else{
+                } else {
                     setShowToast(true);
                     Toast.show({
                         type: 'erreurInnatendueE',
@@ -233,7 +257,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                         position: 'bottom',
                     });
                 }
-            
+
             }
         }
 
@@ -252,9 +276,9 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                     </TouchableOpacity>
                 </Left>
                 <Body>
-                        { langChange == 'en' ? <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>{En.Encaissement}</Text> :
-                         <Text  style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Encaissement</Text>}
-                         </Body>
+                    {langChange == 'en' ? <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>{En.Encaissement}</Text> :
+                        <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Encaissement</Text>}
+                </Body>
                 <Right></Right>
             </Row>
         </SafeAreaView>
@@ -268,7 +292,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
             </View>
             <View style={{ flexDirection: 'row', marginTop: 15, alignItems: 'center', justifyContent: 'center', alignSelf: 'center' }}>
                 <Text style={{ fontSize: 24, alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
-                    {langChange == 'en' ? 'The card has been cashed for an amount of'  : 'La carte a bien été encaissée pour un montant de'} {montantAEncaisser != null ? montantAEncaisser : route.params.balanceGiveX}.
+                    {langChange == 'en' ? 'The card has been cashed for an amount of' : 'La carte a bien été encaissée pour un montant de'} {montantAEncaisser != null ? montantAEncaisser : route.params.balanceGiveX}.
                 </Text>
             </View>
 
@@ -291,40 +315,42 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
             <View style={{ height: '100%', backgroundColor: 'white' }}>
                 <SafeAreaView style={{ backgroundColor: '#231F20', height: Platform.OS == "ios" ? 100 : 120, width: '100%' }}>
                     <Row>
-                        <Left style ={{marginTop:Platform.OS == "ios" ?null: 30}}>
+                        <Left style={{ marginTop: Platform.OS == "ios" ? null : 30 }}>
                             <TouchableOpacity onPress={() => navigation.replace('CarteScreen')}>
                                 <Icon name="arrow-back" type="MaterialIcons" style={{ color: 'white', marginLeft: 15, fontWeight: 'bold' }}></Icon>
                             </TouchableOpacity>
                         </Left>
-                        <Body style ={{marginTop:Platform.OS == "ios" ? null : 30}}>
-                        { langChange == 'en' ? <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>{En.Encaissement}</Text> :
-                         <Text  style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Encaissement</Text>}
-                         </Body>
-                        <Right style ={{marginTop:Platform.OS == "ios" ? null :  35}}>
-                                <TouchableOpacity   style={{ alignItems: 'center', justifyContent: 'center',marginRight:15,
-                                   marginBottom:5}} onPress ={() =>{
-                                        if(isEnglish == true){
-                                            setLangChange('en');
-                                            SyncStorage.set('language','en');
-                                        }else if (isEnglish == false){
-                                            setLangChange('fr');
-                                            SyncStorage.set('language','fr');
-                                        }
-                                        setIsEnglish(!isEnglish);
-                                    
-                                        
-                                    }}>
-                                    
+                        <Body style={{ marginTop: Platform.OS == "ios" ? null : 30 }}>
+                            {langChange == 'en' ? <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>{En.Encaissement}</Text> :
+                                <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Encaissement</Text>}
+                        </Body>
+                        <Right style={{ marginTop: Platform.OS == "ios" ? null : 35 }}>
+                            <TouchableOpacity style={{
+                                alignItems: 'center', justifyContent: 'center', marginRight: 15,
+                                marginBottom: 5
+                            }} onPress={() => {
+                                if (isEnglish) {
+                                    setLangChange('fr');
+                                    SyncStorage.set('language', 'fr');
+                                } else {
+                                    setLangChange('en');
+                                    SyncStorage.set('language', 'en');
+                                }
+                                setIsEnglish(!isEnglish);
 
-                                { isEnglish ?      <Image 
-                                            source={require('../assets/images/drapeu_Canada.png')}
-                                            style ={{height : 35, width:35, borderRadius : 35/2}} /> :      <Image 
-                                            source={require('../assets/images/francais.png')}
-                                            style ={{height : 35, width:35, borderRadius : 35/2}} />}
-                                        { isEnglish ? <Text style={{fontSize:25,textAlign:'center',color:'white'}}>En</Text> : <Text style={{fontSize:25,color:'white'}}>Fr</Text>}
-                                    </TouchableOpacity>
-                                                
-                    
+
+                            }}>
+
+
+                                {isEnglish ? <Image
+                                    source={require('../assets/images/drapeu_Canada.png')}
+                                    style={{ height: 35, width: 35, borderRadius: 35 / 2 }} /> : <Image
+                                    source={require('../assets/images/drapeu_Canada.png')}
+                                    style={{ height: 35, width: 35, borderRadius: 35 / 2 }} />}
+                                {isEnglish ? <Text style={{ fontSize: 25, textAlign: 'center', color: 'white' }}>En2</Text> : <Text style={{ fontSize: 25, color: 'white' }}>Fr</Text>}
+                            </TouchableOpacity>
+
+
                         </Right>
                     </Row>
 
@@ -345,26 +371,26 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
                 </View >
                 <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
-                    <Text style={{ fontSize: 16 }}>{langChange == 'en' ? `${En.Produit} `:'Produit'}</Text>
+                    <Text style={{ fontSize: 16 }}>{langChange == 'en' ? `${En.Produit} ` : 'Produit'}</Text>
                     <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.nomCoffret}</Text>
 
                 </View>
 
                 <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
-                    <Text style={{ fontSize: 16 }}>{langChange == 'en' ? `${En["Prix de détail"]}`: 'Prix de détail'}</Text>
+                    <Text style={{ fontSize: 16 }}>{langChange == 'en' ? `${En["Prix de détail"]}` : 'Prix de détail'}</Text>
                     <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.prixCoffret}</Text>
                 </View>
 
 
                 <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
-                    <Text style={{ fontSize: 16 }}>{langChange == 'en' ? `${En.Balance}`:'Balance'}</Text>
+                    <Text style={{ fontSize: 16 }}>{langChange == 'en' ? `${En.Balance}` : 'Balance'}</Text>
                     <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.balanceGiveX}</Text>
                 </View>
 
 
                 {route.params.encaissementPartiel == true ?
                     <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15, alignItems: 'center', justifyContent: 'center' }}>
-                        <TextInput value={montantAEncaisser}  placeholder={langChange == 'en' ? 'Enter here the amount to be cashed':"Saisir ici le montant à encaisser"} placeholderTextColor="#404040"
+                        <TextInput value={montantAEncaisser} placeholder={langChange == 'en' ? 'Enter here the amount to be cashed' : "Saisir ici le montant à encaisser"} placeholderTextColor="#404040"
                             keyboardType="numeric"
                             onChange={(e) => (setMontantAEncaisser(e.nativeEvent.text))}
                         />
@@ -386,13 +412,13 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                             }}
                             style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 55, padding: 15 }}
                         >
-                        <Text style={{ fontSize: 18, color: 'white' }}>{langChange == 'en' ? `${En.Encaisser}`:'ENCAISSER'}</Text>
+                            <Text style={{ fontSize: 18, color: 'white' }}>{langChange == 'en' ? `${En.Encaisser}` : 'ENCAISSER'}</Text>
                         </Button>
                     </View>
                     :
                     <View style={{ flexDirection: 'row', marginLeft: 20, marginRight: 20, marginTop: 25 }}>
-                         <Text>{langChange == 'en' ? `${En["Cette carte a déjà été encaissé. Le client peut contacter le service à la clientele Giftjoy au 1 800 701 9575. Merci de ne pas honorer la prestation."]}`
-                          :'Cette carte a déjà été encaissée. Le client peut contacter le service à la clientèle Giftjoy au 1 800.701.9575. Merci de ne pas honorer la prestation'}.</Text>
+                        <Text>{langChange == 'en' ? `${En["Cette carte a déjà été encaissé. Le client peut contacter le service à la clientele Giftjoy au 1 800 701 9575. Merci de ne pas honorer la prestation."]}`
+                            : 'Cette carte a déjà été encaissée. Le client peut contacter le service à la clientèle Giftjoy au 1 800.701.9575. Merci de ne pas honorer la prestation'}.</Text>
                     </View>
                 }
 
@@ -407,7 +433,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
                         style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 125, backgroundColor: "white", height: 40, borderColor: '#303030', padding: 15 }}
                     >
-                         <Text style={{ fontSize: 18, color: '#007CFF' }}> {langChange == 'en' ? `${En.Annuler}`:'ANNULER'}</Text>
+                        <Text style={{ fontSize: 18, color: '#007CFF' }}> {langChange == 'en' ? `${En.Annuler}` : 'ANNULER'}</Text>
                     </Button>
                 </View>
                 {Platform.OS == 'ios' ?
