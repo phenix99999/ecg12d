@@ -5,6 +5,7 @@ import Constants from "expo-constants";
 import { StackScreenProps } from "@react-navigation/stack";
 import { LoginStackParamList, RootStackParamList } from "../types";
 import SyncStorage from 'sync-storage';
+import En from '../../en.json';
 
 import base64 from 'react-native-base64';
 
@@ -26,6 +27,8 @@ import AuthStore from "../stores/AuthStore";
 import { givexEncaissement } from '../utils/connectorGiveX';
 import { get, execScript } from '../utils/connectorFileMaker';
 
+import { useFocusEffect } from '@react-navigation/native';
+
 import NetworkUtils from '../utils/NetworkUtils';
 import Toast, { BaseToast } from 'react-native-toast-message';
 
@@ -46,14 +49,39 @@ const toastConfig = {
                 <TouchableOpacity onPress={() => {
                     Toast.hide()
                 }
-                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+                } style={{
+                    marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3,
+                    alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center'
+                }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
 
                 :
                 null
             }
         </View>
     ),
+    balanceInvalideE: () => (
 
+        <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+                <Text style={{ color: 'white' }}>The amount is invalid.</Text>
+            </View>
+
+
+            {Platform.OS == "ios" ?
+
+                <TouchableOpacity onPress={() => {
+                    Toast.hide()
+                }
+                } style={{
+                    marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3,
+                    alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center'
+                }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+
+                :
+                null
+            }
+        </View>
+    ),
     balanceInsuffisante: () => (
         <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
@@ -73,7 +101,25 @@ const toastConfig = {
             }
         </View>
     ),
+    balanceInsuffisanteE: () => (
+        <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+                <Text style={{ color: 'white' }}>The amount to be cashed must be less than the balance.</Text>
+            </View>
 
+
+            {Platform.OS == "ios" ?
+
+                <TouchableOpacity onPress={() => {
+                    Toast.hide()
+                }
+                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+
+                :
+                null
+            }
+        </View>
+    ),
     erreurInnatendue: () => (
 
         <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
@@ -94,8 +140,27 @@ const toastConfig = {
             }
         </View>
     ),
-};
+    erreurInnatendueE: () => (
 
+        <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+                <Text style={{ color: 'white' }}>An unexpected error has occurred. Please discuss this with your supplier.</Text>
+            </View>
+
+
+            {Platform.OS == "ios" ?
+
+                <TouchableOpacity onPress={() => {
+                    Toast.hide()
+                }
+                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+
+                :
+                null
+            }
+        </View>
+    ),
+};
 
 let keyboardDidHideListener;
 
@@ -103,10 +168,31 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
     const [showToast, setShowToast] = React.useState(false);
     const [montantAEncaisser, setMontantAEncaisser] = React.useState(null);
     const [success, setSuccess] = React.useState(false);
+    const [isEnglish, setIsEnglish] = React.useState<Boolean>(false);
+    const [langChange, setLangChange] = React.useState("");
 
     if (!NetworkUtils.isNetworkAvailable()) {
         alert("Erreur de connexion");
     }
+
+    useFocusEffect(
+        React.useCallback(() => {
+            if (SyncStorage.get('language') == null) {
+                setLangChange('fr');
+                setIsEnglish(false);
+            } else if (SyncStorage.get('language') == 'fr') {
+                setLangChange('fr');
+                setIsEnglish(false);
+            } else if (SyncStorage.get('language') == 'en') {
+                setLangChange('en');
+                setIsEnglish(true);
+            }
+
+        }, []));
+
+
+
+
 
     async function encaisser() {
         let montant = route.params.balanceGiveX;
@@ -116,11 +202,20 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
             if (!montantAEncaisser || montantAEncaisser == "0" || montantAEncaisser == "0.0" || montantAEncaisser == "0.00" || montantAEncaisser.search("^[0-9]+(\.[0-9]{1,2})?$") == -1) {
                 error = true;
                 setShowToast(true);
-                Toast.show({
-                    type: 'balanceInvalide',
-                    autoHide: Platform.OS == "ios" ? false : true,
-                    position: 'bottom',
-                });
+                if (langChange == 'fr') {
+                    Toast.show({
+                        type: 'balanceInvalide',
+                        autoHide: Platform.OS == "ios" ? false : true,
+                        position: 'bottom',
+                    });
+                } else {
+                    Toast.show({
+                        type: 'balanceInvalideE',
+                        autoHide: Platform.OS == "ios" ? false : true,
+                        position: 'bottom',
+                    });
+                }
+
             } else {
                 if (montantAEncaisser > montant) {
                     error = true;
@@ -147,12 +242,22 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
             if (returnEncaissement.success) {
                 setSuccess(true);
             } else {
-                setShowToast(true);
-                Toast.show({
-                    type: 'erreurInnatendue',
-                    autoHide: Platform.OS == "ios" ? false : true,
-                    position: 'bottom',
-                });
+                if (langChange == 'fr') {
+                    setShowToast(true);
+                    Toast.show({
+                        type: 'erreurInnatendue',
+                        autoHide: Platform.OS == "ios" ? false : true,
+                        position: 'bottom',
+                    });
+                } else {
+                    setShowToast(true);
+                    Toast.show({
+                        type: 'erreurInnatendueE',
+                        autoHide: Platform.OS == "ios" ? false : true,
+                        position: 'bottom',
+                    });
+                }
+
             }
         }
 
@@ -170,7 +275,10 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                         <Icon name="arrow-back" type="MaterialIcons" style={{ color: 'white', marginLeft: 15, fontWeight: 'bold' }}></Icon>
                     </TouchableOpacity>
                 </Left>
-                <Body><Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}> Encaissement</Text></Body>
+                <Body>
+                    {langChange == 'en' ? <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>{En.Encaissement}</Text> :
+                        <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Encaissement</Text>}
+                </Body>
                 <Right></Right>
             </Row>
         </SafeAreaView>
@@ -184,7 +292,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
             </View>
             <View style={{ flexDirection: 'row', marginTop: 15, alignItems: 'center', justifyContent: 'center', alignSelf: 'center' }}>
                 <Text style={{ fontSize: 24, alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
-                    La carte a bien été encaissée pour un montant de {montantAEncaisser != null ? montantAEncaisser : route.params.balanceGiveX}.
+                    {langChange == 'en' ? 'The card has been cashed for an amount of' : 'La carte a bien été encaissée pour un montant de'} {montantAEncaisser != null ? montantAEncaisser : route.params.balanceGiveX}.
                 </Text>
             </View>
 
@@ -205,15 +313,45 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
 
             <View style={{ height: '100%', backgroundColor: 'white' }}>
-                <SafeAreaView style={{ backgroundColor: '#231F20', height: 100, width: '100%' }}>
+                <SafeAreaView style={{ backgroundColor: '#231F20', height: Platform.OS == "ios" ? 100 : 120, width: '100%' }}>
                     <Row>
-                        <Left>
+                        <Left style={{ marginTop: Platform.OS == "ios" ? null : 30 }}>
                             <TouchableOpacity onPress={() => navigation.replace('CarteScreen')}>
                                 <Icon name="arrow-back" type="MaterialIcons" style={{ color: 'white', marginLeft: 15, fontWeight: 'bold' }}></Icon>
                             </TouchableOpacity>
                         </Left>
-                        <Body><Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}> Encaissement</Text></Body>
-                        <Right></Right>
+                        <Body style={{ marginTop: Platform.OS == "ios" ? null : 30 }}>
+                            {langChange == 'en' ? <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>{En.Encaissement}</Text> :
+                                <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Encaissement</Text>}
+                        </Body>
+                        <Right style={{ marginTop: Platform.OS == "ios" ? null : 35 }}>
+                            <TouchableOpacity style={{
+                                alignItems: 'center', justifyContent: 'center', marginRight: 15,
+                                marginBottom: 5
+                            }} onPress={() => {
+                                if (isEnglish) {
+                                    setLangChange('fr');
+                                    SyncStorage.set('language', 'fr');
+                                } else {
+                                    setLangChange('en');
+                                    SyncStorage.set('language', 'en');
+                                }
+                                setIsEnglish(!isEnglish);
+
+
+                            }}>
+
+
+                                {isEnglish ? <Image
+                                    source={require('../assets/images/drapeu_Canada.png')}
+                                    style={{ height: 35, width: 35, borderRadius: 35 / 2 }} /> : <Image
+                                    source={require('../assets/images/drapeu_Canada.png')}
+                                    style={{ height: 35, width: 35, borderRadius: 35 / 2 }} />}
+                                {isEnglish ? <Text style={{ fontSize: 25, textAlign: 'center', color: 'white' }}>En2</Text> : <Text style={{ fontSize: 25, color: 'white' }}>Fr</Text>}
+                            </TouchableOpacity>
+
+
+                        </Right>
                     </Row>
 
                 </SafeAreaView>
@@ -233,26 +371,26 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
                 </View >
                 <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
-                    <Text style={{ fontSize: 16 }}>Produit</Text>
+                    <Text style={{ fontSize: 16 }}>{langChange == 'en' ? `${En.Produit} ` : 'Produit'}</Text>
                     <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.nomCoffret}</Text>
 
                 </View>
 
                 <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
-                    <Text style={{ fontSize: 16 }}>Prix de détail</Text>
+                    <Text style={{ fontSize: 16 }}>{langChange == 'en' ? `${En["Prix de détail"]}` : 'Prix de détail'}</Text>
                     <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.prixCoffret}</Text>
                 </View>
 
 
                 <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
-                    <Text style={{ fontSize: 16 }}>Balance</Text>
+                    <Text style={{ fontSize: 16 }}>{langChange == 'en' ? `${En.Balance}` : 'Balance'}</Text>
                     <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.balanceGiveX}</Text>
                 </View>
 
 
                 {route.params.encaissementPartiel == true ?
                     <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15, alignItems: 'center', justifyContent: 'center' }}>
-                        <TextInput value={montantAEncaisser} placeholder="Saisir ici le montant à encaisser" placeholderTextColor="#404040"
+                        <TextInput value={montantAEncaisser} placeholder={langChange == 'en' ? 'Enter here the amount to be cashed' : "Saisir ici le montant à encaisser"} placeholderTextColor="#404040"
                             keyboardType="numeric"
                             onChange={(e) => (setMontantAEncaisser(e.nativeEvent.text))}
                         />
@@ -274,12 +412,13 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                             }}
                             style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 55, padding: 15 }}
                         >
-                            <Text style={{ fontSize: 18, color: 'white' }}>ENCAISSER</Text>
+                            <Text style={{ fontSize: 18, color: 'white' }}>{langChange == 'en' ? `${En.Encaisser}` : 'ENCAISSER'}</Text>
                         </Button>
                     </View>
                     :
                     <View style={{ flexDirection: 'row', marginLeft: 20, marginRight: 20, marginTop: 25 }}>
-                        <Text>Cette carte a déjà été encaissée. Le client peut contacter le service à la clientèle Coffrets Prestige au 1 800.701.9575. Merci de ne pas honorer la prestation.</Text>
+                        <Text>{langChange == 'en' ? `${En["Cette carte a déjà été encaissé. Le client peut contacter le service à la clientele Giftjoy au 1 800 701 9575. Merci de ne pas honorer la prestation."]}`
+                            : 'Cette carte a déjà été encaissée. Le client peut contacter le service à la clientèle Giftjoy au 1 800.701.9575. Merci de ne pas honorer la prestation'}.</Text>
                     </View>
                 }
 
@@ -294,7 +433,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
                         style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 125, backgroundColor: "white", height: 40, borderColor: '#303030', padding: 15 }}
                     >
-                        <Text style={{ fontSize: 18, color: '#007CFF' }}> ANNULER</Text>
+                        <Text style={{ fontSize: 18, color: '#007CFF' }}> {langChange == 'en' ? `${En.Annuler}` : 'ANNULER'}</Text>
                     </Button>
                 </View>
                 {Platform.OS == 'ios' ?

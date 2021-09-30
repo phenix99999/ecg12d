@@ -12,7 +12,7 @@ import LoginScreen from "../screens/LoginScreen";
 import CarteScreen from "../screens/CarteScreen";
 import EmployeCarteScreen from "../screens/EmployeCarteScreen";
 import PartenaireCarteScreen from "../screens/PartenaireCarteScreen";
-
+import En from '../../en.json'
 import SyncStorage from 'sync-storage';
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -61,11 +61,11 @@ export default class App extends Component {
                         onPress={async () => {
 
                             Alert.alert(
-                                "Attention",
-                                "Êtes-vous sur de vouloir déconnecter?",
+                               `${SyncStorage.get('language') == 'en' ?`${En.ATTENTION}` :'ATTENTION'}`,
+                               `${SyncStorage.get('language') == 'en' ?`${En["Êtes-vous sur de vouloir déconnecter?"]}` :  'Êtes-vous sur de vouloir déconnecter?'}`,
                                 [
                                     {
-                                        text: "Oui",
+                                        text:  `${SyncStorage.get('language') == 'en' ? 'YES' :'OUI'}`,
                                         onPress: async () => {
                                             await SyncStorage.remove('password');
                                             await SyncStorage.get('codeDeSecurite');
@@ -76,7 +76,7 @@ export default class App extends Component {
                                         }
                                     },
                                     {
-                                        text: "Non",
+                                        text: `${SyncStorage.get('language') == 'en' ? 'NO' :'NON'}`,
                                         onPress: () => console.log("Cancel Pressed"),
                                         style: "cancel"
                                     },
@@ -95,7 +95,7 @@ export default class App extends Component {
 
                         }}
                     >
-                        <Text>Deconnexion</Text>
+                        <Text>{SyncStorage.get('language') == 'en' ?`${En.Déconnexion}` :'Deconnexion'}</Text>
                     </TouchableOpacity>
                 </View>
 

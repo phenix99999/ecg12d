@@ -5,7 +5,7 @@ import Constants from "expo-constants";
 import { StackScreenProps } from "@react-navigation/stack";
 import { LoginStackParamList, RootStackParamList } from "../types";
 import SyncStorage from 'sync-storage';
-
+import En from '../../en.json'
 import base64 from 'react-native-base64';
 
 import { BarCodeScanner } from 'expo-barcode-scanner';
@@ -32,6 +32,7 @@ import { addHiddenFinalProp } from "mobx/lib/internal";
 
 const { StatusBarManager } = NativeModules;
 
+
 const toastConfig = {
     numeroDeFacturePasRempli: () => (
 
@@ -47,11 +48,39 @@ const toastConfig = {
             } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, marginRight: 15, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
         </View>
     ),
+    numeroDeFacturePasRempliE: () => (
+
+        <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+                <Text style={{ color: 'white' }}>Please specify the invoice number</Text>
+            </View>
+
+
+            <TouchableOpacity onPress={() => {
+                Toast.hide();
+            }
+            } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, marginRight: 15, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+        </View>
+    ),
     carteDejaActiver: () => (
 
         <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
                 <Text style={{ color: 'white' }}>Cette carte a déjà été activé.</Text>
+            </View>
+
+
+            <TouchableOpacity onPress={() => {
+                Toast.hide();
+            }
+            } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, marginRight: 15, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+        </View>
+    ),
+    carteDejaActiverE: () => (
+
+        <View style={{ height: 75, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+                <Text style={{ color: 'white' }}>This card has already been activated.</Text>
             </View>
 
 
@@ -82,11 +111,51 @@ const toastConfig = {
             }
         </View>
     ),
-    nipInvalide: () => (
+    nipPasRempliE: () => (
+        <View style={{ height: 60, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+
+                <Text style={{ color: 'white' }}>Please specify the employee number.
+                </Text>
+            </View>
+
+            {Platform.OS == "ios" ?
+
+                <TouchableOpacity onPress={() => {
+                    Toast.hide()
+                }
+                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+
+                :
+                null
+            }
+        </View>
+    ),
+    nipInvalide: (langChange: string) => (
         <View style={{ height: 55, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
-                <Text style={{ color: 'white' }}>Le NIP employé n'est pas valide.
+                <Text style={{ color: 'white' }}>{langChange == 'en' ? `${En["Le NIP employé n'est pas valide."]}` : 'Le NIP employé n\'est pas valide.'}
+                </Text>
+            </View>
+
+            {Platform.OS == "ios" ?
+
+                <TouchableOpacity onPress={() => {
+                    Toast.hide()
+                }
+                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+
+                :
+                null
+            }
+        </View>
+    ),
+    nipInvalideE: (langChange: string) => (
+        <View style={{ height: 55, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+
+                <Text style={{ color: 'white' }}>`${En["Le NIP employé n'est pas valide."]}`
                 </Text>
             </View>
 
@@ -122,6 +191,26 @@ const toastConfig = {
             }
         </View>
     ),
+    certificatInexistantE: () => (
+        <View style={{ height: 55, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+
+                <Text style={{ color: 'white' }}>The certificate does not exist.
+                </Text>
+            </View>
+
+            {Platform.OS == "ios" ?
+
+                <TouchableOpacity onPress={() => {
+                    Toast.hide()
+                }
+                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+
+                :
+                null
+            }
+        </View>
+    ),
     erreurInconnue: () => (
         <View style={{ height: 55, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
@@ -142,21 +231,49 @@ const toastConfig = {
             }
         </View>
     ),
+    erreurInconnueE: () => (
+        <View style={{ height: 55, width: '100%', backgroundColor: '#201D1F', flexDirection: 'row', padding: 4, marginTop: 94 }}>
+            <View style={{ width: Platform.OS === 'ios' ? '70%' : '100%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
+
+                <Text style={{ color: 'white' }}>The card cannot be activated for an unknown reason.
+                </Text>
+            </View>
+
+            {Platform.OS == "ios" ?
+
+                <TouchableOpacity onPress={() => {
+                    Toast.hide()
+                }
+                } style={{ marginLeft: 35, backgroundColor: 'red', width: 50, borderRadius: 3, alignItems: 'center', justifyContent: 'center', height: 28, alignSelf: 'center' }}><Text style={{ color: 'white' }}>{"OK"}</Text></TouchableOpacity>
+
+                :
+                null
+            }
+        </View>
+    ),
 };
-
-
 
 let keyboardDidHideListener;
 
 const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
     const [showToast, setShowToast] = React.useState(false);
     const [success, setSuccess] = React.useState(false);
-
+    const [isEnglish, setIsEnglish] = React.useState<Boolean>(SyncStorage.get('language') == 'fr' ? true : false);
+    const [langChange, setLangChange] = React.useState(SyncStorage.get('language') != null ? SyncStorage.get('language') : 'fr');
     React.useEffect(() => {
+        if (SyncStorage.get('language') == null) {
+            setLangChange('fr');
+            setIsEnglish(false);
+        } else if (SyncStorage.get('language') == 'fr') {
+            setLangChange('fr');
+            setIsEnglish(false);
+        } else if (SyncStorage.get('language') == 'en') {
+            setLangChange('en');
+            setIsEnglish(true);
+        }
 
 
-
-    });
+    }, []);
 
 
     const [nip, setNip] = React.useState("");
@@ -169,15 +286,42 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
     const authHeader = 'Basic ' + base64.encode(`${"Alain Simoneau"}:${"4251"}`);
     let render = <View style={{ height: '100%', backgroundColor: 'white' }}>
-        <SafeAreaView style={{ backgroundColor: '#231F20', height: 100, width: '100%' }}>
+        <SafeAreaView style={{ backgroundColor: '#231F20', height: Platform.OS == "ios" ? 100 : 120, width: '100%' }}>
             <Row>
-                <Left>
+                <Left style={{ marginTop: Platform.OS == "ios" ? null : 30 }}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Icon name="arrow-back" type="MaterialIcons" style={{ color: 'white', marginLeft: 15, fontWeight: 'bold' }}></Icon>
                     </TouchableOpacity>
                 </Left>
-                <Body><Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Activation</Text></Body>
-                <Right></Right>
+                <Body ><Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold', marginTop: Platform.OS == "ios" ? null : 30 }}>{langChange == 'en' ? `${En.Activation}` : 'Activation'}</Text></Body>
+                <Right style={{ marginTop: Platform.OS == "ios" ? null : 40 }}>
+                    <TouchableOpacity style={{
+                        alignItems: 'center', justifyContent: 'center', marginRight: 15,
+                        marginBottom: 5
+                    }} onPress={() => {
+                        if (isEnglish == true) {
+                            setLangChange('fr');
+                            SyncStorage.set('language', 'fr');
+                        } else if (isEnglish == false) {
+                            setLangChange('en');
+                            SyncStorage.set('language', 'en');
+                        }
+                        setIsEnglish(!isEnglish);
+
+
+                    }}>
+
+
+                        {isEnglish ? <Image
+                            source={require('../assets/images/drapeu_Canada.png')}
+                            style={{ height: 35, width: 35, borderRadius: 35 / 2 }} /> : <Image
+                            source={require('../assets/images/drapeu_Canada.png')}
+                            style={{ height: 35, width: 35, borderRadius: 35 / 2 }} />}
+                        {isEnglish ? <Text style={{ fontSize: 25, textAlign: 'center', color: 'white' }}>En</Text> : <Text style={{ fontSize: 25, color: 'white' }}>Fr</Text>}
+                    </TouchableOpacity>
+
+
+                </Right>
             </Row>
 
         </SafeAreaView>
@@ -197,32 +341,32 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
         </SafeAreaView >
         <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 10 }}>
-            <Text style={{ fontSize: 16 }}>Produit</Text>
+            <Text style={{ fontSize: 16 }}>{langChange == 'en' ? `${En.Produit}` : 'Produit'}</Text>
             <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.nomCoffret}</Text>
 
         </View>
 
         <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 10 }}>
-            <Text style={{ fontSize: 16 }}>Prix de détail</Text>
+            <Text style={{ fontSize: 16 }}>{langChange == 'en' ? `${En["Prix de détail"]}` : 'Prix de détail'}</Text>
             <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.prixCoffret}</Text>
         </View>
 
 
         <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 10 }}>
-            <TextInput value={nip} style={styles.input} placeholder="Nip employé" placeholderTextColor="#404040"
+            <TextInput value={nip} style={styles.input} placeholder={langChange == 'en' ? `${En["Nip employé"]}` : "Nip employé"} placeholderTextColor="#404040"
                 onChange={(e) => (setNip(e.nativeEvent.text))}
             />
         </View>
 
 
         <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 10 }}>
-            <TextInput value={facture} style={styles.input} placeholder="Facture" placeholderTextColor="#404040"
+            <TextInput value={facture} style={styles.input} placeholder={langChange == 'en' ? `${En.Facture}` : "Facture"} placeholderTextColor="#404040"
                 onChange={(e) => (setFacture(e.nativeEvent.text))}
             />
         </View>
 
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-            {facture.length > 0 && nip.length > 0 ?
+            {facture.length > 0 || nip.length > 0 ?
 
                 <Button
 
@@ -232,20 +376,38 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
                         if (facture.length == 0) {
                             setShowToast(true);
 
-                            Toast.show({
-                                type: 'numeroDeFacturePasRempli',
-                                autoHide: Platform.OS == "ios" ? false : true,
-                                position: 'bottom',
-                            });
+                            if (langChange == 'en') {
+                                Toast.show({
+                                    type: 'numeroDeFacturePasRempliE',
+                                    autoHide: Platform.OS == "ios" ? false : true,
+                                    position: 'bottom',
+                                });
+                            } else {
+                                Toast.show({
+                                    type: 'numeroDeFacturePasRempli',
+                                    autoHide: Platform.OS == "ios" ? false : true,
+                                    position: 'bottom',
+                                });
+                            }
+
 
                         } else if (nip.length == 0) {
                             setShowToast(true);
 
-                            Toast.show({
-                                type: 'nipPasRempli',
-                                autoHide: Platform.OS == "ios" ? false : true,
-                                position: 'bottom',
-                            });
+                            if (langChange == 'en') {
+                                Toast.show({
+                                    type: 'nipPasRempliE',
+                                    autoHide: Platform.OS == "ios" ? false : true,
+                                    position: 'bottom',
+                                });
+                            } else {
+                                Toast.show({
+                                    type: 'nipPasRempli',
+                                    autoHide: Platform.OS == "ios" ? false : true,
+                                    position: 'bottom',
+                                });
+                            }
+
 
                         } else {
                             let activation = await eliotActivateCard(route.params.noDeCarteFM, route.params.noDeCarte, facture, SyncStorage.get('codeDeSecurite'), nip);
@@ -256,54 +418,81 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
                                 if (activation.error == "nipEmploye") {
                                     setShowToast(true);
 
-                                    Toast.show({
-                                        type: 'nipInvalide',
-                                        autoHide: Platform.OS == "ios" ? false : true,
-                                        position: 'bottom',
-                                    });
+                                    if (langChange == 'fr') {
+                                        Toast.show({
+                                            type: 'nipInvalide',
+                                            autoHide: Platform.OS == "ios" ? false : true,
+                                            position: 'bottom',
+                                        });
+                                    } else {
+                                        Toast.show({
+                                            type: 'nipInvalideE',
+                                            autoHide: Platform.OS == "ios" ? false : true,
+                                            position: 'bottom',
+                                        });
+                                    }
 
 
                                 } else if (activation.error.includes("Carte déjà activée")) {
                                     setShowToast(true);
+                                    if (langChange == 'en') {
+                                        Toast.show({
+                                            type: 'carteDejaActiverE',
+                                            autoHide: Platform.OS == "ios" ? false : true,
+                                            position: 'bottom',
+                                        });
+                                    } else {
+                                        Toast.show({
+                                            type: 'carteDejaActiver',
+                                            autoHide: Platform.OS == "ios" ? false : true,
+                                            position: 'bottom',
+                                        });
+                                    }
 
-                                    Toast.show({
-                                        type: 'carteDejaActiver',
-                                        autoHide: Platform.OS == "ios" ? false : true,
-                                        position: 'bottom',
-                                    });
 
                                 } else if (activation.error.includes("Certificat inexistant")) {
                                     setShowToast(true);
+                                    if (langChange == 'en') {
+                                        Toast.show({
+                                            type: 'certificatInexistantE',
+                                            autoHide: Platform.OS == "ios" ? false : true,
+                                            position: 'bottom',
+                                        });
+                                    } else {
+                                        Toast.show({
+                                            type: 'certificatInexistant',
+                                            autoHide: Platform.OS == "ios" ? false : true,
+                                            position: 'bottom',
+                                        });
+                                    }
 
-                                    Toast.show({
-                                        type: 'certificatInexistant',
-                                        autoHide: Platform.OS == "ios" ? false : true,
-                                        position: 'bottom',
-                                    });
 
                                 } else {
                                     setShowToast(true);
+                                    if (langChange == 'en') {
+                                        Toast.show({
+                                            type: 'erreurInconnueE',
+                                            autoHide: Platform.OS == "ios" ? false : true,
+                                            position: 'bottom',
+                                        });
+                                    } else {
+                                        Toast.show({
+                                            type: 'erreurInconnue',
+                                            autoHide: Platform.OS == "ios" ? false : true,
+                                            position: 'bottom',
+                                        });
+                                    }
 
-                                    Toast.show({
-                                        type: 'erreurInconnue',
-                                        autoHide: Platform.OS == "ios" ? false : true,
-                                        position: 'bottom',
-                                    });
                                 }
                             }
                         }
-
-
-
-                        // await getCardInfo();
                     }
                     }
                     style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: "#DF0024", height: 40, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
                 >
-                    <Text style={{ fontSize: 14, color: 'white' }}>ACTIVER</Text>
+                    <Text style={{ fontSize: 14, color: 'white' }}>{langChange == 'en' ? `${En.ACTIVER}` : 'ACTIVER'}</Text>
                 </Button>
                 : null}
-
         </View>
 
 
@@ -317,7 +506,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
                 style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 125, backgroundColor: "white", height: 40, padding: 15 }}
             >
-                <Text style={{ fontSize: 14, color: '#007CFF' }}> ANNULER</Text>
+                <Text style={{ fontSize: 14, color: '#007CFF' }}> {langChange == 'en' ? `${En.Annuler}` : 'ANNULER'}</Text>
             </Button>
         </View>
 
