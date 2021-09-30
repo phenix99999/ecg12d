@@ -487,43 +487,55 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
 
 
+                    <View style={{ width: '100%' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <View style={{ width: '84%' }}>
 
-                    <View style={{ position: 'absolute', top: 240, width: '100%' }}>
-                        <TextInput
-                            keyboardType="numeric"
-                            placeholderTextColor="#404040"
-                            style={{ height: 45, top: 25, width: '100%', borderBottomWidth: 0.5, borderColor: '#303030', marginLeft: 17 }}
-                            value={noDeCarteManuel}
-                            onChange={(e) => {
-                                setNoDeCarteManuel(e.nativeEvent.text)
-                            }
-                            }
-                            placeholder={langChange == 'en' ? `${En["Numéro de la carte"]}` : "Numéro de carte"}
-                        />
-                        <View style={{ flexDirection: 'row', top: 55, alignItems: 'center', justifyContent: 'center', zIndex: 1 }}>
-                            <Button
-                                onPress={async () => {
+                                <TextInput
+                                    keyboardType="numeric"
+                                    placeholderTextColor="#404040"
+                                    style={{ height: 45, top: 25, width: '100%', borderBottomWidth: 0.5, borderColor: '#303030', marginLeft: 17 }}
+                                    value={noDeCarteManuel}
+                                    onChange={(e) => {
+                                        setNoDeCarteManuel(e.nativeEvent.text)
+                                    }
+                                    }
+                                    placeholder={langChange == 'en' ? `${En["Numéro de la carte"]}` : "Numéro de carte"}
+                                />
 
-                                    await getCardInfo();
-                                }}
-
-
-                                style={{ alignItems: 'center', justifyContent: 'center', width: 250, backgroundColor: "#DF0024", height: 50, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
+                            </View>
+                            <TouchableOpacity style={{ marginTop: 40 }}
+                                onPress={() => Keyboard.dismiss()}
                             >
-
-                                {!isLoading ?
-                                    <Text style={{ fontSize: 14, color: 'white' }}> {langChange == 'en' ? `${En["Soumettre "]} ` : 'SOUMETTRE'} </Text>
-
-                                    :
-                                    <ActivityIndicator size="large" color="white" />
-
-
-                                }
-
-                            </Button>
+                                <Icon type="AntDesign" name="closecircle" />
+                            </TouchableOpacity>
 
 
                         </View>
+                    </View>
+                    <View style={{ flexDirection: 'row', top: 55, alignItems: 'center', justifyContent: 'center', zIndex: 1 }}>
+                        <Button
+                            onPress={async () => {
+
+                                await getCardInfo();
+                            }}
+
+
+                            style={{ alignItems: 'center', justifyContent: 'center', width: 250, backgroundColor: "#DF0024", height: 50, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
+                        >
+
+                            {!isLoading ?
+                                <Text style={{ fontSize: 14, color: 'white' }}> {langChange == 'en' ? `${En["Soumettre "]} ` : 'SOUMETTRE'} </Text>
+
+                                :
+                                <ActivityIndicator size="large" color="white" />
+
+
+                            }
+
+                        </Button>
+
+
                     </View>
 
 
