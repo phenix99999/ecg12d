@@ -329,7 +329,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                 }}
                             >
                                 <Text style={{ color: 'white', marginRight: 20, fontSize: isScreenPartenaire ? 13 : 11 }}>
-                                    {langChange === 'en' ? ` ${En["Connexion partenaire"]}` : 'Connexion partenaire'}
+                                    {langChange === 'en' ? ` ${En["Connexion partenaire"]}` : 'Partenaire'}
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={{ width: '50%', padding: 5, alignItems: 'center' }}
@@ -339,7 +339,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                 }}
                             >
                                 <Text style={{ color: 'white', marginRight: 20, fontSize: isScreenPointVente ? 13 : 11 }}>
-                                    {langChange == 'en' ? `${En["Connexion point de vente"]}` : ' Connexion point de vente '}
+                                    {langChange == 'en' ? `${En["Connexion point de vente"]}` : 'Point de vente '}
                                 </Text>
                             </TouchableOpacity>
                         </View>
