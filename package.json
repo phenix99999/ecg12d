@@ -25,6 +25,7 @@
     "expo-av": "~8.6.0",
     "expo-barcode-scanner": "^10.0.0",
     "expo-camera": "~9.0.0",
+    "expo-cli": "^4.12.10",
     "expo-font": "~8.3.0",
     "expo-status-bar": "~1.0.2",
     "fast-xml-parser": "^3.17.4",

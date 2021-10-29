@@ -76,7 +76,7 @@ export async function add(username, password, server, db, layout, query) {
         return true;
     }).catch(function (error) {
         console.log("ERROR IN ADDD");
-        alert("ERROR");
+        alert(error);
         return false;
     });
 
@@ -105,7 +105,7 @@ export async function execScript(username, password, server, db, layout, query, 
         console.log(response);
         data = new XMLParser().parseFromString(response.data);
     }).catch(function (error) {
-        alert("ERROR");
+        alert(error);
         errorAuth = true;
     });
 
@@ -142,7 +142,7 @@ export async function edit(username, password, server, db, layout, recid, query)
         data = new XMLParser().parseFromString(response.data);
         return true;
     }).catch(function (error) {
-        alert("ERROR");
+        alert(error);
         return false;
     });
 
