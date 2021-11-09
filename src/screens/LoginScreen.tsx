@@ -119,8 +119,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         // alert(auth);
 
         if (auth) {
-            SyncStorage.setItem('connectedPointDeVente', false);
-            SyncStorage.setItem('connectedPartenaire', true);
+            SyncStorage.setItem('connectedPointDeVente', "false");
+            SyncStorage.setItem('connectedPartenaire', "true");
             SyncStorage.setItem('username', login);
             SyncStorage.setItem('password', password);
 
@@ -152,13 +152,14 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
         let auth = await get("Alain Simoneau", "4251", global.fmServer, global.fmDatabase, "api_mobile_SECURITE_POINT_DE_VENTE", "&Code_de_securite=" + codeDeSecurite);
         // // alert(auth);
+
         console.log("auth");
         console.log(auth);
         if (auth.length > 0 && auth.length != -1) {
             // alert(codeDeSecurite);
             SyncStorage.setItem('codeDeSecurite', codeDeSecurite);
-            SyncStorage.setItem('connectedPartenaire', false);
-            SyncStorage.setItem('connectedPointDeVente', true);
+            SyncStorage.setItem('connectedPartenaire', "false");
+            SyncStorage.setItem('connectedPointDeVente', "true");
             navigation.navigate('CarteScreen');
         } else {
             setShowToast(true);
@@ -479,8 +480,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                                 });
                                             }
                                         } else {
-
-                                            await onLoginEmploye()
+                                            // alert("ICI");
+                                            await onLoginEmploye();
                                         }
 
                                     }}

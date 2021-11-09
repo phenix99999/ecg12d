@@ -115,7 +115,7 @@ export default class App extends Component {
                 </Stack.Navigator>;
 
 
-            if (SyncStorage.getItem('connectedPointDeVente') || SyncStorage.getItem('connectedPartenaire')) {
+            if (SyncStorage.getItem('connectedPointDeVente') == "true" || SyncStorage.getItem('connectedPartenaire') == "true") {
                 stack = <Stack.Navigator screenOptions={{ headerShown: false }}  >
                     <Stack.Screen name="CarteScreen" component={CarteScreen} />
                     <Stack.Screen name="PartenaireCarteScreen" component={PartenaireCarteScreen} />
