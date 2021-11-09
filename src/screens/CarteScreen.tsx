@@ -83,7 +83,7 @@ const toastConfig = {
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '95%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Si le problème persiste, il se peut que cette carte ne soit pas enregistrée dans notre système.
-                    Le client peut contacter le service à la clientèle Giftjoy au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
+                Le client peut contacter le service à la clientèle de Coffrets Prestige au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
                 </Text>
             </View>
             {Platform.OS == "ios" ?
@@ -102,7 +102,7 @@ const toastConfig = {
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '95%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Please check the card numbers entered. If the problem persists, this card may not be registered in our system.
-                    The customer can contact Giftjoy customer service at 1800.701.9575. Please do not honor the service until the card is registered and activated.
+                The customer can contact Giftjoy customer service at 1800.701.9575. Please do not honor the service until the card is registered and activated.
                 </Text>
             </View>
             {Platform.OS == "ios" ?
@@ -130,7 +130,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
     const [showBarCodeScanner, setShowBarCodeScanner] = React.useState(false);
     const [showToast, setShowToast] = React.useState(false);
 
-    const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("");
+    const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("603628726841965667180");
     const [sound, setSound] = React.useState();
     const [noDeCarteAutomatique, setNoDeCarteAutomatique] = React.useState("");
 
@@ -184,6 +184,8 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
             let noDeCarteFM = noDeCarte.substring(noDeCarte.length - 10, noDeCarte.length - 1);
             let cardInfo = await execScript("Alain Simoneau", "4251", global.fmServer, global.fmDatabase, "api_mobile_CARTE_DETAILS", "&Numero_final=" + noDeCarteFM, "Givex_GetBalance");
+            console.log(cardInfo);
+
             let nomCoffret = "";
             let lienCoffretLogo = "";
             let prixCoffret = ""

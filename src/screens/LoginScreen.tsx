@@ -106,6 +106,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
     const [scanned, setScanned] = React.useState(false);
     const [badPassword, setBadPassword] = React.useState<Boolean>(false);
     const [codeDeSecurite, setCodeDeSecurite] = React.useState<String>("");
+    const [login, setLogin] = React.useState<String>("");
+    const [password, setPassword] = React.useState<String>("");
     const [isScreenPartenaire, setPartenaire] = React.useState<Boolean>(true);
     const [isScreenPointVente, setPointVente] = React.useState<Boolean>(false);
     const [showToast, setShowToast] = React.useState<Boolean>(false);
@@ -113,14 +115,14 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
     const [langChange, setLangChange] = React.useState("");
 
     async function onLoginPartenaire() {
-        let auth = await authentificationGX(authStore.username, authStore.password);
+        let auth = await authentificationGX(login, password);
         // alert(auth);
 
         if (auth) {
             SyncStorage.setItem('connectedPointDeVente', false);
             SyncStorage.setItem('connectedPartenaire', true);
-            SyncStorage.setItem('username', authStore.username);
-            SyncStorage.setItem('password', authStore.password);
+            SyncStorage.setItem('username', login);
+            SyncStorage.setItem('password', password);
 
             navigation.navigate('CarteScreen');
         } else {
@@ -183,8 +185,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
     async function _keyboardDidHide() {
         // alert("Keyboard did hide " + authStore.username.length + " " + authStore.password.length);
-        if (authStore.password.length > 2) {
-
+        if (login.length > 2) {
             await onLoginPartenaire();
         }
     }
@@ -208,8 +209,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
 
         // alert(SyncStorage.get('username'));
-        authStore.username = "";
-        authStore.password = "";
+
         setCodeDeSecurite("");
 
         // alert(StatusBarManager.HEIGHT);
@@ -219,7 +219,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         }
         // alert(StatusBar.currentHeight);
         if (SyncStorage.getItem('username')) {
-            authStore.username = SyncStorage.getItem('username');
+            setLogin(SyncStorage.getItem('username'));
         }
         // keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow());
         keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
@@ -386,8 +386,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                     <TextInput
                                         placeholderTextColor="#404040"
                                         style={{ height: 45, width: 350, borderWidth: 0.5, borderColor: badPassword ? 'red' : '#303030', padding: 7 }}
-                                        value={authStore.username}
-                                        onChange={(e) => (authStore.username = e.nativeEvent.text)}
+                                        value={login}
+                                        onChange={(e) => (setLogin(e.nativeEvent.text))}
                                         placeholder={langChange == 'en' ? `${En["Nom d'utilisateur"]}` : "Nom d'utilisateur"}
                                     />
 
@@ -396,9 +396,9 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                         placeholderTextColor="#404040"
 
                                         secureTextEntry={true}
-                                        value={authStore.password}
+                                        value={password}
                                         placeholder={langChange == 'en' ? `${En["Mot de Passe"]}` : "Mot de passe"}
-                                        onChange={(e) => (authStore.password = e.nativeEvent.text)}
+                                        onChange={(e) => (setPassword(e.nativeEvent.text))}
                                         style={{ marginTop: 10, height: 45, width: 350, borderWidth: 0.5, borderColor: badPassword ? 'red' : '#303030', padding: 7 }}
 
                                     />
@@ -504,39 +504,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
 
 
-                    {/* <Container style={{ flexGrow: 1, flex: 1, backgroundColor: 'transparent', top: 200 }}>
-            <ScrollView style={{ width: "100%" }} contentContainerStyle={styles.content}>
-                <Content style={{ flexGrow: 1, flex: 1, flexDirection: "row" }}>
-                    <View style={[styles.subContainer, { justifyContent: "flex-start" }]}>
-                        <Form style={styles.form}>
-                            <TextInput
-                                placeholderTextColor="#404040"
-                                style={{ height: 45, width: 200, borderWidth: 0.5, borderColor: '#303030', padding: 7 }}
-                                value={authStore.username}
-                                onChange={(e) => (authStore.username = e.nativeEvent.text)}
-                                placeholder="Nom d'utilisateur"
-                            />
-                            <TextInput
-                                placeholderTextColor="#404040"
-                                secureTextEntry={true}
-                                value={authStore.password}
-                                placeholder="Mot de passe"
-                                onChange={(e) => (authStore.password = e.nativeEvent.text)}
-                                style={{ marginTop: 10, height: 45, width: 200, borderWidth: 0.5, borderColor: '#303030', padding: 7 }}
-                            />
-                        </Form>
-                        <Button
-                            onPress={async () => {
-                                await onLogin()
-                            }}
-                            style={{ justifyContent: 'center', marginTop: 52, backgroundColor: "#1f4598", height: 40, width: '100%', borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
-                        >
-                            <Text> Connexion</Text>
-                        </Button>
-                    </View>
-                </Content>
-            </ScrollView>
-            </Container> */}
+
                     {Platform.OS == 'ios' ?
                         <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 5555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
                             <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />

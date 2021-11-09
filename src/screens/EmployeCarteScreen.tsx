@@ -261,6 +261,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
     const [isEnglish, setIsEnglish] = React.useState<Boolean>(SyncStorage.getItem('language') == 'fr' ? true : false);
     const [langChange, setLangChange] = React.useState(SyncStorage.getItem('language') != null ? SyncStorage.getItem('language') : 'fr');
     React.useEffect(() => {
+        console.log(route.params.image)
         if (SyncStorage.getItem('language') == null) {
             setLangChange('fr');
             setIsEnglish(false);

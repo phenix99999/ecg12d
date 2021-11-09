@@ -25,7 +25,7 @@ export default function App() {
 
     React.useEffect(() => {
         const storageLoad = async () => {
-            await SyncStorage.init();
+            // await SyncStorage.init();
             setStorageLoaded(true);
         };
         storageLoad();

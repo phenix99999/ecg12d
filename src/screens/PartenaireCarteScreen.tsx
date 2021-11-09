@@ -358,7 +358,6 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                     <Image
                         style={{ height: 200, width: 300, marginTop: 15 }}
-                        resizeMode={'contain'}
                         source={
                             {
                                 uri: route.params.lienImage,
@@ -418,7 +417,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                     :
                     <View style={{ flexDirection: 'row', marginLeft: 20, marginRight: 20, marginTop: 25 }}>
                         <Text>{langChange == 'en' ? `${En["Cette carte a déjà été encaissé. Le client peut contacter le service à la clientele Giftjoy au 1 800 701 9575. Merci de ne pas honorer la prestation."]}`
-                            : 'Cette carte a déjà été encaissée. Le client peut contacter le service à la clientèle Giftjoy au 1 800.701.9575. Merci de ne pas honorer la prestation'}.</Text>
+                            : 'Cette carte a déjà été encaissée. Le client peut contacter le service à la clientèle de Coffrets Prestige au 1 800.701.9575. Merci de ne pas honorer la prestation'}.</Text>
                     </View>
                 }
 

@@ -31,7 +31,7 @@ export default class App extends Component {
 
 
     async componentDidMount() {
-        await SyncStorage.init();
+        // await SyncStorage.init();
         if (SyncStorage.getItem('connectedPartenaire')) {
             // alert("if component did mount");
             // alert(SyncStorage.get('connectedPartenaire'));
@@ -143,6 +143,7 @@ export default class App extends Component {
 
         navigation =
             <Drawer.Navigator
+                screenOptions={{ headerShown: false }}
                 drawerContent={(props) => <CustomDrawerContent {...props} />}
 
             >
