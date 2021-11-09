@@ -4,7 +4,7 @@ import Constants from "expo-constants";
 
 import { StackScreenProps } from "@react-navigation/stack";
 import { LoginStackParamList, RootStackParamList } from "../types";
-import SyncStorage from 'sync-storage';
+import SyncStorage from '@react-native-async-storage/async-storage';
 import En from '../../en.json'
 import base64 from 'react-native-base64';
 
@@ -258,16 +258,16 @@ let keyboardDidHideListener;
 const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
     const [showToast, setShowToast] = React.useState(false);
     const [success, setSuccess] = React.useState(false);
-    const [isEnglish, setIsEnglish] = React.useState<Boolean>(SyncStorage.get('language') == 'fr' ? true : false);
-    const [langChange, setLangChange] = React.useState(SyncStorage.get('language') != null ? SyncStorage.get('language') : 'fr');
+    const [isEnglish, setIsEnglish] = React.useState<Boolean>(SyncStorage.getItem('language') == 'fr' ? true : false);
+    const [langChange, setLangChange] = React.useState(SyncStorage.getItem('language') != null ? SyncStorage.getItem('language') : 'fr');
     React.useEffect(() => {
-        if (SyncStorage.get('language') == null) {
+        if (SyncStorage.getItem('language') == null) {
             setLangChange('fr');
             setIsEnglish(false);
-        } else if (SyncStorage.get('language') == 'fr') {
+        } else if (SyncStorage.getItem('language') == 'fr') {
             setLangChange('fr');
             setIsEnglish(false);
-        } else if (SyncStorage.get('language') == 'en') {
+        } else if (SyncStorage.getItem('language') == 'en') {
             setLangChange('en');
             setIsEnglish(true);
         }
@@ -301,10 +301,10 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
                     }} onPress={() => {
                         if (isEnglish == true) {
                             setLangChange('fr');
-                            SyncStorage.set('language', 'fr');
+                            SyncStorage.setItem('language', 'fr');
                         } else if (isEnglish == false) {
                             setLangChange('en');
-                            SyncStorage.set('language', 'en');
+                            SyncStorage.setItem('language', 'en');
                         }
                         setIsEnglish(!isEnglish);
 
@@ -410,7 +410,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
 
                         } else {
-                            let activation = await eliotActivateCard(route.params.noDeCarteFM, route.params.noDeCarte, facture, SyncStorage.get('codeDeSecurite'), nip);
+                            let activation = await eliotActivateCard(route.params.noDeCarteFM, route.params.noDeCarte, facture, SyncStorage.getItem('codeDeSecurite'), nip);
 
                             if (activation.success) {
                                 setSuccess(true);
@@ -563,7 +563,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
             <View style={{ flexDirection: 'row', marginTop: 15, alignItems: 'center', justifyContent: 'center', alignSelf: 'center' }}>
                 <Text style={{ fontSize: 24, alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
                     La carte a bien été activée.
-        </Text>
+                </Text>
             </View>
 
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>

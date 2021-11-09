@@ -4,7 +4,7 @@ import Constants from "expo-constants";
 
 import { StackScreenProps } from "@react-navigation/stack";
 import { LoginStackParamList, RootStackParamList } from "../types";
-import SyncStorage from 'sync-storage';
+import SyncStorage from '@react-native-async-storage/async-storage';
 import { Camera } from 'expo-camera';
 import En from '../../en.json'
 import Torch from 'react-native-torch';
@@ -83,7 +83,7 @@ const toastConfig = {
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '95%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Si le problème persiste, il se peut que cette carte ne soit pas enregistrée dans notre système.
-                Le client peut contacter le service à la clientèle Giftjoy au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
+                    Le client peut contacter le service à la clientèle Giftjoy au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
                 </Text>
             </View>
             {Platform.OS == "ios" ?
@@ -102,7 +102,7 @@ const toastConfig = {
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '95%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Please check the card numbers entered. If the problem persists, this card may not be registered in our system.
-                The customer can contact Giftjoy customer service at 1800.701.9575. Please do not honor the service until the card is registered and activated.
+                    The customer can contact Giftjoy customer service at 1800.701.9575. Please do not honor the service until the card is registered and activated.
                 </Text>
             </View>
             {Platform.OS == "ios" ?
@@ -150,9 +150,9 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
         // //603628726841965667180
         let noDeCarte = "";
         let navigateTo = "PartenaireCarteScreen";
-        if (SyncStorage.get('connectedPointDeVente') == true) {
+        if (SyncStorage.getItem('connectedPointDeVente') == true) {
             navigateTo = "EmployeCarteScreen";
-        } else if (SyncStorage.get('connectedPartenaire') == true) {
+        } else if (SyncStorage.getItem('connectedPartenaire') == true) {
             navigateTo = "PartenaireCarteScreen";
         }
 
@@ -242,13 +242,13 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
             setLoading(false);
 
-            if (SyncStorage.get('language') == null) {
+            if (SyncStorage.getItem('language') == null) {
                 setLangChange('fr');
                 setIsEnglish(false);
-            } else if (SyncStorage.get('language') == 'fr') {
+            } else if (SyncStorage.getItem('language') == 'fr') {
                 setLangChange('fr');
                 setIsEnglish(false);
-            } else if (SyncStorage.get('language') == 'en') {
+            } else if (SyncStorage.getItem('language') == 'en') {
                 setLangChange('en');
                 setIsEnglish(true);
             }
@@ -344,7 +344,6 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
     return (
 
-
         <Root>
 
             <View
@@ -378,10 +377,10 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                             }} onPress={() => {
                                 if (isEnglish == true) {
                                     setLangChange('fr');
-                                    SyncStorage.set('language', 'fr');
+                                    SyncStorage.setItem('language', 'fr');
                                 } else if (isEnglish == false) {
                                     setLangChange('en');
-                                    SyncStorage.set('language', 'en');
+                                    SyncStorage.setItem('language', 'en');
                                 }
                                 setIsEnglish(!isEnglish);
 
@@ -485,8 +484,6 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                         </View>
                     }
 
-
-
                     <View style={{ width: '100%' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <View style={{ width: '84%' }}>
@@ -534,29 +531,15 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                             }
 
                         </Button>
-
-
                     </View>
-
-
-
                 </SafeAreaView>
-
-
-
-
-
-
             </View>
-
             {Platform.OS == 'ios' ?
                 <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 555555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>
                     <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
                 </View>
 
                 :
-
-
                 <View style={{ width: '96%', opacity: showToast ? 1 : 0, bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 555555, backgroundColor: 'black' }}>
                     {showToast ?
                         <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />

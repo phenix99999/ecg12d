@@ -4,7 +4,7 @@ import Constants from "expo-constants";
 import En from '../../en.json'
 import { StackScreenProps } from "@react-navigation/stack";
 import { LoginStackParamList, RootStackParamList } from "../types";
-import SyncStorage from 'sync-storage';
+import SyncStorage from '@react-native-async-storage/async-storage';
 
 import { Root } from "native-base";
 import { inject, observer } from "mobx-react";
@@ -117,10 +117,10 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         // alert(auth);
 
         if (auth) {
-            SyncStorage.set('connectedPointDeVente', false);
-            SyncStorage.set('connectedPartenaire', true);
-            SyncStorage.set('username', authStore.username);
-            SyncStorage.set('password', authStore.password);
+            SyncStorage.setItem('connectedPointDeVente', false);
+            SyncStorage.setItem('connectedPartenaire', true);
+            SyncStorage.setItem('username', authStore.username);
+            SyncStorage.setItem('password', authStore.password);
 
             navigation.navigate('CarteScreen');
         } else {
@@ -154,9 +154,9 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         console.log(auth);
         if (auth.length > 0 && auth.length != -1) {
             // alert(codeDeSecurite);
-            SyncStorage.set('codeDeSecurite', codeDeSecurite);
-            SyncStorage.set('connectedPartenaire', false);
-            SyncStorage.set('connectedPointDeVente', true);
+            SyncStorage.setItem('codeDeSecurite', codeDeSecurite);
+            SyncStorage.setItem('connectedPartenaire', false);
+            SyncStorage.setItem('connectedPointDeVente', true);
             navigation.navigate('CarteScreen');
         } else {
             setShowToast(true);
@@ -195,13 +195,13 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
     React.useEffect(() => {
 
 
-        if (SyncStorage.get('language') == null) {
+        if (SyncStorage.getItem('language') == null) {
             setLangChange('fr');
             setIsEnglish(false);
-        } else if (SyncStorage.get('language') == 'fr') {
+        } else if (SyncStorage.getItem('language') == 'fr') {
             setLangChange('fr');
             setIsEnglish(false);
-        } else if (SyncStorage.get('language') == 'en') {
+        } else if (SyncStorage.getItem('language') == 'en') {
             setLangChange('en');
             setIsEnglish(true);
         }
@@ -218,8 +218,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
             setHasPermission(status === 'granted');
         }
         // alert(StatusBar.currentHeight);
-        if (SyncStorage.get('username')) {
-            authStore.username = SyncStorage.get('username');
+        if (SyncStorage.getItem('username')) {
+            authStore.username = SyncStorage.getItem('username');
         }
         // keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow());
         keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
@@ -242,7 +242,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         <View>
 
 
-            { isLoading ?
+            {isLoading ?
                 <View style={[styles.container, styles.horizontal]}>
                     <ActivityIndicator size="large" color="black" />
                 </View>
@@ -274,10 +274,10 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                 }} onPress={() => {
                                     if (isEnglish == true) {
                                         setLangChange('fr');
-                                        SyncStorage.set('language', 'fr');
+                                        SyncStorage.setItem('language', 'fr');
                                     } else if (isEnglish == false) {
                                         setLangChange('en');
-                                        SyncStorage.set('language', 'en');
+                                        SyncStorage.setItem('language', 'en');
                                     }
                                     setIsEnglish(!isEnglish);
 

@@ -16,5 +16,6 @@
     "target": "es2015",
     "module": "es2015",
     "allowJs": true
-  }
+  },
+  "extends": "expo/tsconfig.base"
 }

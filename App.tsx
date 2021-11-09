@@ -10,8 +10,7 @@ import Navigation from "./src/navigation";
 import { Provider } from "mobx-react";
 
 import { getNavigationState } from "./src/utils/PersistState";
-import SyncStorage from 'sync-storage';
-
+import SyncStorage from '@react-native-async-storage/async-storage';
 import Expo from "expo";
 
 import stores from "./src/stores/index";
@@ -23,7 +22,7 @@ export default function App() {
 
     const [storageLoaded, setStorageLoaded] = React.useState(false);
     //const [fontReady, setFontReady] = React.useState<boolean>(false);
- 
+
     React.useEffect(() => {
         const storageLoad = async () => {
             await SyncStorage.init();

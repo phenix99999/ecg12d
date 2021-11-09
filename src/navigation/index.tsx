@@ -13,7 +13,7 @@ import CarteScreen from "../screens/CarteScreen";
 import EmployeCarteScreen from "../screens/EmployeCarteScreen";
 import PartenaireCarteScreen from "../screens/PartenaireCarteScreen";
 import En from '../../en.json'
-import SyncStorage from 'sync-storage';
+import SyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // If you are not familiar with React Navigation, we recommend going through the
@@ -32,7 +32,7 @@ export default class App extends Component {
 
     async componentDidMount() {
         await SyncStorage.init();
-        if (SyncStorage.get('connectedPartenaire')) {
+        if (SyncStorage.getItem('connectedPartenaire')) {
             // alert("if component did mount");
             // alert(SyncStorage.get('connectedPartenaire'));
             this.setState({ isConnectedPartenaire: true });
@@ -61,22 +61,22 @@ export default class App extends Component {
                         onPress={async () => {
 
                             Alert.alert(
-                               `${SyncStorage.get('language') == 'en' ?`${En.ATTENTION}` :'ATTENTION'}`,
-                               `${SyncStorage.get('language') == 'en' ?`${En["Êtes-vous sur de vouloir déconnecter?"]}` :  'Êtes-vous sur de vouloir déconnecter?'}`,
+                                `${SyncStorage.getItem('language') == 'en' ? `${En.ATTENTION}` : 'ATTENTION'}`,
+                                `${SyncStorage.getItem('language') == 'en' ? `${En["Êtes-vous sur de vouloir déconnecter?"]}` : 'Êtes-vous sur de vouloir déconnecter?'}`,
                                 [
                                     {
-                                        text:  `${SyncStorage.get('language') == 'en' ? 'YES' :'OUI'}`,
+                                        text: `${SyncStorage.getItem('language') == 'en' ? 'YES' : 'OUI'}`,
                                         onPress: async () => {
-                                            await SyncStorage.remove('password');
-                                            await SyncStorage.get('codeDeSecurite');
-                                            await SyncStorage.remove('connectedPartenaire');
-                                            await SyncStorage.remove('connectedPointDeVente');
+                                            await SyncStorage.removeItem('password');
+                                            await SyncStorage.getItem('codeDeSecurite');
+                                            await SyncStorage.getItem('connectedPartenaire');
+                                            await SyncStorage.removeItem('connectedPointDeVente');
                                             props.navigation.navigate('LoginScreen');
 
                                         }
                                     },
                                     {
-                                        text: `${SyncStorage.get('language') == 'en' ? 'NO' :'NON'}`,
+                                        text: `${SyncStorage.getItem('language') == 'en' ? 'NO' : 'NON'}`,
                                         onPress: () => console.log("Cancel Pressed"),
                                         style: "cancel"
                                     },
@@ -95,7 +95,7 @@ export default class App extends Component {
 
                         }}
                     >
-                        <Text>{SyncStorage.get('language') == 'en' ?`${En.Déconnexion}` :'Deconnexion'}</Text>
+                        <Text>{SyncStorage.getItem('language') == 'en' ? `${En.Déconnexion}` : 'Deconnexion'}</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -115,7 +115,7 @@ export default class App extends Component {
                 </Stack.Navigator>;
 
 
-            if (SyncStorage.get('connectedPointDeVente') || SyncStorage.get('connectedPartenaire')) {
+            if (SyncStorage.getItem('connectedPointDeVente') || SyncStorage.getItem('connectedPartenaire')) {
                 stack = <Stack.Navigator screenOptions={{ headerShown: false }}  >
                     <Stack.Screen name="CarteScreen" component={CarteScreen} />
                     <Stack.Screen name="PartenaireCarteScreen" component={PartenaireCarteScreen} />

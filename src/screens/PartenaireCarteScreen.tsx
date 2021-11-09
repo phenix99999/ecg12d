@@ -4,7 +4,7 @@ import Constants from "expo-constants";
 
 import { StackScreenProps } from "@react-navigation/stack";
 import { LoginStackParamList, RootStackParamList } from "../types";
-import SyncStorage from 'sync-storage';
+import SyncStorage from '@react-native-async-storage/async-storage';
 import En from '../../en.json';
 
 import base64 from 'react-native-base64';
@@ -177,13 +177,13 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
     useFocusEffect(
         React.useCallback(() => {
-            if (SyncStorage.get('language') == null) {
+            if (SyncStorage.getItem('language') == null) {
                 setLangChange('fr');
                 setIsEnglish(false);
-            } else if (SyncStorage.get('language') == 'fr') {
+            } else if (SyncStorage.getItem('language') == 'fr') {
                 setLangChange('fr');
                 setIsEnglish(false);
-            } else if (SyncStorage.get('language') == 'en') {
+            } else if (SyncStorage.getItem('language') == 'en') {
                 setLangChange('en');
                 setIsEnglish(true);
             }
@@ -234,8 +234,8 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
         if (!error) {
             const cardGivex = route.params.noDeCarte;
-            const partnerUsername = SyncStorage.get('username');
-            const partnerPassword = SyncStorage.get('password');
+            const partnerUsername = SyncStorage.getItem('username');
+            const partnerPassword = SyncStorage.getItem('password');
 
             let returnEncaissement = await givexEncaissement(cardGivex, montantAEncaisser, partnerUsername, partnerPassword);
 
@@ -331,10 +331,10 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                             }} onPress={() => {
                                 if (isEnglish) {
                                     setLangChange('fr');
-                                    SyncStorage.set('language', 'fr');
+                                    SyncStorage.setItem('language', 'fr');
                                 } else {
                                     setLangChange('en');
-                                    SyncStorage.set('language', 'en');
+                                    SyncStorage.setItem('language', 'en');
                                 }
                                 setIsEnglish(!isEnglish);
 
