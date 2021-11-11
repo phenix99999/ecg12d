@@ -29,7 +29,7 @@ import { get, execScript } from '../utils/connectorFileMaker';
 
 import { useFocusEffect } from '@react-navigation/native';
 
-import NetworkUtils from '../utils/NetworkUtils';
+
 import Toast, { BaseToast } from 'react-native-toast-message';
 
 const { StatusBarManager } = NativeModules;
@@ -171,22 +171,25 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
     const [isEnglish, setIsEnglish] = React.useState<Boolean>(false);
     const [langChange, setLangChange] = React.useState("");
 
-    if (!NetworkUtils.isNetworkAvailable()) {
-        alert("Erreur de connexion");
+
+
+    const theUseEffect = async () => {
+        if (await (SyncStorage.getItem('language')) == null) {
+            setLangChange('fr');
+            setIsEnglish(false);
+        } else if (await (SyncStorage.getItem('language')) == 'fr') {
+            setLangChange('fr');
+            setIsEnglish(false);
+        } else if (await (SyncStorage.getItem('language')) == 'en') {
+            setLangChange('en');
+            setIsEnglish(true);
+        }
+
     }
 
     useFocusEffect(
         React.useCallback(() => {
-            if (SyncStorage.getItem('language') == null) {
-                setLangChange('fr');
-                setIsEnglish(false);
-            } else if (SyncStorage.getItem('language') == 'fr') {
-                setLangChange('fr');
-                setIsEnglish(false);
-            } else if (SyncStorage.getItem('language') == 'en') {
-                setLangChange('en');
-                setIsEnglish(true);
-            }
+            theUseEffect();
 
         }, []));
 
@@ -234,11 +237,11 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
         if (!error) {
             const cardGivex = route.params.noDeCarte;
-            const partnerUsername = SyncStorage.getItem('username');
-            const partnerPassword = SyncStorage.getItem('password');
+            const partnerUsername = await SyncStorage.getItem('username');
+            const partnerPassword = await SyncStorage.getItem('password');
 
             let returnEncaissement = await givexEncaissement(cardGivex, montantAEncaisser, partnerUsername, partnerPassword);
-
+            console.log(returnEncaissement);
             if (returnEncaissement.success) {
                 setSuccess(true);
             } else {
@@ -328,13 +331,13 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                             <TouchableOpacity style={{
                                 alignItems: 'center', justifyContent: 'center', marginRight: 15,
                                 marginBottom: 5
-                            }} onPress={() => {
+                            }} onPress={async () => {
                                 if (isEnglish) {
                                     setLangChange('fr');
-                                    SyncStorage.setItem('language', 'fr');
+                                    await (SyncStorage.setItem('language', 'fr'));
                                 } else {
                                     setLangChange('en');
-                                    SyncStorage.setItem('language', 'en');
+                                    await (SyncStorage.setItem('language', 'en'));
                                 }
                                 setIsEnglish(!isEnglish);
 
@@ -388,11 +391,24 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
 
                 {route.params.encaissementPartiel == true ?
-                    <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15, alignItems: 'center', justifyContent: 'center' }}>
-                        <TextInput value={montantAEncaisser} placeholder={langChange == 'en' ? 'Enter here the amount to be cashed' : "Saisir ici le montant à encaisser"} placeholderTextColor="#404040"
-                            keyboardType="numeric"
-                            onChange={(e) => (setMontantAEncaisser(e.nativeEvent.text))}
-                        />
+                    <View style={{ width: '100%', marginLeft: 20, marginTop: 7 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <View style={{ width: '84%' }}>
+
+                                <TextInput value={montantAEncaisser} placeholder={langChange == 'en' ? 'Enter the amount to be cashed' : "Saisir le montant à encaisser"} placeholderTextColor="#404040"
+                                    keyboardType="numeric"
+                                    onChange={(e) => (setMontantAEncaisser(e.nativeEvent.text))}
+                                />
+
+                            </View>
+                            <TouchableOpacity
+                                onPress={() => Keyboard.dismiss()}
+                            >
+                                <Icon type="AntDesign" name="closecircle" />
+                            </TouchableOpacity>
+
+
+                        </View>
                     </View>
                     :
 

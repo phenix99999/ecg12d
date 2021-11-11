@@ -20,22 +20,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 // "Fundamentals" guide: https://reactnavigation.org/docs/getting-started
 let nbAssignation = 0;
 export default class App extends Component {
+    state = { isConnected: false };
 
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            isConnectedPartenaire: false,
-        };
-    }
 
 
     async componentDidMount() {
+
+
         // await SyncStorage.init();
-        if (SyncStorage.getItem('connectedPartenaire')) {
+        if (await SyncStorage.getItem('connectedPartenaire') == "true" || await SyncStorage.getItem('connectedPointDeVente') == "true") {
             // alert("if component did mount");
             // alert(SyncStorage.get('connectedPartenaire'));
-            this.setState({ isConnectedPartenaire: true });
+            this.setState({ isConnected: true });
+
         }
 
     }
@@ -61,22 +58,26 @@ export default class App extends Component {
                         onPress={async () => {
 
                             Alert.alert(
-                                `${SyncStorage.getItem('language') == 'en' ? `${En.ATTENTION}` : 'ATTENTION'}`,
-                                `${SyncStorage.getItem('language') == 'en' ? `${En["Êtes-vous sur de vouloir déconnecter?"]}` : 'Êtes-vous sur de vouloir déconnecter?'}`,
+                                `${await SyncStorage.getItem('language') == 'en' ? `${En.ATTENTION}` : 'ATTENTION'}`,
+                                `${await SyncStorage.getItem('language') == 'en' ? `${En["Êtes-vous sur de vouloir déconnecter?"]}` : 'Êtes-vous sur de vouloir déconnecter?'}`,
                                 [
                                     {
-                                        text: `${SyncStorage.getItem('language') == 'en' ? 'YES' : 'OUI'}`,
+                                        text: `${await SyncStorage.getItem('language') == 'en' ? 'YES' : 'OUI'}`,
                                         onPress: async () => {
                                             await SyncStorage.removeItem('password');
-                                            await SyncStorage.getItem('codeDeSecurite');
-                                            await SyncStorage.getItem('connectedPartenaire');
+                                            await SyncStorage.removeItem('language');
+                                            await SyncStorage.removeItem('connectedPartenaire');
+                                            await SyncStorage.removeItem('password');
+                                            await SyncStorage.removeItem('codeDeSecurite');
+                                            await SyncStorage.removeItem('connectedPartenaire');
+
                                             await SyncStorage.removeItem('connectedPointDeVente');
                                             props.navigation.navigate('LoginScreen');
 
                                         }
                                     },
                                     {
-                                        text: `${SyncStorage.getItem('language') == 'en' ? 'NO' : 'NON'}`,
+                                        text: `${await SyncStorage.getItem('language') == 'en' ? 'NO' : 'NON'}`,
                                         onPress: () => console.log("Cancel Pressed"),
                                         style: "cancel"
                                     },
@@ -95,7 +96,7 @@ export default class App extends Component {
 
                         }}
                     >
-                        <Text>{SyncStorage.getItem('language') == 'en' ? `${En.Déconnexion}` : 'Deconnexion'}</Text>
+                        <Text>Deconnexion</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -115,20 +116,22 @@ export default class App extends Component {
                 </Stack.Navigator>;
 
 
-            if (SyncStorage.getItem('connectedPointDeVente') == "true" || SyncStorage.getItem('connectedPartenaire') == "true") {
-                stack = <Stack.Navigator screenOptions={{ headerShown: false }}  >
-                    <Stack.Screen name="CarteScreen" component={CarteScreen} />
-                    <Stack.Screen name="PartenaireCarteScreen" component={PartenaireCarteScreen} />
-                    <Stack.Screen name="EmployeCarteScreen" component={EmployeCarteScreen} />
-                    <Stack.Screen name="LoginScreen" component={LoginScreen} />
 
-                </Stack.Navigator>;
-            }
             return (
                 stack
             );
 
 
+        }
+
+        function StackCarteConnected() {
+            return (<Stack.Navigator screenOptions={{ headerShown: false }}  >
+                <Stack.Screen name="CarteScreen" component={CarteScreen} />
+                <Stack.Screen name="PartenaireCarteScreen" component={PartenaireCarteScreen} />
+                <Stack.Screen name="EmployeCarteScreen" component={EmployeCarteScreen} />
+                <Stack.Screen name="LoginScreen" component={LoginScreen} />
+
+            </Stack.Navigator>);
         }
 
 
@@ -147,8 +150,7 @@ export default class App extends Component {
                 drawerContent={(props) => <CustomDrawerContent {...props} />}
 
             >
-
-                <Drawer.Screen name="CarteScreen" component={StackCarte} />
+                {this.state.isConnected ? <Drawer.Screen name="CarteScreen" component={StackCarteConnected} /> : <Drawer.Screen name="CarteScreen" component={StackCarte} />}
 
             </Drawer.Navigator>;
 

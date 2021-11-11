@@ -29,10 +29,9 @@ import {
 } from "native-base";
 import { Image, ImageBackground, RefreshControl, ScrollView, View, TextInput, Keyboard, ActivityIndicator, StatusBar, Platform, NativeModules, TouchableOpacity } from "react-native";
 import AuthStore from "../stores/AuthStore";
-import { authentificationGX } from '../utils/connectorGiveX';
 import { get, execScript } from '../utils/connectorFileMaker';
 import { Sound } from "react-native-sound";
-import NetworkUtils from '../utils/NetworkUtils';
+
 
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -138,10 +137,6 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
     const [langChange, setLangChange] = React.useState("");
 
 
-    async function onLoginPartenaire() {
-        let auth = await authentificationGX(authStore.username, authStore.password);
-        return auth;
-    }
 
     async function getCardInfo() {
 
@@ -150,12 +145,14 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
         // //603628726841965667180
         let noDeCarte = "";
         let navigateTo = "PartenaireCarteScreen";
-        if (SyncStorage.getItem('connectedPointDeVente') == true) {
+
+        if (await SyncStorage.getItem('connectedPointDeVente') == "true") {
             navigateTo = "EmployeCarteScreen";
-        } else if (SyncStorage.getItem('connectedPartenaire') == true) {
+        } else if (await SyncStorage.getItem('connectedPartenaire') == "true") {
             navigateTo = "PartenaireCarteScreen";
         }
 
+        console.log(navigateTo);
         if (noDeCarteAutomatique.length == 21) {
             noDeCarte = noDeCarteAutomatique;
         } else {
@@ -244,17 +241,21 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
             setLoading(false);
 
-            if (SyncStorage.getItem('language') == null) {
-                setLangChange('fr');
-                setIsEnglish(false);
-            } else if (SyncStorage.getItem('language') == 'fr') {
-                setLangChange('fr');
-                setIsEnglish(false);
-            } else if (SyncStorage.getItem('language') == 'en') {
-                setLangChange('en');
-                setIsEnglish(true);
+
+            const showLayoutOnLanguage = async () => {
+                if (await SyncStorage.getItem('language') == null) {
+                    setLangChange('fr');
+                    setIsEnglish(false);
+                } else if (await SyncStorage.getItem('language') == 'fr') {
+                    setLangChange('fr');
+                    setIsEnglish(false);
+                } else if (await SyncStorage.getItem('language') == 'en') {
+                    setLangChange('en');
+                    setIsEnglish(true);
+                }
             }
 
+            showLayoutOnLanguage();
 
 
 
@@ -282,45 +283,49 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
 
 
-    // React.useEffect(() => {
-    //     setLoading(false);
-
-    //     alert(SyncStorage.get('language'));
-    //     if (SyncStorage.get('language') == null) {
-    //         setLangChange('fr');
-    //         setIsEnglish(false);
-    //     } else if (SyncStorage.get('language') == 'fr') {
-    //         setLangChange('fr');
-    //         setIsEnglish(false);
-    //     } else if (SyncStorage.get('language') == 'en') {
-    //         setLangChange('en');
-    //         setIsEnglish(true);
-    //     }
+    React.useEffect(() => {
+        setLoading(false);
 
 
 
 
-    //     const getPermissions = async () => {
-    //         const { status } = await BarCodeScanner.requestPermissionsAsync();
-    //         // const cameraAllowed = await Torch.requestCameraPermission(
-    //         //     'Camera Permissions', // dialog title
-    //         //     'We require camera permissions to use the torch on the back of your phone.' // dialog body
-    //         // );
 
-    //         setHasPermission(status === 'granted');
-    //     }
-    //     getPermissions();
+        const getPermissions = async () => {
+            if (await SyncStorage.getItem('language') == null) {
+                setLangChange('fr');
+                setIsEnglish(false);
+            } else if (await SyncStorage.getItem('language') == 'fr') {
+                setLangChange('fr');
+                setIsEnglish(false);
+            } else if (await SyncStorage.getItem('language') == 'en') {
+                setLangChange('en');
+                setIsEnglish(true);
+            }
 
-    //     const getCardInfoConst = async () => {
-    //         await playBip();
-    //         await getCardInfo();
-    //     }
 
-    //     if (noDeCarteAutomatique.length == 21) {
-    //         getCardInfoConst();
-    //     }
+            const { status } = await BarCodeScanner.requestPermissionsAsync();
+            // const cameraAllowed = await Torch.requestCameraPermission(
+            //     'Camera Permissions', // dialog title
+            //     'We require camera permissions to use the torch on the back of your phone.' // dialog body
+            // );
 
-    // }, [noDeCarteAutomatique]);
+            setHasPermission(status === 'granted');
+        }
+        getPermissions();
+
+        const getCardInfoConst = async () => {
+            await playBip();
+            await getCardInfo();
+        }
+
+        if (noDeCarteAutomatique.length == 21) {
+            getCardInfoConst();
+        }
+
+
+
+
+    }, [noDeCarteAutomatique]);
 
     const handleBarCodeScanned = ({ type, data }) => {
         // setScanned(true);
@@ -331,9 +336,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
     };
 
 
-    if (!NetworkUtils.isNetworkAvailable()) {
-        alert("Erreur de connexion");
-    }
+
     const config = {
         velocityThreshold: 0.3,
         directionalOffsetThreshold: 80
@@ -376,13 +379,13 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                             <TouchableOpacity style={{
                                 alignItems: 'center', justifyContent: 'center', marginRight: 15,
                                 marginTop: 5
-                            }} onPress={() => {
+                            }} onPress={async () => {
                                 if (isEnglish == true) {
                                     setLangChange('fr');
-                                    SyncStorage.setItem('language', 'fr');
+                                    await SyncStorage.setItem('language', 'fr');
                                 } else if (isEnglish == false) {
                                     setLangChange('en');
-                                    SyncStorage.setItem('language', 'en');
+                                    await SyncStorage.setItem('language', 'en');
                                 }
                                 setIsEnglish(!isEnglish);
 

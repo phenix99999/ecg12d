@@ -16,7 +16,6 @@ import {
 import { Image, ImageBackground, RefreshControl, ScrollView, View, TextInput, Keyboard, ActivityIndicator, StatusBar, NativeModules, TouchableOpacity, Platform } from "react-native";
 import AuthStore from "../stores/AuthStore";
 import { authentificationGX } from '../utils/connectorGiveX';
-import NetworkUtils from '../utils/NetworkUtils';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { useIsFocused } from "@react-navigation/native";
 
@@ -119,10 +118,10 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         // alert(auth);
 
         if (auth) {
-            SyncStorage.setItem('connectedPointDeVente', "false");
-            SyncStorage.setItem('connectedPartenaire', "true");
-            SyncStorage.setItem('username', login);
-            SyncStorage.setItem('password', password);
+            await SyncStorage.setItem('connectedPointDeVente', "false");
+            await SyncStorage.setItem('connectedPartenaire', "true");
+            await SyncStorage.setItem('username', login);
+            await SyncStorage.setItem('password', password);
 
             navigation.navigate('CarteScreen');
         } else {
@@ -150,6 +149,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
     async function onLoginEmploye() {
 
+
+
         let auth = await get("Alain Simoneau", "4251", global.fmServer, global.fmDatabase, "api_mobile_SECURITE_POINT_DE_VENTE", "&Code_de_securite=" + codeDeSecurite);
         // // alert(auth);
 
@@ -157,9 +158,9 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         console.log(auth);
         if (auth.length > 0 && auth.length != -1) {
             // alert(codeDeSecurite);
-            SyncStorage.setItem('codeDeSecurite', codeDeSecurite);
-            SyncStorage.setItem('connectedPartenaire', "false");
-            SyncStorage.setItem('connectedPointDeVente', "true");
+            await SyncStorage.setItem('codeDeSecurite', codeDeSecurite);
+            await SyncStorage.setItem('connectedPartenaire', "false");
+            await SyncStorage.setItem('connectedPointDeVente', "true");
             navigation.navigate('CarteScreen');
         } else {
             setShowToast(true);
@@ -197,16 +198,20 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
     React.useEffect(() => {
 
 
-        if (SyncStorage.getItem('language') == null) {
-            setLangChange('fr');
-            setIsEnglish(false);
-        } else if (SyncStorage.getItem('language') == 'fr') {
-            setLangChange('fr');
-            setIsEnglish(false);
-        } else if (SyncStorage.getItem('language') == 'en') {
-            setLangChange('en');
-            setIsEnglish(true);
+        const showLayoutOnLanguage = async () => {
+            if (await SyncStorage.getItem('language') == null) {
+                setLangChange('fr');
+                setIsEnglish(false);
+            } else if (await SyncStorage.getItem('language') == 'fr') {
+                setLangChange('fr');
+                setIsEnglish(false);
+            } else if (await SyncStorage.getItem('language') == 'en') {
+                setLangChange('en');
+                setIsEnglish(true);
+            }
         }
+
+        showLayoutOnLanguage();
 
 
         // alert(SyncStorage.get('username'));
@@ -229,9 +234,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
         }
     }, [isFocused]);
 
-    if (!NetworkUtils.isNetworkAvailable()) {
-        alert("Erreur de connexion");
-    }
+
     const config = {
         velocityThreshold: 0.3,
         directionalOffsetThreshold: 80
@@ -272,13 +275,13 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                 <TouchableOpacity style={{
                                     alignItems: 'center', justifyContent: 'center', marginRight: 15,
                                     marginTop: 5
-                                }} onPress={() => {
+                                }} onPress={async () => {
                                     if (isEnglish == true) {
                                         setLangChange('fr');
-                                        SyncStorage.setItem('language', 'fr');
+                                        await (SyncStorage.setItem('language', 'fr'));
                                     } else if (isEnglish == false) {
                                         setLangChange('en');
-                                        SyncStorage.setItem('language', 'en');
+                                        await (SyncStorage.setItem('language', 'en'));
                                     }
                                     setIsEnglish(!isEnglish);
 
@@ -372,6 +375,17 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                         <View>
 
                             <Form style={styles.form}>
+                                {/* <TouchableOpacity
+                                    onPress={async () => {
+                                        await SyncStorage.setItem('allo', "1");
+
+                                        console.log(await SyncStorage.getItem('allo'));
+                                    }}
+                                >
+                                    <Text>
+                                        Test
+                                    </Text>
+                                </TouchableOpacity> */}
                                 <View style={{ flexDirection: 'row', marginTop: 15, marginLeft: 25, marginRight: 25, justifyContent: 'center' }}>
                                     <Text  >{langChange == 'en' ? `${En["Connectez-vous ici si vous etes une entreprise partenaire"]}` : 'Connectez-vous ici si vous êtes une entreprise partenaire.'}</Text>
                                 </View>
@@ -410,7 +424,6 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
                                 <Button
                                     onPress={async () => {
-
                                         await onLoginPartenaire();
                                     }}
 
@@ -480,7 +493,7 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
                                                 });
                                             }
                                         } else {
-                                            // alert("ICI");
+                                            // alert("ICI");    
                                             await onLoginEmploye();
                                         }
 

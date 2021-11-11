@@ -23,10 +23,9 @@ import {
 } from "native-base";
 import { Image, ImageBackground, RefreshControl, ScrollView, View, TextInput, Keyboard, ActivityIndicator, StatusBar, Platform, NativeModules, TouchableOpacity } from "react-native";
 import AuthStore from "../stores/AuthStore";
-import { authentificationGX, eliotActivateCard } from '../utils/connectorGiveX';
+import { eliotActivateCard } from '../utils/connectorGiveX';
 import { get, execScript } from '../utils/connectorFileMaker';
 
-import NetworkUtils from '../utils/NetworkUtils';
 import Toast, { BaseToast } from 'react-native-toast-message';
 import { addHiddenFinalProp } from "mobx/lib/internal";
 
@@ -258,20 +257,35 @@ let keyboardDidHideListener;
 const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
     const [showToast, setShowToast] = React.useState(false);
     const [success, setSuccess] = React.useState(false);
-    const [isEnglish, setIsEnglish] = React.useState<Boolean>(SyncStorage.getItem('language') == 'fr' ? true : false);
-    const [langChange, setLangChange] = React.useState(SyncStorage.getItem('language') != null ? SyncStorage.getItem('language') : 'fr');
+    const [isEnglish, setIsEnglish] = React.useState<Boolean>(false);
+    const [langChange, setLangChange] = React.useState('fr');
     React.useEffect(() => {
-        console.log(route.params.image)
-        if (SyncStorage.getItem('language') == null) {
-            setLangChange('fr');
-            setIsEnglish(false);
-        } else if (SyncStorage.getItem('language') == 'fr') {
-            setLangChange('fr');
-            setIsEnglish(false);
-        } else if (SyncStorage.getItem('language') == 'en') {
-            setLangChange('en');
-            setIsEnglish(true);
+
+        const showLayoutOnLanguage = async () => {
+            if (await SyncStorage.getItem('language') == 'fr') {
+                setIsEnglish(true);
+            } else {
+                setIsEnglish(false);
+            }
+
+            if (await SyncStorage.getItem('language') != null) {
+                setLangChange(SyncStorage.getItem('language'));
+            }
+
+
+            if (await SyncStorage.getItem('language') == null) {
+                setLangChange('fr');
+                setIsEnglish(false);
+            } else if (await SyncStorage.getItem('language') == 'fr') {
+                setLangChange('fr');
+                setIsEnglish(false);
+            } else if (await SyncStorage.getItem('language') == 'en') {
+                setLangChange('en');
+                setIsEnglish(true);
+            }
         }
+
+        showLayoutOnLanguage();
 
 
     }, []);
@@ -281,9 +295,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
     const [facture, setFacture] = React.useState("");
 
 
-    if (!NetworkUtils.isNetworkAvailable()) {
-        alert("Erreur de connexion");
-    }
+
 
     const authHeader = 'Basic ' + base64.encode(`${"Alain Simoneau"}:${"4251"}`);
     let render = <View style={{ height: '100%', backgroundColor: 'white' }}>
@@ -299,13 +311,13 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
                     <TouchableOpacity style={{
                         alignItems: 'center', justifyContent: 'center', marginRight: 15,
                         marginBottom: 5
-                    }} onPress={() => {
+                    }} onPress={async () => {
                         if (isEnglish == true) {
                             setLangChange('fr');
-                            SyncStorage.setItem('language', 'fr');
+                            await (SyncStorage.setItem('language', 'fr'));
                         } else if (isEnglish == false) {
                             setLangChange('en');
-                            SyncStorage.setItem('language', 'en');
+                            await SyncStorage.setItem('language', 'en');
                         }
                         setIsEnglish(!isEnglish);
 
@@ -341,29 +353,54 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
 
         </SafeAreaView >
-        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 10 }}>
+        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 10, marginLeft: 10 }}>
             <Text style={{ fontSize: 16 }}>{langChange == 'en' ? `${En.Produit}` : 'Produit'}</Text>
             <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.nomCoffret}</Text>
 
         </View>
 
-        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 10 }}>
+        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 10, marginLeft: 10 }}>
             <Text style={{ fontSize: 16 }}>{langChange == 'en' ? `${En["Prix de détail"]}` : 'Prix de détail'}</Text>
             <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.prixCoffret}</Text>
         </View>
 
 
-        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 10 }}>
-            <TextInput value={nip} style={styles.input} placeholder={langChange == 'en' ? `${En["Nip employé"]}` : "Nip employé"} placeholderTextColor="#404040"
-                onChange={(e) => (setNip(e.nativeEvent.text))}
-            />
+        <View style={{ width: '100%' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 20, marginTop: 10 }}>
+                <View style={{ width: '84%' }}>
+
+                    <TextInput value={nip} style={styles.input} placeholder={langChange == 'en' ? `${En["Nip employé"]}` : "Nip employé"} placeholderTextColor="#404040"
+                        onChange={(e) => (setNip(e.nativeEvent.text))}
+                    />
+
+                </View>
+                <TouchableOpacity
+                    onPress={() => Keyboard.dismiss()}
+                >
+                    <Icon type="AntDesign" name="closecircle" />
+                </TouchableOpacity>
+
+
+            </View>
         </View>
 
+        <View style={{ width: '100%' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 20, marginTop: 10 }}>
+                <View style={{ width: '84%' }}>
 
-        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 10 }}>
-            <TextInput value={facture} style={styles.input} placeholder={langChange == 'en' ? `${En.Facture}` : "Facture"} placeholderTextColor="#404040"
-                onChange={(e) => (setFacture(e.nativeEvent.text))}
-            />
+                    <TextInput value={facture} style={styles.input} placeholder={langChange == 'en' ? `${En.Facture}` : "Facture"} placeholderTextColor="#404040"
+                        onChange={(e) => (setFacture(e.nativeEvent.text))}
+                    />
+
+                </View>
+                <TouchableOpacity
+                    onPress={() => Keyboard.dismiss()}
+                >
+                    <Icon type="AntDesign" name="closecircle" />
+                </TouchableOpacity>
+
+
+            </View>
         </View>
 
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
