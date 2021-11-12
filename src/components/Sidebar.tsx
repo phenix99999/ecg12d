@@ -37,10 +37,27 @@ const CustomSidebar = (props: DrawerContentComponentProps<DrawerContentOptions>)
                         <Left>
                             <Icon active name="log-out" />
                         </Left>
+                        <Text>Déconnexion22</Text>
+                        <Body>
+                        </Body>
+                    </ListItem>
+                    <ListItem
+                        icon
+                        button={true}
+                        onPress={() => {
+                            props.navigation.dispatch(DrawerActions.closeDrawer());
+                            props.navigation.navigate("Logout");
+                            setNavigationState("Logout");
+                        }}
+                    >
+                        <Left>
+                            <Icon active name="log-out" />
+                        </Left>
                         <Body>
                             <Text>Déconnexion</Text>
                         </Body>
                     </ListItem>
+
                 </List>
             </Content>
         </View>
