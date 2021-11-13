@@ -167,6 +167,7 @@ export async function get(username, password, server, db, layout, query = null, 
         // console.log("Data");
         // console.log(data);
     }).catch(function (error) {
+        console.log(error)
         // alert("No connexion!");
         errorAuth = true;
     });

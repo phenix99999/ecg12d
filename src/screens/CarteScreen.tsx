@@ -435,7 +435,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                                 }
                                 }
 
-                                    style={{ height: 250, width: '100%', backgroundColor: 'red' }}>
+                                    style={{ height: Dimensions.get('window').height / 3, width: '100%', backgroundColor: 'red' }}>
                                     <Camera
                                         flashMode={flash}
 
@@ -491,7 +491,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                         </View>
                     }
 
-                    <View style={{ width: '100%' }}>
+                    <View style={{ width: '100%', marginTop: 25 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <View style={{ width: '84%' }}>
 
@@ -565,7 +565,7 @@ export default inject("authStore")(observer(CarteScreen));
 
 const styles = StyleSheet.create({
     containerBarCode: {
-        height: '85%',
+        height: Dimensions.get('window').height / 3
 
     },
     container: {
@@ -610,7 +610,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     barcodeContainer: {
-        height: 260,
+        height: Dimensions.get('window').height / 3
 
     },
 });

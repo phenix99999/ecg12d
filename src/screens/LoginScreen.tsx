@@ -198,6 +198,8 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
     React.useEffect(() => {
 
 
+        setCodeDeSecurite("");
+
         const showLayoutOnLanguage = async () => {
             if (await SyncStorage.getItem('language') == null) {
                 setLangChange('fr');
@@ -216,7 +218,6 @@ const LoginScreen = ({ navigation, authStore }: Props) => {
 
         // alert(SyncStorage.get('username'));
 
-        setCodeDeSecurite("");
 
         // alert(StatusBarManager.HEIGHT);
         const getPermission = async () => {
