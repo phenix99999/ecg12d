@@ -82,7 +82,7 @@ const toastConfig = {
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '95%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Si le problème persiste, il se peut que cette carte ne soit pas enregistrée dans notre système.
-                Le client peut contacter le service à la clientèle de Coffrets Prestige au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
+                    Le client peut contacter le service à la clientèle de Coffrets Prestige au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
                 </Text>
             </View>
             {Platform.OS == "ios" ?
@@ -101,7 +101,7 @@ const toastConfig = {
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '95%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Please check the card numbers entered. If the problem persists, this card may not be registered in our system.
-                The customer can contact Giftjoy customer service at 1800.701.9575. Please do not honor the service until the card is registered and activated.
+                    The customer can contact Giftjoy customer service at 1800.701.9575. Please do not honor the service until the card is registered and activated.
                 </Text>
             </View>
             {Platform.OS == "ios" ?
@@ -443,7 +443,9 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                                             barCodeTypes: [BarCodeScanner.Constants.BarCodeType.code128],
                                         }}
                                         onBarCodeScanned={handleBarCodeScanned}
-                                        style={{ width: '100%', height: 250 }}
+                                        style={{
+                                            width: '100%', height: Dimensions.get('window').height / 3
+                                        }}
                                         type={Camera.Constants.Type.back}>
                                         <View style={{ zIndex: 9999999999, flexDirection: 'row-reverse', backgroundColor: 'transparent', height: 30 }}>
                                             <TouchableOpacity
