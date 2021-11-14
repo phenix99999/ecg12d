@@ -271,7 +271,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                 console.log("No de carte automatique " + noDeCarteAutomatique);
                 if (scanned) {
 
-                    // await playBip(); A REMETTRE
+                    await playBip();
                     await getCardInfo();
                 }
 
