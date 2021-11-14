@@ -136,10 +136,8 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
     const [isEnglish, setIsEnglish] = React.useState<Boolean>(false);
     const [langChange, setLangChange] = React.useState("");
 
-
-
     async function getCardInfo() {
-
+        console.log("GET CARD INFO ");
         // setShowToast(false);
 
         // //603628726841965667180
@@ -152,7 +150,6 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
             navigateTo = "PartenaireCarteScreen";
         }
 
-        console.log(navigateTo);
         if (noDeCarteAutomatique.length == 21) {
             noDeCarte = noDeCarteAutomatique;
         } else {
@@ -180,9 +177,9 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
             setLoading(true);
 
             let noDeCarteFM = noDeCarte.substring(noDeCarte.length - 10, noDeCarte.length - 1);
+            console.log("Avant le call..");
             let cardInfo = await execScript("Alain Simoneau", "4251", global.fmServer, global.fmDatabase, "api_mobile_CARTE_DETAILS", "&Numero_final=" + noDeCarteFM, "Givex_GetBalance");
             console.log(cardInfo);
-
             let nomCoffret = "";
             let lienCoffretLogo = "";
             let prixCoffret = ""
@@ -271,77 +268,33 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
             getPermissions();
 
             const getCardInfoConst = async () => {
-                if (!scanned) {
-                    await playBip();
+                console.log("No de carte automatique " + noDeCarteAutomatique);
+                if (scanned) {
+
+                    // await playBip(); A REMETTRE
+                    await getCardInfo();
                 }
-                await playBip();
-                await getCardInfo();
+
             }
 
             if (noDeCarteAutomatique.length == 21) {
                 getCardInfoConst();
             }
+            console.log("UseFocusEffect", noDeCarteAutomatique, scanned.toString());
 
         }, [noDeCarteAutomatique]));
 
 
 
-    React.useEffect(() => {
-        setLoading(false);
-
-
-
-
-        const getPermissions = async () => {
-            if (await SyncStorage.getItem('language') == null) {
-                setLangChange('fr');
-                setIsEnglish(false);
-            } else if (await SyncStorage.getItem('language') == 'fr') {
-                setLangChange('fr');
-                setIsEnglish(false);
-            } else if (await SyncStorage.getItem('language') == 'en') {
-                setLangChange('en');
-                setIsEnglish(true);
-            }
-
-
-            const { status } = await BarCodeScanner.requestPermissionsAsync();
-            // const cameraAllowed = await Torch.requestCameraPermission(
-            //     'Camera Permissions', // dialog title
-            //     'We require camera permissions to use the torch on the back of your phone.' // dialog body
-            // );
-
-            setHasPermission(status === 'granted');
-        }
-        getPermissions();
-
-        const getCardInfoConst = async () => {
-            if (!scanned) {
-                await playBip();
-            }
-
-            await getCardInfo();
-        }
-
-        if (noDeCarteAutomatique.length == 21) {
-            getCardInfoConst();
-        }
-
-
-
-
-    }, [noDeCarteAutomatique]);
-
     const handleBarCodeScanned = ({ type, data }) => {
-        console.log("On est en train de scanner!");
-        console.log(type);
-        console.log(data);
 
-        setScanned(true);
+        if (!scanned) {
+            setScanned(true);
 
-        // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-        // alert(data);
-        setNoDeCarteAutomatique(data.replace(/ /g, ''));
+            setNoDeCarteAutomatique(data.replace(/ /g, ''));
+            setNoDeCarteManuel(data.replace(/ /g, ''));
+        }
+
     };
 
 
@@ -510,7 +463,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                 <SafeAreaView
                 >
 
-                    {showBarCodeScanner ?
+                    {showBarCodeScanner && !scanned ?
 
                         <View style={{ backgroundColor: 'red' }} >
 
@@ -555,22 +508,34 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
                         :
                         <SafeAreaView style={{ height: cameraHeightPercent }} >
-                            <TouchableOpacity onPress={() => setShowBarCodeScanner(true)}>
-                                <ImageBackground
-                                    resizeMode={'cover'}
-                                    source={{ uri: barcodePng }}
-                                    style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}
-                                    imageStyle={{ opacity: 0.3 }}>
-                                    <View
+                            {scanned ?
+                                <View style={{ marginTop: 10, marginBottom: 10 }}>
+                                    <ActivityIndicator size="large" color="red" />
+                                    <Text style={{ textAlign: 'center' }}>Votre Scan est en cours veuillez patienter s.v.p </Text>
+                                </View>
+                                : null}
 
-                                        style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                        <Button light style={{ width: 200, justifyContent: 'center', alignItems: 'center' }} onPress={() => setShowBarCodeScanner(true)}>
-                                            <Text style={{ color: 'black' }}>{langChange == 'en' ? `${En.Numériser}` : 'NUMÉRISER'}</Text>
-                                        </Button>
 
-                                    </View>
-                                </ImageBackground>
-                            </TouchableOpacity>
+                            {!scanned ?
+                                <TouchableOpacity onPress={() => setShowBarCodeScanner(true)}>
+                                    <ImageBackground
+                                        resizeMode={'cover'}
+                                        source={{ uri: barcodePng }}
+                                        style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}
+                                        imageStyle={{ opacity: 0.3 }}>
+                                        <View
+
+                                            style={{ justifyContent: 'center', alignItems: 'center' }}>
+                                            <Button light style={{ width: 200, justifyContent: 'center', alignItems: 'center' }} onPress={() => setShowBarCodeScanner(true)}>
+                                                <Text style={{ color: 'black' }}>{langChange == 'en' ? `${En.Numériser}` : 'NUMÉRISER'}</Text>
+                                            </Button>
+
+                                        </View>
+                                    </ImageBackground>
+                                </TouchableOpacity>
+
+                                : null}
+
                             <View style={{ width: '100%', marginTop: 50 }}>
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <View style={{ width: '84%' }}>
@@ -597,37 +562,37 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
                                 </View>
                             </View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', zIndex: 1, marginTop: 25 }}>
-                                <Button
-                                    onPress={async () => {
+                            {!scanned ?
+                                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', zIndex: 1, marginTop: 25 }}>
+                                    <Button
+                                        onPress={async () => {
+                                            await getCardInfo();
+                                        }}
 
-                                        await getCardInfo();
-                                    }}
+                                        style={{ alignItems: 'center', justifyContent: 'center', width: 250, backgroundColor: "#DF0024", height: 50, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
+                                    >
+
+                                        {!isLoading ?
+                                            <Text style={{ fontSize: 14, color: 'white' }}> {langChange == 'en' ? `${En["Soumettre "]} ` : 'SOUMETTRE'} </Text>
+
+                                            :
+                                            <ActivityIndicator size="large" color="white" />
 
 
-                                    style={{ alignItems: 'center', justifyContent: 'center', width: 250, backgroundColor: "#DF0024", height: 50, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
-                                >
+                                        }
 
-                                    {!isLoading ?
-                                        <Text style={{ fontSize: 14, color: 'white' }}> {langChange == 'en' ? `${En["Soumettre "]} ` : 'SOUMETTRE'} </Text>
+                                    </Button>
+                                </View>
 
-                                        :
-                                        <ActivityIndicator size="large" color="white" />
-
-
-                                    }
-
-                                </Button>
-                            </View>
+                                : null}
 
                         </SafeAreaView>
 
 
                     }
-                    {showBarCodeScanner ?
 
+                    {showBarCodeScanner && !scanned ?
                         <View style={{ top: cameraContainerHeight }}>
-
                             <View style={{ zIndex: 9999999999, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', height: 30 }}>
                                 <TouchableOpacity
                                     style={{ backgroundColor: 'transparent' }}
@@ -652,12 +617,25 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                             >
                                 <Text style={{ fontSize: 24, color: 'black', textAlign: 'center' }}>{isEnglish ? "Close Camera" : "Fermer Camera"}</Text>
                             </TouchableOpacity>
-
                         </View>
                         : null}
 
-
                 </SafeAreaView>
+                {scanned ?
+                    <TouchableOpacity onPress={() => {
+                        setScanned(false);
+                        setNoDeCarteAutomatique("");
+                        setNoDeCarteManuel("");
+                        setShowBarCodeScanner(false);
+                    }}>
+                        <Text style={{ textAlign: 'center' }}>Annuler le scan en cours</Text>
+
+
+                    </TouchableOpacity>
+
+                    : null}
+
+
             </View>
             {
                 Platform.OS == 'ios' ?

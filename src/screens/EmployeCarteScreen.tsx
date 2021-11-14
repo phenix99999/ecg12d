@@ -302,7 +302,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
         <SafeAreaView style={{ backgroundColor: '#231F20', height: Platform.OS == "ios" ? 100 : 120, width: '100%' }}>
             <Row>
                 <Left style={{ marginTop: Platform.OS == "ios" ? null : 30 }}>
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <TouchableOpacity onPress={() => navigation.replace("CarteScreen")}>
                         <Icon name="arrow-back" type="MaterialIcons" style={{ color: 'white', marginLeft: 15, fontWeight: 'bold' }}></Icon>
                     </TouchableOpacity>
                 </Left>
@@ -538,7 +538,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
             <Button
                 onPress={async () => {
-                    navigation.goBack();
+                    navigation.replace('CarteScreen');
                 }}
 
 
