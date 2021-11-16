@@ -448,7 +448,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
 
                         } else {
-                            let activation = await eliotActivateCard(route.params.noDeCarteFM, route.params.noDeCarte, facture, SyncStorage.getItem('codeDeSecurite'), nip);
+                            let activation = await eliotActivateCard(route.params.noDeCarteFM, route.params.noDeCarte, facture, await SyncStorage.getItem('codeDeSecurite'), nip);
 
                             if (activation.success) {
                                 setSuccess(true);
