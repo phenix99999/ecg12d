@@ -298,7 +298,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
 
     const authHeader = 'Basic ' + base64.encode(`${"Alain Simoneau"}:${"4251"}`);
-    let render = <View style={{ height: '100%', backgroundColor: 'white' }}>
+    let render = <ScrollView style={{ height: '100%', backgroundColor: 'white' }}>
         <SafeAreaView style={{ backgroundColor: '#231F20', height: Platform.OS == "ios" ? 100 : 120, width: '100%' }}>
             <Row>
                 <Left style={{ marginTop: Platform.OS == "ios" ? null : 30 }}>
@@ -338,22 +338,9 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
             </Row>
 
         </SafeAreaView>
-        <SafeAreaView style={{ alignItems: 'center', justifyContent: 'center' }}>
-            <Image
-                style={{ height: 200, width: 300, marginTop: 15 }}
-                resizeMode={'contain'}
-                source={
-                    {
-                        uri: route.params.lienImage,
-                        headers: {
-                            Authorization: authHeader
-                        }
-                    }
-                } />
 
 
-        </SafeAreaView >
-        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 10, marginLeft: 10 }}>
+        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 10, marginLeft: 10, marginTop: 10 }}>
             <Text style={{ fontSize: 16 }}>{langChange == 'en' ? `${En.Produit}` : 'Produit'}</Text>
             <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.nomCoffret}</Text>
 
@@ -402,6 +389,24 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
             </View>
         </View>
+
+
+        <SafeAreaView style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <Image
+                style={{ height: 200, width: 300, marginTop: 15 }}
+                resizeMode={'contain'}
+                source={
+                    {
+                        uri: route.params.lienImage,
+                        headers: {
+                            Authorization: authHeader
+                        }
+                    }
+                } />
+
+
+        </SafeAreaView >
+
 
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
             {facture.length > 0 || nip.length > 0 ?
@@ -576,7 +581,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
 
 
-    </View >;
+    </ScrollView >;
 
     if (success == true) {
         render = <View style={{ height: '100%', backgroundColor: 'white' }}><SafeAreaView style={{ backgroundColor: '#231F20', height: 100, width: '100%' }}>

@@ -82,7 +82,7 @@ const toastConfig = {
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '95%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Si le problème persiste, il se peut que cette carte ne soit pas enregistrée dans notre système.
-                    Le client peut contacter le service à la clientèle de Coffrets Prestige au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
+                Le client peut contacter le service à la clientèle de Coffrets Prestige au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
                 </Text>
             </View>
             {Platform.OS == "ios" ?
@@ -101,7 +101,7 @@ const toastConfig = {
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '95%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Please check the card numbers entered. If the problem persists, this card may not be registered in our system.
-                    The customer can contact Giftjoy customer service at 1800.701.9575. Please do not honor the service until the card is registered and activated.
+                The customer can contact Giftjoy customer service at 1800.701.9575. Please do not honor the service until the card is registered and activated.
                 </Text>
             </View>
             {Platform.OS == "ios" ?
@@ -128,6 +128,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
     const [scanned, setScanned] = React.useState(false);
     const [showBarCodeScanner, setShowBarCodeScanner] = React.useState(false);
     const [showToast, setShowToast] = React.useState(false);
+    const [focus, setFocus] = React.useState("");
 
     const [noDeCarteManuel, setNoDeCarteManuel] = React.useState("");
     const [sound, setSound] = React.useState();
@@ -401,10 +402,9 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
 
     return (
-
         <Root>
 
-            <View
+            <ScrollView
             >
 
 
@@ -465,6 +465,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
 
                     {showBarCodeScanner && !scanned ?
 
+
                         <View style={{ backgroundColor: 'red' }} >
 
                             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -479,9 +480,9 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                                 />
 
                                 {/* <BarCodeScanner
-                                    onBarCodeScanned={handleBarCodeScanned}
-                                    style={StyleSheet.absoluteFillObject}
-                                /> */}
+onBarCodeScanned={handleBarCodeScanned}
+style={StyleSheet.absoluteFillObject}
+/> */}
                                 <View
 
                                     style={{ height: cameraHeightPercent, width: '100%', backgroundColor: 'red' }}>
@@ -505,6 +506,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                             </View>
 
                         </View>
+
 
                         :
                         <SafeAreaView style={{ height: cameraHeightPercent }} >
@@ -636,7 +638,7 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                     : null}
 
 
-            </View>
+            </ScrollView>
             {
                 Platform.OS == 'ios' ?
                     <View style={{ position: 'absolute', width: '96%', bottom: 0, flexDirection: 'row', marginLeft: 10, marginRight: 10, zIndex: 555555, backgroundColor: 'black', display: showToast ? 'visible' : 'none' }}>

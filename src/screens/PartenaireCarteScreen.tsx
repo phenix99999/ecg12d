@@ -315,7 +315,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
         render =
 
 
-            <View style={{ height: '100%', backgroundColor: 'white' }}>
+            <ScrollView style={{ height: '100%', backgroundColor: 'white' }}>
                 <SafeAreaView style={{ backgroundColor: '#231F20', height: Platform.OS == "ios" ? 100 : 120, width: '100%' }}>
                     <Row>
                         <Left style={{ marginTop: Platform.OS == "ios" ? null : 30 }}>
@@ -358,21 +358,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                     </Row>
 
                 </SafeAreaView>
-                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                    <Image
-                        style={{ height: 200, width: 300, marginTop: 15 }}
-                        source={
-                            {
-                                uri: route.params.lienImage,
-                                headers: {
-                                    Authorization: authHeader
-                                }
-                            }
-                        } />
-
-
-                </View >
-                <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15 }}>
+                <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderColor: '#e2e2e2', padding: 15, marginTop: 15 }}>
                     <Text style={{ fontSize: 16 }}>{langChange == 'en' ? `${En.Produit} ` : 'Produit'}</Text>
                     <Text style={{ marginLeft: 'auto', marginRight: 5, fontSize: 16 }}>{route.params.nomCoffret}</Text>
 
@@ -414,6 +400,22 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
 
                     null}
+
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <Image
+                        style={{ height: 200, width: 300, marginTop: 15 }}
+                        source={
+                            {
+                                uri: route.params.lienImage,
+                                headers: {
+                                    Authorization: authHeader
+                                }
+                            }
+                        } />
+
+
+                </View >
+
 
 
 
@@ -469,7 +471,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                         }
                     </View>}
 
-            </View >
+            </ScrollView >
     }
     console.log(route.params.lienImage);
     return (
