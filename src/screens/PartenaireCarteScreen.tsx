@@ -350,7 +350,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                                     style={{ height: 35, width: 35, borderRadius: 35 / 2 }} /> : <Image
                                     source={require('../assets/images/drapeu_Canada.png')}
                                     style={{ height: 35, width: 35, borderRadius: 35 / 2 }} />}
-                                {isEnglish ? <Text style={{ fontSize: 25, textAlign: 'center', color: 'white' }}>En2</Text> : <Text style={{ fontSize: 25, color: 'white' }}>Fr</Text>}
+                                {isEnglish ? <Text style={{ fontSize: 25, textAlign: 'center', color: 'white' }}>En</Text> : <Text style={{ fontSize: 25, color: 'white' }}>Fr</Text>}
                             </TouchableOpacity>
 
 
@@ -448,7 +448,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
                         }}
 
 
-                        style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 125, backgroundColor: "white", height: 40, borderColor: '#303030', padding: 15 }}
+                        style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 25, backgroundColor: "white", height: 40, borderColor: '#303030', padding: 15 }}
                     >
                         <Text style={{ fontSize: 18, color: '#007CFF' }}> {langChange == 'en' ? `${En.Annuler}` : 'ANNULER'}</Text>
                     </Button>

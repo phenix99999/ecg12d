@@ -547,7 +547,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
                 }}
 
 
-                style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 125, backgroundColor: "white", height: 40, padding: 15 }}
+                style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 25, backgroundColor: "white", height: 40, padding: 15 }}
             >
                 <Text style={{ fontSize: 14, color: '#007CFF' }}> {langChange == 'en' ? `${En.Annuler}` : 'ANNULER'}</Text>
             </Button>
