@@ -393,7 +393,7 @@ const EmployeCarteScreen = ({ route, navigation, authStore }: Props) => {
 
         <SafeAreaView style={{ alignItems: 'center', justifyContent: 'center' }}>
             <Image
-                style={{ height: 200, width: 300, marginTop: 15 }}
+                style={{ height: 125, width: 300, marginTop: 15 }}
                 resizeMode={'contain'}
                 source={
                     {

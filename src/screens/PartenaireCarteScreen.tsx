@@ -403,7 +403,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                     <Image
-                        style={{ height: 200, width: 300, marginTop: 15 }}
+                        style={{ height: 125, width: 300, marginTop: 15 }}
                         source={
                             {
                                 uri: route.params.lienImage,

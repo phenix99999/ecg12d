@@ -37,7 +37,7 @@ const CustomSidebar = (props: DrawerContentComponentProps<DrawerContentOptions>)
                         <Left>
                             <Icon active name="log-out" />
                         </Left>
-                        <Text>Déconnexion22</Text>
+                        <Text>Déconnexion</Text>
                         <Body>
                         </Body>
                     </ListItem>

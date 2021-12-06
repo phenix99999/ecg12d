@@ -82,7 +82,7 @@ const toastConfig = {
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '95%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Si le problème persiste, il se peut que cette carte ne soit pas enregistrée dans notre système.
-                Le client peut contacter le service à la clientèle de Coffrets Prestige au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
+                    Le client peut contacter le service à la clientèle de Coffrets Prestige au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
                 </Text>
             </View>
             {Platform.OS == "ios" ?
@@ -101,7 +101,7 @@ const toastConfig = {
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '95%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Please check the card numbers entered. If the problem persists, this card may not be registered in our system.
-                The customer can contact Giftjoy customer service at 1800.701.9575. Please do not honor the service until the card is registered and activated.
+                    The customer can contact Giftjoy customer service at 1800.701.9575. Please do not honor the service until the card is registered and activated.
                 </Text>
             </View>
             {Platform.OS == "ios" ?
@@ -460,8 +460,39 @@ const CarteScreen = ({ navigation, authStore }: Props) => {
                     </Row>
                 </SafeAreaView>
 
-                <SafeAreaView
+                {showBarCodeScanner && !scanned ?
+                    <View style={{ backgroundColor: 'transparent', zIndex: 9999999, flexDirection: 'row' }}>
+
+                        <View style={{ zIndex: 12, backgroundColor: 'transparent' }}>
+                            <TouchableOpacity
+                                style={{ backgroundColor: 'transparent' }}
+                                onPress={() => {
+                                    if (flash == 'off') {
+                                        setFlash('torch')
+                                    } else {
+                                        setFlash('off');
+                                    }
+                                }}
+                            >
+                                <Icon name={flash == 'torch' ? "flashlight-off" : "flashlight"} type="MaterialCommunityIcons" style={{ color: 'white' }} ></Icon>
+                            </TouchableOpacity>
+                        </View>
+
+                        <TouchableOpacity
+                            style={{ marginLeft: 'auto' }}
+                            onPress={() => {
+                                setFlash('off');
+                                setShowBarCodeScanner(false);
+                            }}
+                        >
+                            <Text style={{ fontSize: 24, color: 'white', }}>{isEnglish ? "Close Camera" : "Fermer Camera"}</Text>
+                        </TouchableOpacity>
+                    </View>
+                    : null}
+                <View
                 >
+
+
 
                     {showBarCodeScanner && !scanned ?
 
@@ -485,7 +516,8 @@ style={StyleSheet.absoluteFillObject}
 /> */}
                                 <View
 
-                                    style={{ height: cameraHeightPercent, width: '100%', backgroundColor: 'red' }}>
+                                    style={{ height: cameraHeightPercent, width: '100%' }}>
+
                                     <Camera
                                         flashMode={flash}
 
@@ -500,6 +532,9 @@ style={StyleSheet.absoluteFillObject}
 
 
                                     </Camera>
+
+
+
                                 </View>
 
 
@@ -513,7 +548,10 @@ style={StyleSheet.absoluteFillObject}
                             {scanned ?
                                 <View style={{ marginTop: 10, marginBottom: 10 }}>
                                     <ActivityIndicator size="large" color="red" />
-                                    <Text style={{ textAlign: 'center' }}>Votre Scan est en cours veuillez patienter s.v.p </Text>
+                                    <Text style={{ textAlign: 'center' }}>
+                                        {isEnglish ? "Your scan is in progress please wait." : "Votre Scan est en cours veuillez patienter s.v.p"}
+
+                                    </Text>
                                 </View>
                                 : null}
 
@@ -593,36 +631,9 @@ style={StyleSheet.absoluteFillObject}
 
                     }
 
-                    {showBarCodeScanner && !scanned ?
-                        <View style={{ top: cameraContainerHeight }}>
-                            <View style={{ zIndex: 9999999999, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent', height: 30 }}>
-                                <TouchableOpacity
-                                    style={{ backgroundColor: 'transparent' }}
-                                    onPress={() => {
-                                        if (flash == 'off') {
-                                            setFlash('torch')
-                                        } else {
-                                            setFlash('off');
-                                        }
-                                    }}
-                                >
-                                    <Icon name={flash == 'torch' ? "flashlight-off" : "flashlight"} type="MaterialCommunityIcons" style={{ color: 'black' }} ></Icon>
-                                </TouchableOpacity>
-                            </View>
 
-                            <TouchableOpacity
-                                style={{ justifyContent: 'center', marginTop: 25 }}
-                                onPress={() => {
-                                    setFlash('off');
-                                    setShowBarCodeScanner(false);
-                                }}
-                            >
-                                <Text style={{ fontSize: 24, color: 'black', textAlign: 'center' }}>{isEnglish ? "Close Camera" : "Fermer Camera"}</Text>
-                            </TouchableOpacity>
-                        </View>
-                        : null}
 
-                </SafeAreaView>
+                </View>
                 {scanned ?
                     <TouchableOpacity onPress={() => {
                         setScanned(false);
@@ -630,7 +641,7 @@ style={StyleSheet.absoluteFillObject}
                         setNoDeCarteManuel("");
                         setShowBarCodeScanner(false);
                     }}>
-                        <Text style={{ textAlign: 'center' }}>Annuler le scan en cours</Text>
+                        <Text style={{ textAlign: 'center' }}>{isEnglish ? "Cancel the scan in progress" : "Annuler le scan en cours"}</Text>
 
 
                     </TouchableOpacity>

@@ -100,7 +100,7 @@ export default class App extends Component {
                     </TouchableOpacity>
 
                     <View style={{ flexDirection: 'row', padding: 20, borderBottomWidth: 1, borderColor: '#e2e2e2' }}
-                    ><Text>Version 2.1.9</Text>
+                    ><Text>Version 2.2.0</Text>
                     </View>
 
                 </View>
