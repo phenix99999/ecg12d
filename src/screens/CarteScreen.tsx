@@ -82,7 +82,7 @@ const toastConfig = {
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '95%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Veuillez vérifier les numéros de cartes saisis. Si le problème persiste, il se peut que cette carte ne soit pas enregistrée dans notre système.
-                    Le client peut contacter le service à la clientèle de Coffrets Prestige au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
+                Le client peut contacter le service à la clientèle de Coffrets Prestige au 1800.701.9575. Merci de ne pas honorer la prestation tant que la carte n'est pas enregistrée et activée.
                 </Text>
             </View>
             {Platform.OS == "ios" ?
@@ -101,7 +101,7 @@ const toastConfig = {
             <View style={{ width: Platform.OS === 'ios' ? '70%' : '95%', marginLeft: 10, marginTop: 5, justifyContent: 'center' }}>
 
                 <Text style={{ color: 'white' }}>Please check the card numbers entered. If the problem persists, this card may not be registered in our system.
-                    The customer can contact Giftjoy customer service at 1800.701.9575. Please do not honor the service until the card is registered and activated.
+                The customer can contact Giftjoy customer service at 1800.701.9575. Please do not honor the service until the card is registered and activated.
                 </Text>
             </View>
             {Platform.OS == "ios" ?
@@ -576,62 +576,41 @@ style={StyleSheet.absoluteFillObject}
 
                                 : null}
 
-                            <View style={{ width: '100%', marginTop: 50 }}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <View style={{ width: '84%' }}>
 
-                                        <TextInput
-                                            keyboardType="numeric"
-                                            placeholderTextColor="#404040"
-                                            style={{ height: 45, width: '100%', borderBottomWidth: 0.5, borderColor: '#303030', marginLeft: 17 }}
-                                            value={noDeCarteManuel}
-                                            onChange={(e) => {
-                                                setNoDeCarteManuel(e.nativeEvent.text)
-                                            }
-                                            }
-                                            placeholder={langChange == 'en' ? `${En["Numéro de la carte"]}` : "Numéro de carte"}
-                                        />
-
-                                    </View>
-                                    <TouchableOpacity style={{ marginTop: 1 }}
-                                        onPress={() => Keyboard.dismiss()}
-                                    >
-                                        <Icon type="AntDesign" name="closecircle" />
-                                    </TouchableOpacity>
-
-
-                                </View>
-                            </View>
-                            {!scanned ?
-                                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', zIndex: 1, marginTop: 25 }}>
-                                    <Button
-                                        onPress={async () => {
-                                            await getCardInfo();
-                                        }}
-
-                                        style={{ alignItems: 'center', justifyContent: 'center', width: 250, backgroundColor: "#DF0024", height: 50, borderWidth: 0.5, borderColor: '#303030', padding: 15 }}
-                                    >
-
-                                        {!isLoading ?
-                                            <Text style={{ fontSize: 14, color: 'white' }}> {langChange == 'en' ? `${En["Soumettre "]} ` : 'SOUMETTRE'} </Text>
-
-                                            :
-                                            <ActivityIndicator size="large" color="white" />
-
-
-                                        }
-
-                                    </Button>
-                                </View>
-
-                                : null}
 
                         </SafeAreaView>
 
 
                     }
+                    {!showBarCodeScanner && !scanned ?
+
+                        <View style={{ width: '100%', marginTop: 50 }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={{ width: '84%' }}>
+
+                                    <TextInput
+                                        keyboardType="numeric"
+                                        placeholderTextColor="#404040"
+                                        style={{ height: 45, width: '100%', borderBottomWidth: 0.5, borderColor: '#303030', marginLeft: 17 }}
+                                        value={noDeCarteManuel}
+                                        onChange={(e) => {
+                                            setNoDeCarteManuel(e.nativeEvent.text)
+                                        }
+                                        }
+                                        placeholder={langChange == 'en' ? `${En["Numéro de la carte"]}` : "Numéro de carte"}
+                                    />
+
+                                </View>
+                                <TouchableOpacity style={{ marginTop: 1 }}
+                                    onPress={() => Keyboard.dismiss()}
+                                >
+                                    <Icon type="AntDesign" name="closecircle" />
+                                </TouchableOpacity>
 
 
+                            </View>
+                        </View>
+                        : null}
 
                 </View>
                 {scanned ?
@@ -647,6 +626,31 @@ style={StyleSheet.absoluteFillObject}
                     </TouchableOpacity>
 
                     : null}
+
+                {!showBarCodeScanner && !scanned ?
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', zIndex: 1, marginTop: 25 }}>
+                        <Button
+                            onPress={async () => {
+                                await getCardInfo();
+                            }}
+
+                            style={{ alignItems: 'center', justifyContent: 'center', width: 250, marginTop: 52, backgroundColor: '#FFB59C', height: 55, padding: 15 }}
+                        >
+
+                            {!isLoading ?
+                                <Text style={{ fontSize: 14, color: 'white' }}> {langChange == 'en' ? `${En["Soumettre "]} ` : 'SOUMETTRE'} </Text>
+
+                                :
+                                <ActivityIndicator size="large" color="white" />
+
+
+                            }
+
+                        </Button>
+                    </View>
+
+                    : null}
+
 
 
             </ScrollView>
