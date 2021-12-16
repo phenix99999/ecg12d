@@ -1,18 +1,17 @@
 {
   "expo": {
-    "name": "Coffrets Prestige",
-    "slug": "coffrets-prestige",
+    "name": "Ecg12d",
+    "slug": "ecg12d",
     "version": "2.2.1",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/splash.jpeg",
     "platforms": [
       "ios",
       "android"
     ],
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash.jpeg",
       "resizeMode": "contain",
-      "backgroundColor": "#231F20"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -22,7 +21,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.dionavi.copreredeem",
+      "bundleIdentifier": "com.vhiculemedia.testecg",
       "infoPlist": {
         "NSCameraUsageDescription": "Cette application utilise la caméra pour numériser le code-barres des cartes."
       }

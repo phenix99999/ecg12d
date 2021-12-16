@@ -155,7 +155,7 @@ export default class App extends Component {
                 drawerContent={(props) => <CustomDrawerContent {...props} />}
 
             >
-                {this.state.isConnected ? <Drawer.Screen name="CarteScreen" component={StackCarteConnected} /> : <Drawer.Screen name="CarteScreen" component={StackCarte} />}
+                <Drawer.Screen name="CarteScreen" component={StackCarte} />
 
             </Drawer.Navigator>;
 
