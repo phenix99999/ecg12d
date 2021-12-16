@@ -2,9 +2,9 @@
   "expo": {
     "name": "Ecg12d",
     "slug": "ecg12d",
-    "version": "2.2.1",
+    "version": "1.0.5",
     "orientation": "portrait",
-    "icon": "./assets/splash.jpeg",
+    "icon": "./assets/icone.png",
     "platforms": [
       "ios",
       "android"
