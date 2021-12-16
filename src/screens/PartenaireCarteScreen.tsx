@@ -199,8 +199,9 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
     async function encaisser() {
         let montant = route.params.balanceGiveX;
+
         let error = false;
-        if (route.params.encaissementPartiel == true) {
+        if (route.params.encaissementPartiel == "1") {
 
             if (!montantAEncaisser || montantAEncaisser == "0" || montantAEncaisser == "0.0" || montantAEncaisser == "0.00" || montantAEncaisser.search("^[0-9]+(\.[0-9]{1,2})?$") == -1) {
                 error = true;
@@ -221,6 +222,7 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
 
             } else {
                 if (montantAEncaisser > montant) {
+                    console.log("ON RENTRE ICI");
                     error = true;
                     montant = montantAEncaisser;
                     setShowToast(true);
@@ -239,9 +241,17 @@ const PartenaireCarteScreen = ({ route, navigation, authStore }: Props) => {
             const cardGivex = route.params.noDeCarte;
             const partnerUsername = await SyncStorage.getItem('username');
             const partnerPassword = await SyncStorage.getItem('password');
+            let returnEncaissement;
+            console.log(route.params);
+            console.log("VOICI LE MONTANT " + montant);
+            if (route.params.encaissementPartiel == "1") {
+                returnEncaissement = await givexEncaissement(cardGivex, montantAEncaisser, partnerUsername, partnerPassword);
+            } else {
+                console.log("VOICI LE MONTANT AVANT LE CALL " + montant);
+                returnEncaissement = await givexEncaissement(cardGivex, montant, partnerUsername, partnerPassword);
+            }
 
-            let returnEncaissement = await givexEncaissement(cardGivex, montantAEncaisser, partnerUsername, partnerPassword);
-            console.log(returnEncaissement);
+
             if (returnEncaissement.success) {
                 setSuccess(true);
             } else {

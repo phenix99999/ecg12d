@@ -10,7 +10,10 @@ let fmDatabase = "Coffrets_Prestige";
 
 export async function authentificationGX(username, password) {
     let data = { "id": "", "params": ["fr", "9999", username, password, "", ""], "jsonrpc": "2.0", "method": "dc_901" }
+    console.log(GIVEX_HOST);
+    console.log(data);
     let response = await axios.post(GIVEX_HOST, data)
+    console.log(response);
     let errorCode = response.data.result[1]
 
     if (errorCode === "1") {
@@ -23,10 +26,12 @@ export async function authentificationGX(username, password) {
 //GIVEX
 export async function givexEncaissement(card, amount, username, password) {
     let data = { "id": card, "params": ["fr", "9999", username, password, card, amount], "jsonrpc": "2.0", "method": "dc_901" }
-    console.log("Debut function :: ");
-    console.log(data)
+    // console.log(data);
+    console.log(amount);
+    // console.log("Debut function :: ");
+    // console.log(data)
     let response = await axios.post(GIVEX_HOST, data)
-    console.log(response);
+    // console.log(response);
     let result = response.data.result
     let code = result[1]
     if (code !== '0') {
