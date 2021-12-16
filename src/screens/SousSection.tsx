@@ -56,7 +56,7 @@ const LoginScreen = ({ route, navigation, authStore }: Props) => {
     const getUrl = async () => {
 
         let dataUrl = await get("Alain Simoneau", "4251", global.fmServer, global.fmDatabase, "ECG12D");
-        console.log(dataUrl);
+
         setDataUrl(dataUrl);
 
     }
@@ -65,12 +65,15 @@ const LoginScreen = ({ route, navigation, authStore }: Props) => {
         let sousSpecialite = route.params.sousSection;
         let dataSection = [];
         let indexSection = 0;
+        console.log(route.params);
+        console.log(sousSpecialite);
         for (let i = 0; i < sousSpecialite.length; i++) {
-            if (sousSpecialite[i]._link == route.params.pk_ID) {
+            if (sousSpecialite[i].fk_section == route.params.pk_ID) {
                 dataSection[indexSection] = sousSpecialite[i];
                 indexSection++;
             }
         }
+        console.log(dataSection);
         setData(dataSection);
 
         getUrl();
