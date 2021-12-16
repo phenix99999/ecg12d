@@ -8,7 +8,8 @@ import { createDrawerNavigator, DrawerContentComponentProps, DrawerContentOption
 import { RootStackParamList, MainStackParamList, LoginStackParamList, DrawerStackParamList } from "../types";
 import { createStackNavigator } from "@react-navigation/stack";
 type InitialRouteNames = "Logout" | "Login";
-import LoginScreen from "../screens/LoginScreen";
+import SectionScreen from "../screens/Section";
+import SousSectionScreen from "../screens/SousSection";
 import CarteScreen from "../screens/CarteScreen";
 import EmployeCarteScreen from "../screens/EmployeCarteScreen";
 import PartenaireCarteScreen from "../screens/PartenaireCarteScreen";
@@ -113,10 +114,8 @@ export default class App extends Component {
             let stack =
                 <Stack.Navigator screenOptions={{ headerShown: false }}  >
 
-                    <Stack.Screen name="LoginScreen" component={LoginScreen} />
-                    <Stack.Screen name="CarteScreen" component={CarteScreen} />
-                    <Stack.Screen name="PartenaireCarteScreen" component={PartenaireCarteScreen} />
-                    <Stack.Screen name="EmployeCarteScreen" component={EmployeCarteScreen} />
+                    <Stack.Screen name="Section" component={SectionScreen} />
+                    <Stack.Screen name="SousSection" component={SousSectionScreen} />
 
                 </Stack.Navigator>;
 
@@ -129,20 +128,12 @@ export default class App extends Component {
 
         }
 
-        function StackCarteConnected() {
-            return (<Stack.Navigator screenOptions={{ headerShown: false }}  >
-                <Stack.Screen name="CarteScreen" component={CarteScreen} />
-                <Stack.Screen name="PartenaireCarteScreen" component={PartenaireCarteScreen} />
-                <Stack.Screen name="EmployeCarteScreen" component={EmployeCarteScreen} />
-                <Stack.Screen name="LoginScreen" component={LoginScreen} />
 
-            </Stack.Navigator>);
-        }
 
 
         const Stack = createStackNavigator();
-        global.fmServer = "cpfilemaker.com";
-        global.fmDatabase = "Coffrets_Prestige";
+        global.fmServer = "vhmsoft.com";
+        global.fmDatabase = "ecg12d";
         // this.fmClient = new FMClient('cpfilemaker.com', 'Coffrets_Prestige', 'Basic QXBwbGljYXRpb25fbW9iaWxlOg==')
         let navigationConnectedPartenaire;
         let navigation;

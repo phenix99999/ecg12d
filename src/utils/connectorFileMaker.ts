@@ -136,7 +136,7 @@ export async function edit(username, password, server, db, layout, recid, query)
     // https://vhmsoft.com/fmi/xml/fmresultset.xml?-db=vhmsoft_Lyes&-lay=mobile_TEMPS&AM_PM=PM&-new
     let url = "https://" + server + "/fmi/xml/fmresultset.xml?-db=" + db + "&-lay=" + layout + "&-recid=" + recid + query + "&-edit";
 
-    console.log(url);
+
     await axios.post(url, {}, {
         headers: { 'Authorization': authHeader }
     }).then(function (response) {
@@ -160,11 +160,13 @@ export async function get(username, password, server, db, layout, query = null, 
     }
     console.log(url);
     let errorAuth = false;
-
+    console.log(url);
     await axios.post(url, {}, {
         headers: { 'Authorization': authHeader }
     }).then(function (response) {
+
         data = new XMLParser().parseFromString(response.data);
+
         // console.log("Data");
         // console.log(data);
     }).catch(function (error) {
